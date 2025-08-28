@@ -296,3 +296,11 @@ PermissionError
 2025-08-28 15:34:58,031 [INFO] app: [API] Connecting to Google Sheet ...
 2025-08-28 15:35:00,232 [INFO] app: [API] Append success for id=00004 name=大王
 2025-08-28 15:35:00,240 [INFO] app: [API] 成功寫入：id=00004, name=大王
+2025-08-28 15:58:25,104 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 16:04:11,226 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 16:06:40,807 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 16:10:16,544 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 16:30:21,875 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 16:31:29,259 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 16:42:28,857 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 17:00:25,450 [DEBUG] app: Logging initialized. Debug=True

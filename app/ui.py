@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Optional
 
 import cv2
+import json
+import qrcode
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 from .config import AppConfig
@@ -19,6 +21,8 @@ from .qr_tools import (
     generate_qr_images,
     load_attendees_csv,
     parse_qr_payload,
+    DesignOptions,
+    generate_qr_posters,
 )
 
 
@@ -83,6 +87,78 @@ class GenerateTab(QtWidgets.QWidget):
         event_layout.addWidget(self.event_edit)
         layout.addLayout(event_layout)
 
+        # Design panel
+        design_group = QtWidgets.QGroupBox("圖面設計（預設 4:5 1080x1350）")
+        grid = QtWidgets.QGridLayout()
+
+        self.cb_use_design = QtWidgets.QCheckBox("使用設計版輸出（含文字/顏色/字型）")
+        self.cb_use_design.setChecked(True)
+
+        self.sp_width = QtWidgets.QSpinBox(); self.sp_width.setRange(300, 4000); self.sp_width.setValue(1080)
+        self.sp_height = QtWidgets.QSpinBox(); self.sp_height.setRange(300, 4000); self.sp_height.setValue(1350)
+        self.sl_qr_ratio = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
+        self.sl_qr_ratio.setRange(10, 100); self.sl_qr_ratio.setValue(70)
+        self.lb_qr_ratio = QtWidgets.QLabel("70%")
+        self.sl_qr_ratio.valueChanged.connect(lambda v: self.lb_qr_ratio.setText(f"{v}%"))
+
+        self.ed_bg = QtWidgets.QLineEdit("#FFFFFF"); self.bg_input = self._attach_color_button(self.ed_bg)
+        self.ed_qr = QtWidgets.QLineEdit("#000000"); self.qr_input = self._attach_color_button(self.ed_qr)
+        self.ed_text = QtWidgets.QLineEdit("#000000"); self.text_input = self._attach_color_button(self.ed_text)
+
+        # Font combo (installed fonts)
+        self.font_combo = QtWidgets.QFontComboBox()
+        self.sp_font_size = QtWidgets.QSpinBox(); self.sp_font_size.setRange(10, 200); self.sp_font_size.setValue(48)
+
+        # Optional background image to replace solid color
+        self.ed_bg_img = QtWidgets.QLineEdit("")
+        btn_bg_img = QtWidgets.QPushButton("選擇圖面…")
+        btn_bg_img.clicked.connect(self._choose_bg_image)
+
+        # Text block fine-tune
+        self.cb_text_anchor = QtWidgets.QComboBox(); self.cb_text_anchor.addItems(["頂部", "中間", "底部"]); self.cb_text_anchor.setCurrentText("底部")
+        self.cb_text_align = QtWidgets.QComboBox(); self.cb_text_align.addItems(["靠左", "置中", "靠右"]); self.cb_text_align.setCurrentText("置中")
+        self.sp_text_margin = QtWidgets.QSpinBox(); self.sp_text_margin.setRange(0, 400); self.sp_text_margin.setValue(40)
+        self.dsb_line_spacing = QtWidgets.QDoubleSpinBox(); self.dsb_line_spacing.setRange(0.0, 2.0); self.dsb_line_spacing.setSingleStep(0.1); self.dsb_line_spacing.setValue(0.4)
+
+        r = 0
+        grid.addWidget(self.cb_use_design, r, 0, 1, 3); r += 1
+        grid.addWidget(QtWidgets.QLabel("寬度"), r, 0); grid.addWidget(self.sp_width, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("高度"), r, 0); grid.addWidget(self.sp_height, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("QR 寬度占比"), r, 0); grid.addWidget(self.sl_qr_ratio, r, 1); grid.addWidget(self.lb_qr_ratio, r, 2); r += 1
+        grid.addWidget(QtWidgets.QLabel("背景色"), r, 0); grid.addWidget(self.bg_input, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("QR 顏色"), r, 0); grid.addWidget(self.qr_input, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("文字顏色"), r, 0); grid.addWidget(self.text_input, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("字型"), r, 0); 
+        hfont = QtWidgets.QHBoxLayout(); hfont.addWidget(self.font_combo)
+        wfont = QtWidgets.QWidget(); wfont.setLayout(hfont)
+        grid.addWidget(wfont, r, 1, 1, 2); r += 1
+        grid.addWidget(QtWidgets.QLabel("字型大小"), r, 0); grid.addWidget(self.sp_font_size, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("圖面路徑(可替代背景色)"), r, 0)
+        hbg = QtWidgets.QHBoxLayout(); hbg.addWidget(self.ed_bg_img); hbg.addWidget(btn_bg_img)
+        wbg = QtWidgets.QWidget(); wbg.setLayout(hbg)
+        grid.addWidget(wbg, r, 1, 1, 2); r += 1
+
+        grid.addWidget(QtWidgets.QLabel("文字錨點"), r, 0); grid.addWidget(self.cb_text_anchor, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("文字對齊"), r, 0); grid.addWidget(self.cb_text_align, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("文字邊界"), r, 0); grid.addWidget(self.sp_text_margin, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("行距係數"), r, 0); grid.addWidget(self.dsb_line_spacing, r, 1); r += 1
+
+        design_group.setLayout(grid)
+        layout.addWidget(design_group)
+
+        # Preview
+        prev_row = QtWidgets.QHBoxLayout()
+        self.btn_preview = QtWidgets.QPushButton("預覽")
+        self.btn_preview.clicked.connect(self._preview)
+        prev_row.addWidget(self.btn_preview)
+        prev_row.addStretch(1)
+        layout.addLayout(prev_row)
+        self.preview_label = QtWidgets.QLabel()
+        self.preview_label.setFixedHeight(300)
+        self.preview_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.preview_label.setStyleSheet("background:#1c1c1c;border:1px solid #333;border-radius:6px")
+        layout.addWidget(self.preview_label)
+
         # Row: button (only generate here)
         btn_layout = QtWidgets.QHBoxLayout()
         self.btn_generate = QtWidgets.QPushButton("批次產生 QR Code")
@@ -114,10 +190,171 @@ class GenerateTab(QtWidgets.QWidget):
         event = self.event_edit.text().strip() or self.cfg.event_name
         try:
             attendees = load_attendees_csv(csv_path)
-            count = generate_qr_images(attendees, event, out_dir)
-            self.status.setText(f"完成產生 {count} 張 QR Code 圖片 → {out_dir}")
+            if self.cb_use_design.isChecked():
+                opts = DesignOptions(
+                    width=int(self.sp_width.value()),
+                    height=int(self.sp_height.value()),
+                    qr_ratio=float(self.sl_qr_ratio.value()) / 100.0,
+                    bg_color=self.ed_bg.text().strip(),
+                    qr_color=self.ed_qr.text().strip(),
+                    text_color=self.ed_text.text().strip(),
+                    font_family=self.font_combo.currentFont().family(),
+                    font_size=int(self.sp_font_size.value()),
+                    bg_image_path=self.ed_bg_img.text().strip() or None,
+                    text_anchor=self._map_anchor(),
+                    text_align=self._map_align(),
+                    text_margin=int(self.sp_text_margin.value()),
+                    line_spacing_scale=float(self.dsb_line_spacing.value()),
+                )
+                count = generate_qr_posters(attendees, event, out_dir, opts)
+            else:
+                count = generate_qr_images(attendees, event, out_dir)
+            self.status.setText(f"完成產生 {count} 張 圖片 → {out_dir}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "發生錯誤", str(e))
+
+    def _attach_color_button(self, edit: QtWidgets.QLineEdit) -> QtWidgets.QWidget:
+        btn = QtWidgets.QPushButton("…")
+        btn.setFixedWidth(28)
+        btn.clicked.connect(lambda: self._pick_color_into(edit))
+        lay = QtWidgets.QHBoxLayout(); lay.setContentsMargins(0,0,0,0)
+        lay.addWidget(edit); lay.addWidget(btn)
+        w = QtWidgets.QWidget(); w.setLayout(lay)
+        return w
+
+    def _pick_color_into(self, edit: QtWidgets.QLineEdit):
+        c = QtWidgets.QColorDialog.getColor(QtGui.QColor(edit.text().strip() or "#000000"), self, "選擇顏色")
+        if c.isValid():
+            edit.setText(c.name())
+
+    def _choose_bg_image(self):
+        fn, _ = QtWidgets.QFileDialog.getOpenFileName(self, "選擇圖面", str(Path.cwd()), "Image Files (*.png *.jpg *.jpeg)")
+        if fn:
+            self.ed_bg_img.setText(fn)
+
+    def _preview(self):
+        # Build a sample attendee from first row of CSV if present; else placeholders
+        sample = Attendee(id="ID", name="NAME", extra={"salon": "SALON", "seller": "SELLER"})
+        opts = DesignOptions(
+            width=int(self.sp_width.value()),
+            height=int(self.sp_height.value()),
+            qr_ratio=float(self.sl_qr_ratio.value()) / 100.0,
+            bg_color=self.ed_bg.text().strip(),
+            qr_color=self.ed_qr.text().strip(),
+            text_color=self.ed_text.text().strip(),
+            font_family=self.font_combo.currentFont().family(),
+            font_size=int(self.sp_font_size.value()),
+            bg_image_path=self.ed_bg_img.text().strip() or None,
+            text_anchor=self._map_anchor(),
+            text_align=self._map_align(),
+            text_margin=int(self.sp_text_margin.value()),
+            line_spacing_scale=float(self.dsb_line_spacing.value()),
+        )
+        # Render a single poster to memory
+        try:
+            # Reuse generator logic but not writing to disk: replicate steps
+            payload = json.dumps({
+                "id": sample.id,
+                "name": sample.name,
+                "event": self.event_edit.text().strip() or self.cfg.event_name,
+                "extra": sample.extra,
+            }, ensure_ascii=False)
+            # QR
+            qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M)
+            qr.add_data(payload)
+            qr.make(fit=True)
+            qr_img = qr.make_image(fill_color=opts.qr_color, back_color="#FFFFFF").convert("RGB")
+
+            from PIL import Image
+            from PIL.ImageQt import ImageQt
+            from PIL import ImageDraw as PILImageDraw, ImageFont as PILImageFont
+
+            def _hex_to_rgb_local(hex_str: str):
+                s = hex_str.strip()
+                if s.startswith('#'):
+                    s = s[1:]
+                if len(s) == 3:
+                    s = ''.join(ch*2 for ch in s)
+                try:
+                    return (int(s[0:2],16), int(s[2:4],16), int(s[4:6],16))
+                except Exception:
+                    return (0,0,0)
+
+            # background: image or color
+            if opts.bg_image_path and Path(opts.bg_image_path).exists():
+                bg = Image.open(opts.bg_image_path).convert("RGB")
+                sw, sh = bg.size
+                tw, th = opts.width, opts.height
+                scale = max(tw / sw, th / sh)
+                bg = bg.resize((int(sw*scale), int(sh*scale)), Image.Resampling.LANCZOS)
+                left = (bg.width - tw)//2; top = (bg.height - th)//2
+                canvas = bg.crop((left, top, left+tw, top+th))
+            else:
+                canvas = Image.new("RGB", (opts.width, opts.height), _hex_to_rgb_local(opts.bg_color))
+            draw = PILImageDraw.Draw(canvas)
+            qr_target_w = int(opts.width * max(0.1, min(1.0, opts.qr_ratio)))
+            qr_target_w = max(50, min(qr_target_w, opts.width - 80))
+            qr_resized = qr_img.resize((qr_target_w, qr_target_w), Image.Resampling.LANCZOS)
+            qr_x = (opts.width - qr_target_w) // 2
+            qr_y = 40
+            canvas.paste(qr_resized, (qr_x, qr_y))
+            # font
+            # Try find a font file from family (best-effort), fallback to default
+            try:
+                from app.qr_tools import _find_font_file  # reuse helper
+                fpath = _find_font_file(opts.font_family)
+                font = PILImageFont.truetype(fpath, opts.font_size) if fpath else PILImageFont.load_default()
+            except Exception:
+                font = PILImageFont.load_default()
+            text_color = _hex_to_rgb_local(opts.text_color)
+            lines = [
+                f"ID: {sample.id}",
+                f"姓名: {sample.name}",
+                f"Salon: {sample.extra.get('salon','')}",
+                f"Seller: {sample.extra.get('seller','')}",
+            ]
+            # Place text block anchored per options, independent from QR size
+            spacing = int(max(0.0, opts.line_spacing_scale) * opts.font_size)
+            metrics = []
+            total_h = 0
+            for line in lines:
+                bbox = draw.textbbox((0,0), line, font=font)
+                w = bbox[2]-bbox[0]; h=bbox[3]-bbox[1]
+                metrics.append((line, w, h))
+                total_h += h
+            total_h += spacing * (len([m for m in metrics if m[2]>0]) - 1)
+            margin = max(0, int(opts.text_margin))
+            if opts.text_anchor == 'top':
+                y = margin
+            elif opts.text_anchor == 'middle':
+                y = max(margin, (opts.height - total_h)//2)
+            else:
+                y = max(margin, opts.height - margin - total_h)
+            for line, w, h in metrics:
+                if h == 0:
+                    continue
+                if opts.text_align == 'left':
+                    x = margin
+                elif opts.text_align == 'right':
+                    x = max(margin, opts.width - margin - w)
+                else:
+                    x = (opts.width - w)//2
+                draw.text((x,y), line, fill=text_color, font=font)
+                y += h + spacing
+
+            qim = ImageQt(canvas)
+            pix = QtGui.QPixmap.fromImage(qim).scaled(self.preview_label.width(), self.preview_label.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+            self.preview_label.setPixmap(pix)
+        except Exception as e:
+            QtWidgets.QMessageBox.warning(self, "預覽失敗", str(e))
+
+    def _map_anchor(self) -> str:
+        t = self.cb_text_anchor.currentText()
+        return {'頂部':'top','中間':'middle','底部':'bottom'}.get(t, 'bottom')
+
+    def _map_align(self) -> str:
+        t = self.cb_text_align.currentText()
+        return {'靠左':'left','置中':'center','靠右':'right'}.get(t, 'center')
 
 
 class ScanTab(QtWidgets.QWidget):
@@ -597,15 +834,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.cfg.credentials_path, self.cfg.spreadsheet_id, self.cfg.worksheet_name
         )
 
-        self.tab_generate = GenerateTab(self.cfg)
+        # Put Scan tab first as Home
         self.tab_scan = ScanTab(self.cfg, self.sheets_client)
+        self.tab_generate = GenerateTab(self.cfg)
         self.tab_settings = SettingsTab(self.cfg)
         self.tab_template = TemplateTab(self.cfg)
         self.tab_settings.config_changed.connect(self._on_config_changed)
 
+        tabs.addTab(self.tab_scan, "首頁簽到")
         tabs.addTab(self.tab_generate, "產生 QR Code")
         tabs.addTab(self.tab_template, "建立範本")
-        tabs.addTab(self.tab_scan, "掃描簽到")
         tabs.addTab(self.tab_settings, "設定")
 
         # Style

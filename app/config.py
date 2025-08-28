@@ -14,7 +14,7 @@ DEFAULTS: Dict[str, Any] = {
     "event": {"name": "活動"},
     "camera": {"index": 0},
     "output": {"qr_folder": "output_qrcodes"},
-    "fields": {"extras": ["email", "company"]},
+    "fields": {"extras": ["salon", "seller"]},
     "debug": False,
 }
 
