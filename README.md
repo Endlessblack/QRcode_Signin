@@ -1,5 +1,7 @@
 # Windows QR Code 簽到程式（Google Sheet 後端）
 
+版本：v1.0.0（穩定版）
+
 一個可在 Windows 執行的桌面簽到工具：
 - 以本機名單（CSV）批次產生 QR Code 圖檔
 - 使用攝影機掃描 QR Code，將簽到紀錄寫入 Google Sheet

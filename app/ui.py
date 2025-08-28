@@ -10,6 +10,7 @@ import cv2
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 from .config import AppConfig
+from . import __version__
 from .google_sheets import GoogleSheetsClient
 from .logger import setup_logging
 from .qr_tools import (
@@ -583,7 +584,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, cfg: AppConfig):
         super().__init__()
         self.cfg = cfg
-        self.setWindowTitle("QR 簽到")
+        self.setWindowTitle(f"QR 簽到 v{__version__}")
         self.resize(1000, 700)
         self._init_ui()
 
