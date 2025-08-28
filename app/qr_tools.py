@@ -88,10 +88,12 @@ class DesignOptions:
     font_size: int = 48
     margin: int = 40
     bg_image_path: Optional[str] = None
-    text_anchor: str = "bottom"  # one of: top, middle, bottom
+    text_anchor: str = "top"  # default top within region
     text_align: str = "center"   # one of: left, center, right
     text_margin: int = 40         # inner margin for text block
     line_spacing_scale: float = 0.4
+    auto_fit_text: bool = True    # shrink font to fit region if needed
+    text_region: Optional[Tuple[float, float, float, float]] = None  # (x0,y0,x1,y1) normalized
 
 
 def _hex_to_rgb(hex_str: str) -> Tuple[int, int, int]:
@@ -127,7 +129,26 @@ def _find_font_file(family: Optional[str]) -> Optional[str]:
                 Path('/System/Library/Fonts'),
                 Path.home() / 'Library/Fonts',
             ]
-        family_norm = family.lower().replace(' ', '').replace('-', '').replace('_', '')
+        # Direct known-mapping for common CJK on Windows
+        known_map = {
+            'microsoft jhenghei': 'msjh.ttc',
+            '微軟正黑體': 'msjh.ttc',
+            'mingliu': 'mingliu.ttc',
+            'pmingliu': 'pmingliu.ttc',
+            '新細明體': 'mingliu.ttc',
+            '細明體': 'mingliu.ttc',
+            '標楷體': 'kaiu.ttf',
+            'kaiu': 'kaiu.ttf',
+            'noto sans cjk': 'NotoSansCJK-Regular.ttc',
+        }
+        family_norm = family.lower().strip()
+        if os.name == 'nt' and family_norm in known_map:
+            for root in candidates:
+                p = root / known_map[family_norm]
+                if p.exists():
+                    return str(p)
+        # Fuzzy match by filename stem
+        family_norm2 = family_norm.replace(' ', '').replace('-', '').replace('_', '')
         for root in candidates:
             if not root.exists():
                 continue
@@ -135,24 +156,80 @@ def _find_font_file(family: Optional[str]) -> Optional[str]:
                 if p.suffix.lower() not in ('.ttf', '.otf', '.ttc'):
                     continue
                 name = p.stem.lower().replace(' ', '').replace('-', '').replace('_', '')
-                if family_norm in name:
+                if family_norm2 in name:
                     return str(p)
     except Exception:
         return None
     return None
 
 
-def _get_font(size: int, family: Optional[str] = None, path: Optional[str] = None) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+def get_font_with_meta(size: int, family: Optional[str] = None, path: Optional[str] = None):
+    """Return (font, meta) where meta includes resolved path, index, and family name.
+    Tries hard to map a family to an actual font file and TTC face index.
+    """
     try:
         fpath = path or _find_font_file(family)
+        # last-resort common CJK candidates
+        if not fpath:
+            for c in [
+                'C:/Windows/Fonts/msjh.ttc',  # 微軟正黑體
+                'C:/Windows/Fonts/msyh.ttc',  # 微軟雅黑
+                'C:/Windows/Fonts/mingliu.ttc',
+                'C:/Windows/Fonts/simhei.ttf',
+                'C:/Windows/Fonts/simsun.ttc',
+                '/System/Library/Fonts/PingFang.ttc',
+                '/Library/Fonts/Arial Unicode.ttf',
+                '/Library/Fonts/Arial Unicode MS.ttf',
+                '/System/Library/Fonts/STHeiti Light.ttc',
+                '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
+                '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
+            ]:
+                if Path(c).exists():
+                    fpath = c
+                    break
         if fpath and Path(fpath).exists():
-            return ImageFont.truetype(fpath, size)
+            fpl = str(fpath).lower()
+            if fpl.endswith('.ttc') and family:
+                # Search faces to match requested family
+                family_norm = family.lower().replace(' ', '')
+                first: Optional[tuple] = None
+                for idx in range(0, 8):
+                    try:
+                        ft = ImageFont.truetype(fpath, size, index=idx)
+                        fam = ''
+                        try:
+                            fam = ft.getname()[0]
+                        except Exception:
+                            fam = ''
+                        if family_norm in fam.lower().replace(' ', ''):
+                            return ft, {"path": str(fpath), "index": idx, "name": fam}
+                        if first is None:
+                            first = (ft, {"path": str(fpath), "index": idx, "name": fam})
+                    except Exception:
+                        continue
+                if first is not None:
+                    return first
+            # Non-TTC or no family match
+            ft = ImageFont.truetype(fpath, size)
+            fam = ''
+            try:
+                fam = ft.getname()[0]
+            except Exception:
+                fam = ''
+            return ft, {"path": str(fpath), "index": 0, "name": fam}
     except Exception:
-        pass
+        return ImageFont.load_default(), {"path": "default", "index": 0, "name": "default"}
+
+
+def _get_font(size: int, family: Optional[str] = None, path: Optional[str] = None) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     try:
-        return ImageFont.load_default()
+        f, _meta = get_font_with_meta(size, family, path)
+        return f
     except Exception:
-        return ImageFont.load_default()
+        try:
+            return ImageFont.load_default()
+        except Exception:
+            return ImageFont.load_default()
 
 
 def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str | Path, options: DesignOptions) -> int:
@@ -215,9 +292,8 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
             f"Seller: {seller}",
         ]
 
-        # Draw text block independent from QR size
+        # Draw text block in area below the QR (qr_bottom .. canvas_bottom)
         line_metrics = []
-        spacing = int(max(0.0, options.line_spacing_scale) * options.font_size)
         total_h = 0
         for line in lines:
             if not line.strip():
@@ -229,29 +305,72 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
             line_metrics.append((line, w, h))
             total_h += h
         non_empty = [m for m in line_metrics if m[2] > 0]
+        max_h = max((m[2] for m in non_empty), default=options.font_size)
+        spacing = int(max(0.0, options.line_spacing_scale) * max_h)
         if non_empty:
             total_h += spacing * (len(non_empty) - 1)
-        # anchor with margin, independent from QR size
+        # anchor within region: explicit region if provided, else below-QR block
         margin = max(0, int(options.text_margin))
+        qr_bottom = qr_y + qr_target_w
+        if options.text_region:
+            x0n, y0n, x1n, y1n = options.text_region
+            region_left = int(max(0.0, min(1.0, x0n)) * options.width)
+            region_right = int(max(0.0, min(1.0, x1n)) * options.width)
+            region_top = int(max(0.0, min(1.0, y0n)) * options.height)
+            region_bottom = int(max(0.0, min(1.0, y1n)) * options.height)
+            if region_right < region_left:
+                region_left, region_right = region_right, region_left
+            if region_bottom < region_top:
+                region_top, region_bottom = region_bottom, region_top
+        else:
+            region_left = margin
+            region_right = options.width - margin
+            region_top = qr_bottom + margin
+            region_bottom = options.height - margin
+        region_height = max(0, region_bottom - region_top)
+        # optional auto-fit text: shrink font to fit region height
+        if options.auto_fit_text and total_h > region_height and region_height > 0:
+            scale = max(0.1, region_height / total_h)
+            new_size = max(10, int(options.font_size * scale))
+            if new_size != options.font_size:
+                font = _get_font(new_size, options.font_family, options.font_path)
+                # recompute metrics with new font
+                line_metrics = []
+                total_h = 0
+                for line in lines:
+                    if not line.strip():
+                        line_metrics.append((line, 0, 0))
+                        continue
+                    bbox = draw.textbbox((0, 0), line, font=font)
+                    w = bbox[2] - bbox[0]
+                    h = bbox[3] - bbox[1]
+                    line_metrics.append((line, w, h))
+                    total_h += h
+                non_empty = [m for m in line_metrics if m[2] > 0]
+                if non_empty:
+                    max_h = max((m[2] for m in non_empty), default=new_size)
+                    spacing = int(max(0.0, options.line_spacing_scale) * max_h)
+                    total_h += spacing * (len(non_empty) - 1)
+        # default fallback if region is too small: start at region_top
         if options.text_anchor == "top":
-            y = margin
+            y = region_top
         elif options.text_anchor == "middle":
-            y = max(margin, (options.height - total_h) // 2)
+            y = region_top + max(0, (region_height - total_h) // 2)
         else:  # bottom
-            y = max(margin, options.height - margin - total_h)
+            y = max(region_top, region_bottom - total_h)
 
         for line, w, h in line_metrics:
             if h == 0:
                 continue
             # alignment
             if options.text_align == "left":
-                x = margin
+                x = region_left
             elif options.text_align == "right":
-                x = max(margin, options.width - margin - w)
+                x = max(region_left, region_right - w)
             else:
-                x = (options.width - w) // 2
+                x = (region_left + region_right - w) // 2
 
-            if y + h > options.height - margin:
+            if y + h > region_bottom:
                 break
             draw.text((x, y), line, font=font, fill=text_color)
             y += h + spacing
