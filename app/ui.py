@@ -52,16 +52,17 @@ class WorkerAppendSheet(QtCore.QObject):
 
 
 class InteractivePreview(QtWidgets.QLabel):
-    regionChanged = QtCore.pyqtSignal(tuple)
+    # Emit normalized anchor point (x, y) in [0,1]
+    anchorChanged = QtCore.pyqtSignal(tuple)
 
     def __init__(self, parent: QtWidgets.QWidget | None = None):
         super().__init__(parent)
         self.setMouseTracking(True)
         self._canvas_w = 1080
         self._canvas_h = 1350
-        self._norm_rect = [0.05, 0.60, 0.95, 0.95]  # x0,y0,x1,y1 normalized
+        # single point anchor instead of text region rectangle
+        self._norm_pt = [0.5, 0.8]  # center-bottom-ish by default
         self._dragging = False
-        self._resizing = False
         self._last_pos = QtCore.QPointF()
 
     def setCanvasSize(self, w: int, h: int):
@@ -69,14 +70,14 @@ class InteractivePreview(QtWidgets.QLabel):
         self._canvas_h = max(1, int(h))
         self.update()
 
-    def setNormRect(self, rect: tuple[float, float, float, float]):
-        x0, y0, x1, y1 = rect
-        self._norm_rect = [float(x0), float(y0), float(x1), float(y1)]
-        self._clamp_rect()
+    def setNormPoint(self, pt: tuple[float, float]):
+        x, y = pt
+        self._norm_pt = [float(x), float(y)]
+        self._clamp_point()
         self.update()
 
-    def normRect(self) -> tuple[float, float, float, float]:
-        return tuple(self._norm_rect)
+    def normPoint(self) -> tuple[float, float]:
+        return tuple(self._norm_pt)
 
     def _pixmap_rect(self) -> QtCore.QRectF:
         if self._canvas_w <= 0 or self._canvas_h <= 0:
@@ -98,73 +99,55 @@ class InteractivePreview(QtWidgets.QLabel):
         y = max(0.0, min(1.0, y))
         return QtCore.QPointF(x, y)
 
-    def _clamp_rect(self):
-        x0, y0, x1, y1 = self._norm_rect
-        x0 = max(0.0, min(1.0, x0))
-        y0 = max(0.0, min(1.0, y0))
-        x1 = max(0.0, min(1.0, x1))
-        y1 = max(0.0, min(1.0, y1))
-        if x1 < x0:
-            x0, x1 = x1, x0
-        if y1 < y0:
-            y0, y1 = y1, y0
-        # minimum size
-        if x1 - x0 < 0.05:
-            x1 = min(1.0, x0 + 0.05)
-        if y1 - y0 < 0.05:
-            y1 = min(1.0, y0 + 0.05)
-        self._norm_rect = [x0, y0, x1, y1]
+    def _clamp_point(self):
+        x, y = self._norm_pt
+        x = max(0.0, min(1.0, x))
+        y = max(0.0, min(1.0, y))
+        self._norm_pt = [x, y]
 
     def paintEvent(self, ev: QtGui.QPaintEvent):
         super().paintEvent(ev)
-        # overlay red rectangle
+        # overlay: draw a solid anchor point
         p = QtGui.QPainter(self)
         p.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
-        pen = QtGui.QPen(QtGui.QColor(255, 64, 64), 2)
-        p.setPen(pen)
         r = self._pixmap_rect()
-        x0, y0, x1, y1 = self._norm_rect
-        rx0 = r.left() + r.width() * x0
-        ry0 = r.top() + r.height() * y0
-        rx1 = r.left() + r.width() * x1
-        ry1 = r.top() + r.height() * y1
-        p.drawRect(QtCore.QRectF(QtCore.QPointF(rx0, ry0), QtCore.QPointF(rx1, ry1)))
+        x, y = self._norm_pt
+        px = r.left() + r.width() * x
+        py = r.top() + r.height() * y
+        # outer ring for contrast
+        p.setPen(QtGui.QPen(QtGui.QColor(0, 0, 0, 160), 3))
+        p.setBrush(QtGui.QBrush(QtGui.QColor(255, 64, 64)))
+        p.drawEllipse(QtCore.QPointF(px, py), 6, 6)
+        # small crosshair (use QPointF overload to accept floats)
+        p.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 200), 1))
+        p.drawLine(QtCore.QPointF(px - 6.0, py), QtCore.QPointF(px + 6.0, py))
+        p.drawLine(QtCore.QPointF(px, py - 6.0), QtCore.QPointF(px, py + 6.0))
 
     def mousePressEvent(self, ev: QtGui.QMouseEvent):
         self._last_pos = ev.position()
-        if ev.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
-            self._resizing = True
-        else:
-            self._dragging = True
+        # reposition to click immediately and start dragging
+        cur_n = self._label_to_norm(self._last_pos)
+        self._norm_pt = [cur_n.x(), cur_n.y()]
+        self._clamp_point()
+        self._dragging = True
+        self.update()
+        self.anchorChanged.emit(tuple(self._norm_pt))
 
     def mouseMoveEvent(self, ev: QtGui.QMouseEvent):
-        if not (self._dragging or self._resizing):
+        if not self._dragging:
             return
         cur = ev.position()
-        prev = self._last_pos
         self._last_pos = cur
-        prev_n = self._label_to_norm(prev)
         cur_n = self._label_to_norm(cur)
-        dx = cur_n.x() - prev_n.x()
-        dy = cur_n.y() - prev_n.y()
-        x0, y0, x1, y1 = self._norm_rect
-        if self._resizing:
-            # resize from bottom-right by default
-            x1 += dx
-            y1 += dy
-        else:
-            x0 += dx; x1 += dx
-            y0 += dy; y1 += dy
-        self._norm_rect = [x0, y0, x1, y1]
-        self._clamp_rect()
+        self._norm_pt = [cur_n.x(), cur_n.y()]
+        self._clamp_point()
         self.update()
-        self.regionChanged.emit(tuple(self._norm_rect))
+        self.anchorChanged.emit(tuple(self._norm_pt))
 
     def mouseReleaseEvent(self, ev: QtGui.QMouseEvent):
-        if self._dragging or self._resizing:
+        if self._dragging:
             self._dragging = False
-            self._resizing = False
-            self.regionChanged.emit(tuple(self._norm_rect))
+            self.anchorChanged.emit(tuple(self._norm_pt))
 
 
 class GenerateTab(QtWidgets.QWidget):
@@ -223,8 +206,18 @@ class GenerateTab(QtWidgets.QWidget):
 
         # Font combo (installed fonts)
         self.font_combo = QtWidgets.QFontComboBox()
+        try:
+            self.font_combo.setFontFilters(
+                QtWidgets.QFontComboBox.FontFilter.ScalableFonts
+            )
+        except Exception:
+            pass
         self.lb_font_meta = QtWidgets.QLabel("")
         self.sp_font_size = QtWidgets.QSpinBox(); self.sp_font_size.setRange(10, 500); self.sp_font_size.setValue(48)
+        # font weight (細分字重)
+        self.cb_font_weight = QtWidgets.QComboBox()
+        self.cb_font_weight.addItems(["Regular", "Medium", "SemiBold", "Bold", "ExtraBold", "Black"])
+        self.cb_font_weight.setCurrentText("Regular")
         
         # Optional background image to replace solid color
         self.ed_bg_img = QtWidgets.QLineEdit("")
@@ -232,7 +225,11 @@ class GenerateTab(QtWidgets.QWidget):
         btn_bg_img.clicked.connect(self._choose_bg_image)
 
         # Text block fine-tune
-        self.cb_text_align = QtWidgets.QComboBox(); self.cb_text_align.addItems(["靠左", "置中", "靠右"]); self.cb_text_align.setCurrentText("置中")
+        self.cb_text_align = QtWidgets.QComboBox()
+        self.cb_text_align.addItems(["靠左", "置中", "靠右"])
+        self.cb_text_align.setCurrentText("置中")
+        self.cb_text_align.hide()
+        # Text margin (inner padding)
         self.sp_text_margin = QtWidgets.QSpinBox(); self.sp_text_margin.setRange(0, 400); self.sp_text_margin.setValue(40)
         self.dsb_line_spacing = QtWidgets.QDoubleSpinBox(); self.dsb_line_spacing.setRange(0.0, 2.0); self.dsb_line_spacing.setSingleStep(0.1); self.dsb_line_spacing.setValue(0.4)
         self.cb_auto_fit = QtWidgets.QCheckBox("自動縮放文字以適配可用區域")
@@ -247,20 +244,26 @@ class GenerateTab(QtWidgets.QWidget):
         grid.addWidget(QtWidgets.QLabel("QR 顏色"), r, 0); grid.addWidget(self.qr_input, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("文字顏色"), r, 0); grid.addWidget(self.text_input, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("字型"), r, 0); 
-        hfont = QtWidgets.QHBoxLayout(); hfont.addWidget(self.font_combo)
+        hfont = QtWidgets.QHBoxLayout(); hfont.addWidget(self.font_combo); hfont.addStretch(1); hfont.addWidget(QtWidgets.QLabel("字重")); hfont.addWidget(self.cb_font_weight)
         wfont = QtWidgets.QWidget(); wfont.setLayout(hfont)
         grid.addWidget(wfont, r, 1, 1, 2); r += 1
         grid.addWidget(QtWidgets.QLabel("字型大小"), r, 0); grid.addWidget(self.sp_font_size, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("實際字型"), r, 0); grid.addWidget(self.lb_font_meta, r, 1, 1, 2); r += 1
         grid.addWidget(QtWidgets.QLabel("圖面路徑(可替代背景色)"), r, 0)
-        hbg = QtWidgets.QHBoxLayout(); hbg.addWidget(self.ed_bg_img); hbg.addWidget(btn_bg_img)
-        wbg = QtWidgets.QWidget(); wbg.setLayout(hbg)
-        grid.addWidget(wbg, r, 1, 1, 2); r += 1
+        hbg = QtWidgets.QHBoxLayout()
+        hbg.addWidget(self.ed_bg_img)
+        hbg.addWidget(btn_bg_img)
+        wbg = QtWidgets.QWidget()
+        wbg.setLayout(hbg)
+        # 別忘了把 wbg 放進 (r,1..2) 並且遞增 r
+        grid.addWidget(wbg, r, 1, 1, 2)
+        r += 1
 
-        grid.addWidget(QtWidgets.QLabel("文字對齊"), r, 0); grid.addWidget(self.cb_text_align, r, 1); r += 1
-        grid.addWidget(QtWidgets.QLabel("文字邊界"), r, 0); grid.addWidget(self.sp_text_margin, r, 1); r += 1
-        grid.addWidget(QtWidgets.QLabel("行距係數"), r, 0); grid.addWidget(self.dsb_line_spacing, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("Text Margin"), r, 0); grid.addWidget(self.sp_text_margin, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("Line Spacing"), r, 0); grid.addWidget(self.dsb_line_spacing, r, 1); r += 1
         grid.addWidget(self.cb_auto_fit, r, 0, 1, 2); r += 1
+
+
 
         design_group.setLayout(grid)
         # Place design panel and preview side-by-side
@@ -270,9 +273,12 @@ class GenerateTab(QtWidgets.QWidget):
         self.preview_label.setMinimumSize(360, 360)
         self.preview_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.preview_label.setStyleSheet("background:#1c1c1c;border:1px solid #333;border-radius:6px")
-        self.preview_label.regionChanged.connect(self._on_region_changed)
+        self.preview_label.anchorChanged.connect(self._on_anchor_changed)
         row.addWidget(self.preview_label, 1)
         layout.addLayout(row)
+        # Load initial values from config and persist on change
+        self._load_design_from_config()
+        self._bind_persist_signals()
 
         # Row: button (only generate here)
         btn_layout = QtWidgets.QHBoxLayout()
@@ -280,9 +286,10 @@ class GenerateTab(QtWidgets.QWidget):
         self.btn_generate.clicked.connect(self._generate)
         btn_layout.addStretch(1)
         btn_layout.addWidget(self.btn_generate)
+        self.sp_text_margin.valueChanged.connect(self._preview)
         layout.addLayout(btn_layout)
 
-        # Wire live preview updates
+        # Wire live preview updates（保留一份就好，移除下方重覆段落）
         self.sp_width.valueChanged.connect(self._preview)
         self.sp_height.valueChanged.connect(self._preview)
         self.sl_qr_ratio.valueChanged.connect(self._preview)
@@ -291,9 +298,9 @@ class GenerateTab(QtWidgets.QWidget):
         self.ed_text.textChanged.connect(self._preview)
         self.font_combo.currentFontChanged.connect(lambda *_: self._preview())
         self.sp_font_size.valueChanged.connect(self._preview)
+        self.cb_font_weight.currentIndexChanged.connect(self._preview)
         self.ed_bg_img.textChanged.connect(self._preview)
         self.cb_text_align.currentIndexChanged.connect(self._preview)
-        self.sp_text_margin.valueChanged.connect(self._preview)
         self.dsb_line_spacing.valueChanged.connect(self._preview)
         self.cb_auto_fit.toggled.connect(self._preview)
 
@@ -301,20 +308,6 @@ class GenerateTab(QtWidgets.QWidget):
         self.status = QtWidgets.QLabel()
         layout.addWidget(self.status)
         layout.addStretch(1)
-        # Live preview triggers
-        self.sp_width.valueChanged.connect(self._preview)
-        self.sp_height.valueChanged.connect(self._preview)
-        self.sl_qr_ratio.valueChanged.connect(self._preview)
-        self.ed_bg.textChanged.connect(self._preview)
-        self.ed_qr.textChanged.connect(self._preview)
-        self.ed_text.textChanged.connect(self._preview)
-        self.font_combo.currentFontChanged.connect(lambda *_: self._preview())
-        self.sp_font_size.valueChanged.connect(self._preview)
-        self.ed_bg_img.textChanged.connect(self._preview)
-        self.cb_text_align.currentIndexChanged.connect(self._preview)
-        self.sp_text_margin.valueChanged.connect(self._preview)
-        self.dsb_line_spacing.valueChanged.connect(self._preview)
-        self.cb_auto_fit.toggled.connect(self._preview)
         QtCore.QTimer.singleShot(0, self._preview)
         # initial preview
         QtCore.QTimer.singleShot(10, self._preview)
@@ -328,6 +321,11 @@ class GenerateTab(QtWidgets.QWidget):
         dn = QtWidgets.QFileDialog.getExistingDirectory(self, "選擇輸出資料夾", str(Path.cwd()))
         if dn:
             self.out_edit.setText(dn)
+            try:
+                self.cfg.qr_folder = dn
+                self.cfg.save()
+            except Exception:
+                pass
 
     # Export template moved to TemplateTab
     
@@ -347,14 +345,14 @@ class GenerateTab(QtWidgets.QWidget):
                     text_color=self.ed_text.text().strip(),
                     font_family=self.font_combo.currentFont().family(),
                     font_size=int(self.sp_font_size.value()),
-                    bg_image_path=self.ed_bg_img.text().strip() or None,
-                    text_align=self._map_align(),
+                    font_weight=self._map_weight(),
+                    bg_image_path=(self._safe_text(self.ed_bg_img) or None),
                     text_margin=int(self.sp_text_margin.value()),
                     line_spacing_scale=float(self.dsb_line_spacing.value()),
                     auto_fit_text=bool(self.cb_auto_fit.isChecked()),
                 )
-                if hasattr(self, 'text_region_norm') and self.text_region_norm:
-                    opts.text_region = self.text_region_norm
+                if hasattr(self, 'text_anchor_norm') and self.text_anchor_norm:
+                    opts.text_point = tuple(self.text_anchor_norm)
                 count = generate_qr_posters(attendees, event, out_dir, opts)
             else:
                 count = generate_qr_images(attendees, event, out_dir)
@@ -381,6 +379,14 @@ class GenerateTab(QtWidgets.QWidget):
         if fn:
             self.ed_bg_img.setText(fn)
 
+    def _safe_text(self, widget: QtWidgets.QLineEdit | None) -> str:
+        try:
+            if widget is None:
+                return ""
+            return widget.text().strip()
+        except RuntimeError:
+            return ""
+
     def _preview(self):
         # Build a sample attendee from first row of CSV if present; else placeholders
         sample = Attendee(id="ID", name="NAME", extra={"salon": "SALON", "seller": "SELLER"})
@@ -393,14 +399,14 @@ class GenerateTab(QtWidgets.QWidget):
             text_color=self.ed_text.text().strip(),
             font_family=self.font_combo.currentFont().family(),
             font_size=int(self.sp_font_size.value()),
-            bg_image_path=self.ed_bg_img.text().strip() or None,
-            text_align=self._map_align(),
+            font_weight=self._map_weight(),
+            bg_image_path=(self._safe_text(self.ed_bg_img) or None),
             text_margin=int(self.sp_text_margin.value()),
             line_spacing_scale=float(self.dsb_line_spacing.value()),
             auto_fit_text=bool(self.cb_auto_fit.isChecked()),
         )
-        if hasattr(self, 'text_region_norm') and self.text_region_norm:
-            opts.text_region = self.text_region_norm
+        if hasattr(self, 'text_anchor_norm') and self.text_anchor_norm:
+            opts.text_point = tuple(self.text_anchor_norm)
         # Render a single poster to memory
         try:
             # Reuse generator logic but not writing to disk: replicate steps
@@ -453,10 +459,12 @@ class GenerateTab(QtWidgets.QWidget):
             # Use the same font loader as generator and show resolved info
             try:
                 from app.qr_tools import get_font_with_meta as get_font_meta
-                font, meta = get_font_meta(opts.font_size, opts.font_family, None)
+                font, meta = get_font_meta(opts.font_size, opts.font_family, None,
+                                           weight=opts.font_weight)
                 try:
                     from pathlib import Path as _P
-                    self.lb_font_meta.setText(f"{meta.get('name','')} ({_P(meta.get('path','')).name}#{meta.get('index',0)})")
+                    style = meta.get('style','')
+                    self.lb_font_meta.setText(f"{meta.get('name','')} {style and '('+style+')'} ({_P(meta.get('path','')).name}#{meta.get('index',0)})")
                 except Exception:
                     self.lb_font_meta.setText(str(meta))
             except Exception:
@@ -466,66 +474,256 @@ class GenerateTab(QtWidgets.QWidget):
             text_color = _hex_to_rgb_local(opts.text_color)
             lines = [
                 f"ID: {sample.id}",
-                f"姓名: {sample.name}",
+                f"name: {sample.name}",
                 f"Salon: {sample.extra.get('salon','')}",
                 f"Seller: {sample.extra.get('seller','')}",
             ]
-            # Place text block anchored in area below QR only
-            # spacing based on measured max line height rather than requested size
-            metrics = []
+            # Draw via Qt for better text rendering
+            # NOTE: text_margin 僅作為「上方」留白，不再影響下方邊界
+            margin = max(0, int(opts.text_margin))          # 左右與上方使用
+            top_margin = margin
+            bottom_margin = 40                               # 固定下方邊界（如需可調，可改成從設定讀）
+            qimg = ImageQt(canvas).copy()
+            painter = QtGui.QPainter(qimg)
+            painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing, True)
+            # Build QFont
+            qf = QtGui.QFont()
+            if opts.font_family:
+                qf.setFamily(opts.font_family)
+            qf.setPixelSize(int(opts.font_size))
+            # weight mapping
+            wmap = {
+                'thin': QtGui.QFont.Weight.Thin,
+                'extralight': QtGui.QFont.Weight.ExtraLight,
+                'light': QtGui.QFont.Weight.Light,
+                'regular': QtGui.QFont.Weight.Normal,
+                'medium': QtGui.QFont.Weight.Medium,
+                'semibold': QtGui.QFont.Weight.DemiBold,
+                'bold': QtGui.QFont.Weight.Bold,
+                'extrabold': QtGui.QFont.Weight.ExtraBold,
+                'black': QtGui.QFont.Weight.Black,
+            }
+            if getattr(opts, 'font_weight', None):
+                qf.setWeight(wmap.get(str(opts.font_weight).lower(), QtGui.QFont.Weight.Normal))
+            # BIU removed per request; only weight used
+            painter.setFont(qf)
+            # color
+            qc = QtGui.QColor(opts.text_color)
+            if not qc.isValid():
+                qc = QtGui.QColor('#000000')
+            painter.setPen(qc)
+            # two-column measure: label left, value right
+            fm = QtGui.QFontMetricsF(qf)
+            pairs = [
+                ("ID", f"{sample.id}"),
+                ("name", f"{sample.name}"),
+                ("Salon", f"{sample.extra.get('salon','')}")
+                ,("Seller", f"{sample.extra.get('seller','')}")
+            ]
+            rows = []  # (lab, val, wL, wR, h)
             total_h = 0
-            for line in lines:
-                bbox = draw.textbbox((0,0), line, font=font)
-                w = bbox[2]-bbox[0]; h=bbox[3]-bbox[1]
-                metrics.append((line, w, h))
+            max_h = 0
+            for lab, val in pairs:
+                brL = fm.boundingRect(lab)
+                brV = fm.boundingRect(val)
+                wL = int(brL.width()); hL = int(fm.height())
+                wR = int(brV.width()); hR = int(fm.height())
+                h = max(hL, hR)
+                rows.append((lab, val, wL, wR, h))
                 total_h += h
-            max_h = max((h for _,_,h in metrics if h>0), default=opts.font_size)
-            spacing = int(max(0.0, opts.line_spacing_scale) * max_h)
-            total_h += spacing * (len([m for m in metrics if m[2]>0]) - 1)
-            margin = max(0, int(opts.text_margin))
-            if hasattr(self, 'text_region_norm') and self.text_region_norm:
-                x0n, y0n, x1n, y1n = self.text_region_norm
-                region_top = int(y0n * opts.height)
-                region_bottom = int(y1n * opts.height)
-                region_left = int(x0n * opts.width)
-                region_right = int(x1n * opts.width)
+                max_h = max(max_h, h)
+            spacing = int(max(0.0, opts.line_spacing_scale) * (max_h or opts.font_size))
+            if rows:
+                total_h += spacing * (len(rows) - 1)
+            # origin (Y from control point if present)
+            if hasattr(self, 'text_anchor_norm') and self.text_anchor_norm:
+                _, yn = self.text_anchor_norm
+                y = int(max(0.0, min(1.0, yn)) * opts.height)
             else:
                 qr_bottom = qr_y + qr_target_w
-                region_top = qr_bottom + margin
-                region_bottom = opts.height - margin
-                region_left = margin
-                region_right = opts.width - margin
-            region_height = max(0, region_bottom - region_top)
-            # default anchor to top within computed region
-            y = region_top
-            for line, w, h in metrics:
+                y = qr_bottom + top_margin
+            region_bottom = opts.height - bottom_margin
+            avail_h = max(0, region_bottom - y)
+            if bool(self.cb_auto_fit.isChecked()) and total_h > avail_h and avail_h > 0:
+                scale = max(0.1, avail_h / max(1, total_h))
+                new_px = max(10, int(opts.font_size * scale))
+                if new_px != opts.font_size:
+                    qf.setPixelSize(new_px)
+                    painter.setFont(qf)
+                    fm = QtGui.QFontMetricsF(qf)
+                    rows = []
+                    total_h = 0
+                    max_h = 0
+                    for lab, val in pairs:
+                        brL = fm.boundingRect(lab)
+                        brV = fm.boundingRect(val)
+                        wL = int(brL.width()); hL = int(fm.height())
+                        wR = int(brV.width()); hR = int(fm.height())
+                        h = max(hL, hR)
+                        rows.append((lab, val, wL, wR, h))
+                        total_h += h
+                        max_h = max(max_h, h)
+                    spacing = int(max(0.0, opts.line_spacing_scale) * (max_h or new_px))
+                    if rows:
+                        total_h += spacing * (len(rows) - 1)
+            # draw two columns: header left-aligned, content right-aligned
+            region_left = margin
+            region_right = opts.width - margin
+            total_w = max(0, region_right - region_left)
+            min_gap = int(max(8, opts.font_size * 0.40))
+            cur_y = y + int(fm.ascent())
+            for lab, val, wL, wR, h in rows:
                 if h == 0:
                     continue
-                if opts.text_align == 'left':
-                    x = region_left
-                elif opts.text_align == 'right':
-                    x = max(region_left, region_right - w)
-                else:
-                    x = (region_left + region_right - w)//2
-                if y + h > region_bottom:
+                if cur_y + (h - int(fm.ascent())) > region_bottom:
                     break
-                draw.text((x,y), line, fill=text_color, font=font)
-                y += h + spacing
+                # Elide value to fit maximum possible width
+                max_val_w = max(0, total_w - min_gap)
+                val_draw = fm.elidedText(val, QtCore.Qt.TextElideMode.ElideRight, max_val_w)
+                wR2 = int(fm.boundingRect(val_draw).width())
+                # Remaining space for label
+                avail_left = max(0, total_w - min_gap - wR2)
+                lab_draw = fm.elidedText(lab, QtCore.Qt.TextElideMode.ElideRight, avail_left)
+                wL2 = int(fm.boundingRect(lab_draw).width())
+                xL = region_left
+                xR = region_right - wR2
+                painter.drawText(QtCore.QPointF(float(xL), float(cur_y)), lab_draw)
+                painter.drawText(QtCore.QPointF(float(xR), float(cur_y)), val_draw)
+                cur_y += h + spacing
+            painter.end()
 
-            qim = ImageQt(canvas)
-            pix = QtGui.QPixmap.fromImage(qim).scaled(self.preview_label.width(), self.preview_label.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+            pix = QtGui.QPixmap.fromImage(qimg).scaled(self.preview_label.width(), self.preview_label.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
             self.preview_label.setPixmap(pix)
             self.preview_label.setCanvasSize(opts.width, opts.height)
         except Exception as e:
             QtWidgets.QMessageBox.warning(self, "預覽失敗", str(e))
 
-    def _on_region_changed(self, norm_rect: tuple):
-        self.text_region_norm = tuple(norm_rect)
+    def _on_anchor_changed(self, norm_pt: tuple):
+        self.text_anchor_norm = tuple(norm_pt)
         self._preview()
+        # persist point into config
+        try:
+            if norm_pt and len(norm_pt) == 2:
+                self.cfg.set_design("text_point", [float(norm_pt[0]), float(norm_pt[1])])
+                self.cfg.save()
+        except Exception:
+            pass
+
+    def _bind_persist_signals(self):
+        # Persist most UI options to config on change
+        self.sp_width.valueChanged.connect(lambda *_: self._save_design_to_config())
+        self.sp_height.valueChanged.connect(lambda *_: self._save_design_to_config())
+        self.sl_qr_ratio.valueChanged.connect(lambda *_: self._save_design_to_config())
+        self.ed_bg.textChanged.connect(lambda *_: self._save_design_to_config())
+        self.ed_qr.textChanged.connect(lambda *_: self._save_design_to_config())
+        self.ed_text.textChanged.connect(lambda *_: self._save_design_to_config())
+        self.font_combo.currentFontChanged.connect(lambda *_: self._save_design_to_config())
+        self.sp_font_size.valueChanged.connect(lambda *_: self._save_design_to_config())
+        self.cb_font_weight.currentIndexChanged.connect(lambda *_: self._save_design_to_config())
+        self.ed_bg_img.textChanged.connect(lambda *_: self._save_design_to_config())
+        self.sp_text_margin.valueChanged.connect(lambda *_: self._save_design_to_config())
+        self.dsb_line_spacing.valueChanged.connect(lambda *_: self._save_design_to_config())
+        self.cb_auto_fit.toggled.connect(lambda *_: self._save_design_to_config())
+        self.cb_use_design.toggled.connect(lambda *_: self._save_design_to_config())
+        self.event_edit.editingFinished.connect(lambda *_: self._save_event_to_config())
+
+    def _save_event_to_config(self):
+        try:
+            self.cfg.event_name = self.event_edit.text().strip()
+            self.cfg.save()
+        except Exception:
+            pass
+
+    def _save_design_to_config(self):
+        try:
+            self.cfg.set_design("use_design", bool(self.cb_use_design.isChecked()))
+            self.cfg.set_design("width", int(self.sp_width.value()))
+            self.cfg.set_design("height", int(self.sp_height.value()))
+            self.cfg.set_design("qr_ratio", float(self.sl_qr_ratio.value()) / 100.0)
+            self.cfg.set_design("bg_color", self.ed_bg.text().strip())
+            self.cfg.set_design("qr_color", self.ed_qr.text().strip())
+            self.cfg.set_design("text_color", self.ed_text.text().strip())
+            self.cfg.set_design("font_family", self.font_combo.currentFont().family())
+            self.cfg.set_design("font_size", int(self.sp_font_size.value()))
+            self.cfg.set_design("font_weight", (self.cb_font_weight.currentText() or "regular"))
+            # background image path may be empty
+            try:
+                self.cfg.set_design("bg_image_path", self.ed_bg_img.text().strip())
+            except Exception:
+                pass
+            self.cfg.set_design("text_margin", int(self.sp_text_margin.value()))
+            self.cfg.set_design("line_spacing_scale", float(self.dsb_line_spacing.value()))
+            self.cfg.set_design("auto_fit_text", bool(self.cb_auto_fit.isChecked()))
+            # save anchor if present
+            if hasattr(self, 'text_anchor_norm') and self.text_anchor_norm:
+                self.cfg.set_design("text_point", [float(self.text_anchor_norm[0]), float(self.text_anchor_norm[1])])
+            self.cfg.save()
+        except Exception:
+            pass
+
+    def _load_design_from_config(self):
+        try:
+            self.cb_use_design.setChecked(bool(self.cfg.get_design("use_design", True)))
+            self.sp_width.setValue(int(self.cfg.get_design("width", 1080)))
+            self.sp_height.setValue(int(self.cfg.get_design("height", 1350)))
+            self.sl_qr_ratio.setValue(int(float(self.cfg.get_design("qr_ratio", 0.7)) * 100))
+            self.ed_bg.setText(str(self.cfg.get_design("bg_color", "#FFFFFF")))
+            self.ed_qr.setText(str(self.cfg.get_design("qr_color", "#000000")))
+            self.ed_text.setText(str(self.cfg.get_design("text_color", "#000000")))
+            fam = str(self.cfg.get_design("font_family", ""))
+            if fam:
+                self.font_combo.setCurrentFont(QtGui.QFont(fam))
+            self.sp_font_size.setValue(int(self.cfg.get_design("font_size", 48)))
+            fw = str(self.cfg.get_design("font_weight", "regular"))
+            idx = self.cb_font_weight.findText(fw)
+            if idx >= 0:
+                self.cb_font_weight.setCurrentIndex(idx)
+            self.ed_bg_img.setText(str(self.cfg.get_design("bg_image_path", "")))
+            self.sp_text_margin.setValue(int(self.cfg.get_design("text_margin", 40)))
+            self.dsb_line_spacing.setValue(float(self.cfg.get_design("line_spacing_scale", 0.4)))
+            self.cb_auto_fit.setChecked(bool(self.cfg.get_design("auto_fit_text", True)))
+            tp = self.cfg.get_design("text_point", None)
+            if isinstance(tp, (list, tuple)) and len(tp) == 2:
+                try:
+                    x, y = float(tp[0]), float(tp[1])
+                    self.preview_label.setNormPoint((x, y))
+                    self.text_anchor_norm = (x, y)
+                except Exception:
+                    pass
+        except Exception:
+            pass
 
     def _map_align(self) -> str:
         t = self.cb_text_align.currentText()
         return {'靠左':'left','置中':'center','靠右':'right'}.get(t, 'center')
+
+    def _map_anchor_from_norm(self, yn: float) -> str:
+        # Map normalized Y to one of top/middle/bottom
+        try:
+            y = float(yn)
+        except Exception:
+            y = 0.8
+        if y < (1.0/3.0):
+            return 'top'
+        elif y < (2.0/3.0):
+            return 'middle'
+        else:
+            return 'bottom'
+
+    def _map_weight(self) -> str:
+        try:
+            t = (self.cb_font_weight.currentText() or '').strip().lower()
+        except Exception:
+            t = 'regular'
+        mapping = {
+            'regular': 'regular',
+            'medium': 'medium',
+            'semibold': 'semibold',
+            'bold': 'bold',
+            'extrabold': 'extrabold',
+            'black': 'black',
+        }
+        return mapping.get(t, 'regular')
 
 
 class ScanTab(QtWidgets.QWidget):
@@ -576,7 +774,7 @@ class ScanTab(QtWidgets.QWidget):
 
         # Table of scans
         self.table = QtWidgets.QTableWidget(0, 4)
-        self.table.setHorizontalHeaderLabels(["時間", "ID", "姓名", "內容"])
+        self.table.setHorizontalHeaderLabels(["時間", "ID", "name", "內容"])
         self.table.horizontalHeader().setStretchLastSection(True)
         layout.addWidget(self.table)
 

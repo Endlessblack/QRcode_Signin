@@ -15,6 +15,23 @@ DEFAULTS: Dict[str, Any] = {
     "camera": {"index": 0},
     "output": {"qr_folder": "output_qrcodes"},
     "fields": {"extras": ["salon", "seller"]},
+    "design": {
+        "use_design": True,
+        "width": 1080,
+        "height": 1350,
+        "qr_ratio": 0.7,
+        "bg_color": "#FFFFFF",
+        "qr_color": "#000000",
+        "text_color": "#000000",
+        "font_family": "",
+        "font_size": 48,
+        "font_weight": "regular",
+        "bg_image_path": "",
+        "text_margin": 40,
+        "line_spacing_scale": 0.4,
+        "auto_fit_text": True,
+        "text_point": None,
+    },
     "debug": False,
 }
 
@@ -124,3 +141,13 @@ class AppConfig:
     @debug.setter
     def debug(self, v: bool) -> None:
         self.data["debug"] = bool(v)
+
+    # Design getters/setters (generic)
+    def get_design(self, key: str, default: Any = None) -> Any:
+        try:
+            return self.data.get("design", {}).get(key, default)
+        except Exception:
+            return default
+
+    def set_design(self, key: str, value: Any) -> None:
+        self.data.setdefault("design", {})[key] = value

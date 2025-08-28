@@ -3,3 +3,5 @@
 /output_qrcodes
 /.venv
 /app/__pycache__
+*.csv
+*.log

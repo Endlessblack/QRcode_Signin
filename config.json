@@ -15,9 +15,29 @@
   },
   "fields": {
     "extras": [
-      "email",
+      "seller",
       "Salon",
       "Licence"
+    ]
+  },
+  "design": {
+    "use_design": true,
+    "width": 1080,
+    "height": 1350,
+    "qr_ratio": 0.77,
+    "bg_color": "#141414",
+    "qr_color": "#1c5300",
+    "text_color": "#d9d9d9",
+    "font_family": "Microsoft JhengHei UI",
+    "font_size": 43,
+    "font_weight": "Regular",
+    "bg_image_path": "",
+    "text_margin": 194,
+    "line_spacing_scale": 0.7,
+    "auto_fit_text": true,
+    "text_point": [
+      0.5329422382671486,
+      0.672202166064982
     ]
   },
   "debug": true
