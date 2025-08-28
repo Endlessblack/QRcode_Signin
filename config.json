@@ -1,0 +1,24 @@
+{
+  "google": {
+    "credentials_path": "C:/secure/qrcode-sign-in-76600cd3b57a.json",
+    "spreadsheet_id": "1SxaJMBF8jNlXl2-td5o3doN55BZ012Vb80M3a7p-w_s",
+    "worksheet_name": "Signin"
+  },
+  "event": {
+    "name": "活動"
+  },
+  "camera": {
+    "index": 0
+  },
+  "output": {
+    "qr_folder": "output_qrcodes"
+  },
+  "fields": {
+    "extras": [
+      "email",
+      "Salon",
+      "Licence"
+    ]
+  },
+  "debug": true
+}

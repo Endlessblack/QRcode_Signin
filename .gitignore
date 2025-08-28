@@ -1,1 +1,3 @@
 /.venv
+.attendees_template.csv
+/output_qrcodes

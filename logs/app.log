@@ -1,0 +1,298 @@
+2025-08-28 14:44:11,351 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 14:44:46,840 [INFO] app: 偵測到 QR：{'id': '00001', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4564.com', 'Salon': '46546', 'licence': '
+2025-08-28 14:45:09,364 [INFO] app: 相機已停止
+2025-08-28 14:45:10,410 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 14:45:28,327 [INFO] app: 相機已停止
+2025-08-28 14:45:30,046 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 14:51:11,404 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 14:51:24,456 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 14:52:50,804 [INFO] app: 相機已停止
+2025-08-28 14:52:52,138 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 14:53:02,359 [INFO] app: 偵測到 QR：{'id': '00002', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4565.com', 'Salon': '46546', 'licence': '
+2025-08-28 14:53:02,362 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 14:53:02,366 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 14:53:03,411 [ERROR] app: [API] Append failed: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 155, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [403]: The caller does not have permission
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 39, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 42, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 19, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 160, in open_by_key
+    raise PermissionError from ex
+PermissionError
+
+2025-08-28 14:53:03,438 [INFO] app: [API] 失敗：Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 155, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [403]: The caller does not have permission
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 39, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 42, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 19, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 160, in open_by_key
+    raise PermissionError from ex
+PermissionError
+
+2025-08-28 14:53:08,357 [INFO] app: [API] 寫入逾時，重置掃描狀態（6s）
+2025-08-28 14:57:57,668 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 14:59:43,380 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 14:59:49,687 [INFO] app: 偵測到 QR：{'id': '00002', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4565.com', 'Salon': '46546', 'licence': '
+2025-08-28 14:59:49,691 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 14:59:49,696 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 14:59:53,738 [INFO] app: [API] Append success for id=00002 name=4156456
+2025-08-28 14:59:53,756 [INFO] app: [API] 成功寫入：id=00002, name=4156456
+2025-08-28 15:00:00,587 [INFO] app: 偵測到 QR：{'id': '00003', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4566.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:00:00,589 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:00:00,596 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:00:03,290 [INFO] app: [API] Append success for id=00003 name=4156456
+2025-08-28 15:00:03,325 [INFO] app: [API] 成功寫入：id=00003, name=4156456
+2025-08-28 15:00:04,820 [INFO] app: 偵測到 QR：{'id': '00005', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4568.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:00:04,822 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:00:04,825 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:00:07,440 [INFO] app: [API] Append success for id=00005 name=4156456
+2025-08-28 15:00:07,455 [INFO] app: [API] 成功寫入：id=00005, name=4156456
+2025-08-28 15:00:16,404 [INFO] app: 偵測到 QR：{'id': '00007', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4570.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:00:16,404 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:00:16,406 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:00:18,561 [INFO] app: [API] Append success for id=00007 name=4156456
+2025-08-28 15:00:18,570 [INFO] app: [API] 成功寫入：id=00007, name=4156456
+2025-08-28 15:00:25,664 [INFO] app: 偵測到 QR：{'id': '00008', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4571.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:00:25,666 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:00:25,669 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:00:29,964 [INFO] app: [API] Append success for id=00008 name=4156456
+2025-08-28 15:00:29,992 [INFO] app: [API] 成功寫入：id=00008, name=4156456
+2025-08-28 15:00:37,235 [INFO] app: 偵測到 QR：{'id': '00010', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4573.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:00:37,238 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:00:37,242 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:00:39,382 [INFO] app: [API] Append success for id=00010 name=4156456
+2025-08-28 15:00:39,394 [INFO] app: [API] 成功寫入：id=00010, name=4156456
+2025-08-28 15:01:24,774 [INFO] app: 相機已停止
+2025-08-28 15:02:52,134 [INFO] app: 相機已停止
+2025-08-28 15:08:08,525 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 15:08:22,007 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 15:10:00,768 [INFO] app: 相機已停止
+2025-08-28 15:10:08,398 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 15:11:08,506 [INFO] app: 相機已停止
+2025-08-28 15:12:21,014 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 15:12:49,503 [INFO] app: 相機已停止
+2025-08-28 15:12:54,750 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 15:14:14,954 [INFO] app: 相機已停止
+2025-08-28 15:14:24,425 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 15:20:50,938 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 15:21:14,837 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 15:26:21,789 [DEBUG] app: Logging initialized. Debug=True
+2025-08-28 15:26:36,031 [INFO] app: 相機已啟動（索引 0）
+2025-08-28 15:27:02,955 [INFO] app: 偵測到 QR：{'id': '00001', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4564.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:02,960 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:27:02,965 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:02,973 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:03,887 [INFO] app: 偵測到 QR：{'id': '00001', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4564.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:03,890 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:27:06,217 [INFO] app: [API] Append success for id=00001 name=4156456
+2025-08-28 15:27:06,276 [INFO] app: [API] 成功寫入：id=00001, name=4156456
+2025-08-28 15:27:06,332 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:06,338 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:09,111 [INFO] app: [API] Append success for id=00001 name=4156456
+2025-08-28 15:27:09,160 [INFO] app: [API] 成功寫入：id=00001, name=4156456
+2025-08-28 15:27:10,162 [INFO] app: 偵測到 QR：{'id': '00002', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4565.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:10,166 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:27:10,169 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:10,174 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:11,078 [INFO] app: 偵測到 QR：{'id': '00002', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4565.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:11,082 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:27:12,043 [INFO] app: 偵測到 QR：{'id': '00003', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4566.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:12,046 [INFO] app: 已加入佇列，待寫入（佇列長度 2）
+2025-08-28 15:27:12,984 [INFO] app: 偵測到 QR：{'id': '00004', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4567.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:12,988 [INFO] app: 已加入佇列，待寫入（佇列長度 3）
+2025-08-28 15:27:13,325 [INFO] app: [API] Append success for id=00002 name=4156456
+2025-08-28 15:27:13,346 [INFO] app: [API] 成功寫入：id=00002, name=4156456
+2025-08-28 15:27:13,391 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:13,400 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:13,859 [INFO] app: 偵測到 QR：{'id': '00005', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4568.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:13,860 [INFO] app: 已加入佇列，待寫入（佇列長度 3）
+2025-08-28 15:27:14,754 [INFO] app: 偵測到 QR：{'id': '00005', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4568.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:14,755 [INFO] app: 已加入佇列，待寫入（佇列長度 4）
+2025-08-28 15:27:15,484 [INFO] app: [API] Append success for id=00002 name=4156456
+2025-08-28 15:27:15,490 [INFO] app: [API] 成功寫入：id=00002, name=4156456
+2025-08-28 15:27:15,492 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:15,495 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:15,594 [INFO] app: 偵測到 QR：{'id': '00006', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4569.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:15,595 [INFO] app: 已加入佇列，待寫入（佇列長度 4）
+2025-08-28 15:27:16,470 [INFO] app: 偵測到 QR：{'id': '00007', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4570.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:16,471 [INFO] app: 已加入佇列，待寫入（佇列長度 5）
+2025-08-28 15:27:17,414 [INFO] app: 偵測到 QR：{'id': '00008', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4571.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:17,417 [INFO] app: 已加入佇列，待寫入（佇列長度 6）
+2025-08-28 15:27:17,479 [INFO] app: [API] Append success for id=00003 name=4156456
+2025-08-28 15:27:17,510 [INFO] app: [API] 成功寫入：id=00003, name=4156456
+2025-08-28 15:27:17,522 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:17,527 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:18,266 [INFO] app: 偵測到 QR：{'id': '00009', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4572.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:18,267 [INFO] app: 已加入佇列，待寫入（佇列長度 6）
+2025-08-28 15:27:19,153 [INFO] app: 偵測到 QR：{'id': '00010', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4573.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:19,156 [INFO] app: 已加入佇列，待寫入（佇列長度 7）
+2025-08-28 15:27:20,089 [INFO] app: [API] Append success for id=00004 name=4156456
+2025-08-28 15:27:20,119 [INFO] app: 偵測到 QR：{'id': '00011', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4574.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:20,126 [INFO] app: 已加入佇列，待寫入（佇列長度 8）
+2025-08-28 15:27:20,131 [INFO] app: [API] 成功寫入：id=00004, name=4156456
+2025-08-28 15:27:20,167 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:20,178 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:20,987 [INFO] app: 偵測到 QR：{'id': '00012', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4575.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:20,987 [INFO] app: 已加入佇列，待寫入（佇列長度 8）
+2025-08-28 15:27:21,948 [INFO] app: 偵測到 QR：{'id': '00013', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4576.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:21,951 [INFO] app: 已加入佇列，待寫入（佇列長度 9）
+2025-08-28 15:27:22,469 [INFO] app: [API] Append success for id=00005 name=4156456
+2025-08-28 15:27:22,503 [INFO] app: [API] 成功寫入：id=00005, name=4156456
+2025-08-28 15:27:22,535 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:22,537 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:22,785 [INFO] app: 偵測到 QR：{'id': '00014', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4577.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:27:22,786 [INFO] app: 已加入佇列，待寫入（佇列長度 9）
+2025-08-28 15:27:23,653 [INFO] app: 偵測到 QR：{'id': '', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4581.com', 'Salon': '46546'}}
+2025-08-28 15:27:23,655 [INFO] app: 已加入佇列，待寫入（佇列長度 10）
+2025-08-28 15:27:24,498 [INFO] app: 偵測到 QR：{'id': '', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4581.com', 'Salon': '46546'}}
+2025-08-28 15:27:24,499 [INFO] app: 已加入佇列，待寫入（佇列長度 11）
+2025-08-28 15:27:24,663 [INFO] app: [API] Append success for id=00005 name=4156456
+2025-08-28 15:27:24,708 [INFO] app: [API] 成功寫入：id=00005, name=4156456
+2025-08-28 15:27:24,744 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:24,754 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:25,425 [INFO] app: 偵測到 QR：{'id': '', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4581.com', 'Salon': '46546'}}
+2025-08-28 15:27:25,430 [INFO] app: 已加入佇列，待寫入（佇列長度 11）
+2025-08-28 15:27:26,333 [INFO] app: 偵測到 QR：{'id': '', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4581.com', 'Salon': '46546'}}
+2025-08-28 15:27:26,334 [INFO] app: 已加入佇列，待寫入（佇列長度 12）
+2025-08-28 15:27:27,554 [INFO] app: [API] Append success for id=00006 name=4156456
+2025-08-28 15:27:27,560 [INFO] app: [API] 成功寫入：id=00006, name=4156456
+2025-08-28 15:27:27,569 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:27,573 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:30,012 [INFO] app: [API] Append success for id=00007 name=4156456
+2025-08-28 15:27:30,018 [INFO] app: [API] 成功寫入：id=00007, name=4156456
+2025-08-28 15:27:30,022 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:30,024 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:31,932 [INFO] app: [API] Append success for id=00008 name=4156456
+2025-08-28 15:27:31,933 [INFO] app: [API] 成功寫入：id=00008, name=4156456
+2025-08-28 15:27:31,936 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:31,939 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:33,926 [INFO] app: [API] Append success for id=00009 name=4156456
+2025-08-28 15:27:33,953 [INFO] app: [API] 成功寫入：id=00009, name=4156456
+2025-08-28 15:27:33,966 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:33,979 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:36,463 [INFO] app: [API] Append success for id=00010 name=4156456
+2025-08-28 15:27:36,525 [INFO] app: [API] 成功寫入：id=00010, name=4156456
+2025-08-28 15:27:36,533 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:36,542 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:38,776 [INFO] app: [API] Append success for id=00011 name=4156456
+2025-08-28 15:27:38,778 [INFO] app: [API] 成功寫入：id=00011, name=4156456
+2025-08-28 15:27:38,780 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:38,782 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:40,899 [INFO] app: [API] Append success for id=00012 name=4156456
+2025-08-28 15:27:40,906 [INFO] app: [API] 成功寫入：id=00012, name=4156456
+2025-08-28 15:27:40,945 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:40,950 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:43,720 [INFO] app: [API] Append success for id=00013 name=4156456
+2025-08-28 15:27:43,745 [INFO] app: [API] 成功寫入：id=00013, name=4156456
+2025-08-28 15:27:43,749 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:43,750 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:45,687 [INFO] app: [API] Append success for id=00014 name=4156456
+2025-08-28 15:27:45,701 [INFO] app: [API] 成功寫入：id=00014, name=4156456
+2025-08-28 15:27:45,796 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:45,801 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:48,802 [INFO] app: [API] Append success for id= name=4156456
+2025-08-28 15:27:48,806 [INFO] app: [API] 成功寫入：id=, name=4156456
+2025-08-28 15:27:48,812 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:48,818 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:50,916 [INFO] app: [API] Append success for id= name=4156456
+2025-08-28 15:27:50,928 [INFO] app: [API] 成功寫入：id=, name=4156456
+2025-08-28 15:27:50,987 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:50,994 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:52,996 [INFO] app: [API] Append success for id= name=4156456
+2025-08-28 15:27:53,020 [INFO] app: [API] 成功寫入：id=, name=4156456
+2025-08-28 15:27:53,076 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:27:53,103 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:27:57,144 [INFO] app: [API] Append success for id= name=4156456
+2025-08-28 15:27:57,163 [INFO] app: [API] 成功寫入：id=, name=4156456
+2025-08-28 15:29:49,305 [INFO] app: 偵測到 QR：{'id': '', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4581.com', 'Salon': '46546'}}
+2025-08-28 15:29:49,308 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:29:49,310 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:29:49,315 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:29:53,424 [INFO] app: [API] Append success for id= name=4156456
+2025-08-28 15:29:53,438 [INFO] app: [API] 成功寫入：id=, name=4156456
+2025-08-28 15:30:03,091 [INFO] app: 偵測到 QR：{'id': '', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4581.com', 'Salon': '46546'}}
+2025-08-28 15:30:03,092 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:30:03,094 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:30:03,095 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:30:05,195 [INFO] app: [API] Append success for id= name=4156456
+2025-08-28 15:30:05,219 [INFO] app: [API] 成功寫入：id=, name=4156456
+2025-08-28 15:30:05,531 [INFO] app: 偵測到 QR：{'id': '', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4581.com', 'Salon': '46546'}}
+2025-08-28 15:30:05,532 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:30:05,533 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:30:05,535 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:30:07,678 [INFO] app: [API] Append success for id= name=4156456
+2025-08-28 15:30:07,679 [INFO] app: [API] 成功寫入：id=, name=4156456
+2025-08-28 15:30:23,974 [INFO] app: 偵測到 QR：{'id': '00009', 'name': '4156456', 'event': 'test', 'extra': {'email': '456456@4572.com', 'Salon': '46546', 'licence': '
+2025-08-28 15:30:23,976 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:30:23,977 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:30:23,979 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:30:27,498 [INFO] app: [API] Append success for id=00009 name=4156456
+2025-08-28 15:30:27,532 [INFO] app: [API] 成功寫入：id=00009, name=4156456
+2025-08-28 15:34:46,804 [INFO] app: 偵測到 QR：{'id': '00001', 'name': '大明', 'event': '活動', 'extra': {'email': '123@gmail.com', 'Salon': 'test01', 'Licence': 'year'}}
+2025-08-28 15:34:46,806 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:34:46,809 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:34:46,814 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:34:50,992 [INFO] app: [API] Append success for id=00001 name=大明
+2025-08-28 15:34:51,138 [INFO] app: [API] 成功寫入：id=00001, name=大明
+2025-08-28 15:34:52,480 [INFO] app: 偵測到 QR：{'id': '00002', 'name': '小明', 'event': '活動', 'extra': {'email': '124@gmail.com', 'Salon': 'test02', 'Licence': 'moth'}}
+2025-08-28 15:34:52,484 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:34:52,485 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:34:52,488 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:34:54,864 [INFO] app: [API] Append success for id=00002 name=小明
+2025-08-28 15:34:54,907 [INFO] app: [API] 成功寫入：id=00002, name=小明
+2025-08-28 15:34:55,087 [INFO] app: 偵測到 QR：{'id': '00003', 'name': '小王', 'event': '活動', 'extra': {'email': '125@gmail.com', 'Salon': 'test03', 'Licence': 'day'}}
+2025-08-28 15:34:55,089 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:34:55,092 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:34:55,096 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:34:57,244 [INFO] app: 偵測到 QR：{'id': '00004', 'name': '大王', 'event': '活動', 'extra': {'email': '126@gmail.com', 'Salon': 'test04', 'Licence': 'week'}}
+2025-08-28 15:34:57,246 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-28 15:34:57,945 [INFO] app: [API] Append success for id=00003 name=小王
+2025-08-28 15:34:57,963 [INFO] app: [API] 成功寫入：id=00003, name=小王
+2025-08-28 15:34:58,027 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-28 15:34:58,031 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-28 15:35:00,232 [INFO] app: [API] Append success for id=00004 name=大王
+2025-08-28 15:35:00,240 [INFO] app: [API] 成功寫入：id=00004, name=大王

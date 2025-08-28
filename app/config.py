@@ -14,6 +14,8 @@ DEFAULTS: Dict[str, Any] = {
     "event": {"name": "活動"},
     "camera": {"index": 0},
     "output": {"qr_folder": "output_qrcodes"},
+    "fields": {"extras": ["email", "company"]},
+    "debug": False,
 }
 
 
@@ -99,3 +101,26 @@ class AppConfig:
     def qr_folder(self, s: str) -> None:
         self.data["output"]["qr_folder"] = s
 
+    @property
+    def extra_fields(self) -> list[str]:
+        vals = self.data.get("fields", {}).get("extras", [])
+        if isinstance(vals, list):
+            return [str(x) for x in vals if str(x).strip() and str(x) not in ("id", "name")]
+        return []
+
+    @extra_fields.setter
+    def extra_fields(self, items: list[str]) -> None:
+        cleaned = []
+        for x in items:
+            s = str(x).strip()
+            if s and s not in ("id", "name") and s not in cleaned:
+                cleaned.append(s)
+        self.data.setdefault("fields", {})["extras"] = cleaned
+
+    @property
+    def debug(self) -> bool:
+        return bool(self.data.get("debug", False))
+
+    @debug.setter
+    def debug(self, v: bool) -> None:
+        self.data["debug"] = bool(v)

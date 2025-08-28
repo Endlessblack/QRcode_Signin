@@ -33,12 +33,13 @@ def load_attendees_csv(csv_path: str | Path) -> List[Attendee]:
     return rows
 
 
-def export_template_csv(path: str | Path) -> None:
+def export_template_csv(path: str | Path, extra_fields: list[str] | None = None) -> None:
     path = Path(path)
+    extras = [e for e in (extra_fields or ["email", "company"]) if e not in ("id", "name")]
     with path.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["id", "name", "email", "company"])  # 可增減欄位
-        writer.writerow(["A001", "王小明", "mike@example.com", "ACME"])
+        # 只輸出標題列；不包含示例資料列
+        writer.writerow(["id", "name", *extras])
 
 
 def generate_qr_images(attendees: List[Attendee], event_name: str, out_dir: str | Path) -> int:
@@ -70,4 +71,3 @@ def parse_qr_payload(data: str, default_event: str) -> Dict[str, Any]:
         pass
     # Fallback: treat as raw
     return {"raw": data, "event": default_event}
-
