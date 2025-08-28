@@ -1,0 +1,7 @@
+PyQt6==6.6.1
+opencv-python==4.10.0.84
+qrcode==7.4.2
+Pillow==10.4.0
+gspread==6.1.2
+google-auth==2.33.0
+python-dotenv==1.0.1

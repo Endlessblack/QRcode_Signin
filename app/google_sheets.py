@@ -1,0 +1,71 @@
+from __future__ import annotations
+
+import datetime as dt
+from typing import Dict, List, Any
+
+import gspread
+
+
+class GoogleSheetsClient:
+    def __init__(self, credentials_path: str, spreadsheet_id: str, worksheet_name: str) -> None:
+        self.credentials_path = credentials_path
+        self.spreadsheet_id = spreadsheet_id
+        self.worksheet_name = worksheet_name
+        self._client = None
+        self._ws = None
+
+    def connect(self) -> None:
+        gc = gspread.service_account(filename=self.credentials_path)
+        sh = gc.open_by_key(self.spreadsheet_id)
+        try:
+            ws = sh.worksheet(self.worksheet_name)
+        except gspread.WorksheetNotFound:
+            ws = sh.add_worksheet(title=self.worksheet_name, rows=1000, cols=26)
+        self._client = gc
+        self._ws = ws
+        self._ensure_headers(["timestamp", "event", "id", "name", "raw"])  # basic headers
+
+    def _ensure_headers(self, headers: List[str]) -> None:
+        assert self._ws is not None
+        values = self._ws.get_all_values()
+        if not values:
+            self._ws.append_row(headers)
+        else:
+            existing = values[0]
+            new_headers = list(dict.fromkeys(existing + headers))
+            if new_headers != existing:
+                self._ws.resize(rows=max(1000, len(values)), cols=max(len(new_headers), len(existing)))
+                self._ws.update('1:1', [new_headers])
+
+    def append_signin(self, payload: Dict[str, Any]) -> None:
+        if self._ws is None:
+            self.connect()
+        assert self._ws is not None
+
+        # Build row based on headers
+        headers = self._ws.row_values(1)
+        timestamp = dt.datetime.now().astimezone().isoformat(timespec="seconds")
+
+        # Expand payload to flat dict
+        base = {
+            "timestamp": timestamp,
+            "event": payload.get("event", ""),
+            "id": payload.get("id", ""),
+            "name": payload.get("name", ""),
+            "raw": payload.get("raw", ""),
+        }
+
+        extra = payload.get("extra", {})
+        if isinstance(extra, dict):
+            for k, v in extra.items():
+                base[str(k)] = v
+
+        # Ensure headers cover keys
+        need_headers = [h for h in base.keys() if h not in headers]
+        if need_headers:
+            self._ensure_headers(headers + need_headers)
+            headers = self._ws.row_values(1)
+
+        row = [base.get(h, "") for h in headers]
+        self._ws.append_row(row)
+
