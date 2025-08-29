@@ -8,6 +8,9 @@ from typing import Any, Dict
 DEFAULTS: Dict[str, Any] = {
     "google": {
         "credentials_path": "credentials.json",
+        "auth_method": "service_account",  # or 'oauth'
+        "oauth_client_path": "",           # client_secret.json for OAuth
+        "oauth_token_path": "token.json",  # where to store authorized user token
         "spreadsheet_id": "",
         "worksheet_name": "Signin",
     },
@@ -28,6 +31,8 @@ DEFAULTS: Dict[str, Any] = {
         "font_weight": "regular",
         "bg_image_path": "",
         "text_margin": 40,
+        "text_top_gap": 40,
+        "text_bottom_margin": 40,
         "line_spacing_scale": 0.4,
         "auto_fit_text": True,
         "text_point": None,
@@ -151,3 +156,31 @@ class AppConfig:
 
     def set_design(self, key: str, value: Any) -> None:
         self.data.setdefault("design", {})[key] = value
+
+    # Google auth extras
+    @property
+    def auth_method(self) -> str:
+        try:
+            return str(self.data.get("google", {}).get("auth_method", "service_account")).lower()
+        except Exception:
+            return "service_account"
+
+    @auth_method.setter
+    def auth_method(self, m: str) -> None:
+        self.data.setdefault("google", {})["auth_method"] = str(m)
+
+    @property
+    def oauth_client_path(self) -> str:
+        return str(self.data.get("google", {}).get("oauth_client_path", ""))
+
+    @oauth_client_path.setter
+    def oauth_client_path(self, p: str) -> None:
+        self.data.setdefault("google", {})["oauth_client_path"] = p
+
+    @property
+    def oauth_token_path(self) -> str:
+        return str(self.data.get("google", {}).get("oauth_token_path", "token.json"))
+
+    @oauth_token_path.setter
+    def oauth_token_path(self, p: str) -> None:
+        self.data.setdefault("google", {})["oauth_token_path"] = p

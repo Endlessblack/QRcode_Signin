@@ -7,15 +7,33 @@ import gspread
 
 
 class GoogleSheetsClient:
-    def __init__(self, credentials_path: str, spreadsheet_id: str, worksheet_name: str) -> None:
+    def __init__(self,
+                 credentials_path: str,
+                 spreadsheet_id: str,
+                 worksheet_name: str,
+                 auth_method: str = "service_account",
+                 oauth_client_path: str | None = None,
+                 oauth_token_path: str | None = None) -> None:
         self.credentials_path = credentials_path
         self.spreadsheet_id = spreadsheet_id
         self.worksheet_name = worksheet_name
+        self.auth_method = (auth_method or "service_account").lower()
+        self.oauth_client_path = oauth_client_path or ""
+        self.oauth_token_path = oauth_token_path or "token.json"
         self._client = None
         self._ws = None
 
     def connect(self) -> None:
-        gc = gspread.service_account(filename=self.credentials_path)
+        if self.auth_method == 'oauth':
+            # OAuth installed-app flow; opens browser on first run to create token
+            if self.oauth_client_path:
+                gc = gspread.oauth(credentials_filename=self.oauth_client_path,
+                                    authorized_user_filename=self.oauth_token_path)
+            else:
+                # Fallback to default filenames in current directory
+                gc = gspread.oauth()
+        else:
+            gc = gspread.service_account(filename=self.credentials_path)
         sh = gc.open_by_key(self.spreadsheet_id)
         try:
             ws = sh.worksheet(self.worksheet_name)
@@ -68,4 +86,3 @@ class GoogleSheetsClient:
 
         row = [base.get(h, "") for h in headers]
         self._ws.append_row(row)
-

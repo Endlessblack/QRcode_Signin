@@ -4,5 +4,6 @@ qrcode
 Pillow
 gspread
 google-auth
+google-auth-oauthlib
 python-dotenv
 pygrabber

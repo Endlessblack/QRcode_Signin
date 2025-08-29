@@ -41,7 +41,14 @@ class WorkerAppendSheet(QtCore.QObject):
         log = setup_logging(self.cfg.debug)
         try:
             log.info("[API] Connecting to Google Sheet ...")
-            client = GoogleSheetsClient(self.cfg.credentials_path, self.cfg.spreadsheet_id, self.cfg.worksheet_name)
+            client = GoogleSheetsClient(
+                self.cfg.credentials_path,
+                self.cfg.spreadsheet_id,
+                self.cfg.worksheet_name,
+                auth_method=self.cfg.auth_method,
+                oauth_client_path=self.cfg.oauth_client_path,
+                oauth_token_path=self.cfg.oauth_token_path,
+            )
             client.append_signin(self.payload)
             log.info("[API] Append success for id=%s name=%s", self.payload.get("id"), self.payload.get("name"))
             self.finished.emit(self.payload)
@@ -234,6 +241,9 @@ class GenerateTab(QtWidgets.QWidget):
         self.dsb_line_spacing = QtWidgets.QDoubleSpinBox(); self.dsb_line_spacing.setRange(0.0, 2.0); self.dsb_line_spacing.setSingleStep(0.1); self.dsb_line_spacing.setValue(0.4)
         self.cb_auto_fit = QtWidgets.QCheckBox("自動縮放文字以適配可用區域")
         self.cb_auto_fit.setChecked(True)
+        # Vertical paddings (top gap and bottom margin)
+        self.sp_top_gap = QtWidgets.QSpinBox(); self.sp_top_gap.setRange(0, 400); self.sp_top_gap.setValue(40)
+        self.sp_bottom_margin = QtWidgets.QSpinBox(); self.sp_bottom_margin.setRange(0, 400); self.sp_bottom_margin.setValue(40)
 
         r = 0
         grid.addWidget(self.cb_use_design, r, 0, 1, 3); r += 1
@@ -261,6 +271,8 @@ class GenerateTab(QtWidgets.QWidget):
 
         grid.addWidget(QtWidgets.QLabel("Text Margin"), r, 0); grid.addWidget(self.sp_text_margin, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("Line Spacing"), r, 0); grid.addWidget(self.dsb_line_spacing, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("上方距離"), r, 0); grid.addWidget(self.sp_top_gap, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("底部邊界"), r, 0); grid.addWidget(self.sp_bottom_margin, r, 1); r += 1
         grid.addWidget(self.cb_auto_fit, r, 0, 1, 2); r += 1
 
 
@@ -302,6 +314,8 @@ class GenerateTab(QtWidgets.QWidget):
         self.ed_bg_img.textChanged.connect(self._preview)
         self.cb_text_align.currentIndexChanged.connect(self._preview)
         self.dsb_line_spacing.valueChanged.connect(self._preview)
+        self.sp_top_gap.valueChanged.connect(self._preview)
+        self.sp_bottom_margin.valueChanged.connect(self._preview)
         self.cb_auto_fit.toggled.connect(self._preview)
 
         # Status
@@ -348,6 +362,8 @@ class GenerateTab(QtWidgets.QWidget):
                     font_weight=self._map_weight(),
                     bg_image_path=(self._safe_text(self.ed_bg_img) or None),
                     text_margin=int(self.sp_text_margin.value()),
+                    text_top_gap=int(self.sp_top_gap.value()),
+                    text_bottom_margin=int(self.sp_bottom_margin.value()),
                     line_spacing_scale=float(self.dsb_line_spacing.value()),
                     auto_fit_text=bool(self.cb_auto_fit.isChecked()),
                 )
@@ -402,6 +418,8 @@ class GenerateTab(QtWidgets.QWidget):
             font_weight=self._map_weight(),
             bg_image_path=(self._safe_text(self.ed_bg_img) or None),
             text_margin=int(self.sp_text_margin.value()),
+            text_top_gap=int(self.sp_top_gap.value()),
+            text_bottom_margin=int(self.sp_bottom_margin.value()),
             line_spacing_scale=float(self.dsb_line_spacing.value()),
             auto_fit_text=bool(self.cb_auto_fit.isChecked()),
         )
@@ -472,17 +490,36 @@ class GenerateTab(QtWidgets.QWidget):
                 font = PILImageFont2.load_default()
                 self.lb_font_meta.setText("default")
             text_color = _hex_to_rgb_local(opts.text_color)
+            # Case-insensitive lookup for extras and consistent labels
+            def _ci(d: dict, key: str) -> str:
+                kl = key.lower()
+                for k, v in d.items():
+                    try:
+                        if str(k).lower() == kl:
+                            return str(v)
+                    except Exception:
+                        continue
+                return ""
+            def _label_from_extra(d: dict, key: str, default: str) -> str:
+                kl = key.lower()
+                for k in d.keys():
+                    try:
+                        if str(k).lower() == kl:
+                            return str(k)
+                    except Exception:
+                        continue
+                return default
             lines = [
                 f"ID: {sample.id}",
                 f"name: {sample.name}",
-                f"Salon: {sample.extra.get('salon','')}",
-                f"Seller: {sample.extra.get('seller','')}",
+                f"{_label_from_extra(sample.extra,'salon','salon')}: {_ci(sample.extra,'salon')}",
+                f"{_label_from_extra(sample.extra,'seller','seller')}: {_ci(sample.extra,'seller')}",
             ]
             # Draw via Qt for better text rendering
-            # NOTE: text_margin 僅作為「上方」留白，不再影響下方邊界
-            margin = max(0, int(opts.text_margin))          # 左右與上方使用
-            top_margin = margin
-            bottom_margin = 40                               # 固定下方邊界（如需可調，可改成從設定讀）
+            # text_margin 僅控制左右內距（不影響上下）
+            lr_margin = max(0, int(opts.text_margin))       # 左右內距
+            top_margin = max(0, int(getattr(opts, 'text_top_gap', 40)))
+            bottom_margin = max(0, int(getattr(opts, 'text_bottom_margin', 40)))
             qimg = ImageQt(canvas).copy()
             painter = QtGui.QPainter(qimg)
             painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing, True)
@@ -517,8 +554,8 @@ class GenerateTab(QtWidgets.QWidget):
             pairs = [
                 ("ID", f"{sample.id}"),
                 ("name", f"{sample.name}"),
-                ("Salon", f"{sample.extra.get('salon','')}")
-                ,("Seller", f"{sample.extra.get('seller','')}")
+                (_label_from_extra(sample.extra,'salon','salon'), f"{_ci(sample.extra,'salon')}")
+                ,(_label_from_extra(sample.extra,'seller','seller'), f"{_ci(sample.extra,'seller')}")
             ]
             rows = []  # (lab, val, wL, wR, h)
             total_h = 0
@@ -567,8 +604,8 @@ class GenerateTab(QtWidgets.QWidget):
                     if rows:
                         total_h += spacing * (len(rows) - 1)
             # draw two columns: header left-aligned, content right-aligned
-            region_left = margin
-            region_right = opts.width - margin
+            region_left = lr_margin
+            region_right = opts.width - lr_margin
             total_w = max(0, region_right - region_left)
             min_gap = int(max(8, opts.font_size * 0.40))
             cur_y = y + int(fm.ascent())
@@ -623,6 +660,8 @@ class GenerateTab(QtWidgets.QWidget):
         self.ed_bg_img.textChanged.connect(lambda *_: self._save_design_to_config())
         self.sp_text_margin.valueChanged.connect(lambda *_: self._save_design_to_config())
         self.dsb_line_spacing.valueChanged.connect(lambda *_: self._save_design_to_config())
+        self.sp_top_gap.valueChanged.connect(lambda *_: self._save_design_to_config())
+        self.sp_bottom_margin.valueChanged.connect(lambda *_: self._save_design_to_config())
         self.cb_auto_fit.toggled.connect(lambda *_: self._save_design_to_config())
         self.cb_use_design.toggled.connect(lambda *_: self._save_design_to_config())
         self.event_edit.editingFinished.connect(lambda *_: self._save_event_to_config())
@@ -653,6 +692,8 @@ class GenerateTab(QtWidgets.QWidget):
                 pass
             self.cfg.set_design("text_margin", int(self.sp_text_margin.value()))
             self.cfg.set_design("line_spacing_scale", float(self.dsb_line_spacing.value()))
+            self.cfg.set_design("text_top_gap", int(self.sp_top_gap.value()))
+            self.cfg.set_design("text_bottom_margin", int(self.sp_bottom_margin.value()))
             self.cfg.set_design("auto_fit_text", bool(self.cb_auto_fit.isChecked()))
             # save anchor if present
             if hasattr(self, 'text_anchor_norm') and self.text_anchor_norm:
@@ -681,6 +722,8 @@ class GenerateTab(QtWidgets.QWidget):
             self.ed_bg_img.setText(str(self.cfg.get_design("bg_image_path", "")))
             self.sp_text_margin.setValue(int(self.cfg.get_design("text_margin", 40)))
             self.dsb_line_spacing.setValue(float(self.cfg.get_design("line_spacing_scale", 0.4)))
+            self.sp_top_gap.setValue(int(self.cfg.get_design("text_top_gap", 40)))
+            self.sp_bottom_margin.setValue(int(self.cfg.get_design("text_bottom_margin", 40)))
             self.cb_auto_fit.setChecked(bool(self.cfg.get_design("auto_fit_text", True)))
             tp = self.cfg.get_design("text_point", None)
             if isinstance(tp, (list, tuple)) and len(tp) == 2:
@@ -920,12 +963,32 @@ class SettingsTab(QtWidgets.QWidget):
     def _build(self):
         form = QtWidgets.QFormLayout(self)
 
+        # Auth method
+        self.cb_auth = QtWidgets.QComboBox()
+        self.cb_auth.addItem("服務帳戶 JSON", userData="service_account")
+        self.cb_auth.addItem("OAuth 使用者登入", userData="oauth")
+        cur_method = (self.cfg.auth_method or 'service_account').lower()
+        idx = max(0, self.cb_auth.findData(cur_method))
+        self.cb_auth.setCurrentIndex(idx)
+
         self.ed_credentials = QtWidgets.QLineEdit(self.cfg.credentials_path)
         btn_cred = QtWidgets.QPushButton("瀏覽...")
         btn_cred.clicked.connect(self._choose_credentials)
         h1 = QtWidgets.QHBoxLayout()
         h1.addWidget(self.ed_credentials)
         h1.addWidget(btn_cred)
+
+        # OAuth client + token paths
+        self.ed_oauth_client = QtWidgets.QLineEdit(self.cfg.oauth_client_path)
+        btn_oauth_client = QtWidgets.QPushButton("瀏覽...")
+        btn_oauth_client.clicked.connect(lambda: self._choose_file_into(self.ed_oauth_client, "選擇 OAuth client.json"))
+        h_oac = QtWidgets.QHBoxLayout(); h_oac.addWidget(self.ed_oauth_client); h_oac.addWidget(btn_oauth_client)
+
+        # We manage token.json automatically; do not ask user for a path
+        self.lb_oauth_status = QtWidgets.QLabel("")
+        self.btn_oauth_logout = QtWidgets.QPushButton("登出 (清除 OAuth token)")
+        self.btn_oauth_logout.clicked.connect(self._logout_oauth)
+        h_oat = QtWidgets.QHBoxLayout(); h_oat.addWidget(self.lb_oauth_status); h_oat.addStretch(1); h_oat.addWidget(self.btn_oauth_logout)
 
         # Spreadsheet URL instead of ID; display mapped URL
         self.ed_spreadsheet = QtWidgets.QLineEdit(self._to_sheet_url(self.cfg.spreadsheet_id))
@@ -940,7 +1003,10 @@ class SettingsTab(QtWidgets.QWidget):
         cam_row.addWidget(btn_cam_refresh)
         self._populate_cameras()
 
+        form.addRow("驗證方式", self.cb_auth)
         form.addRow("憑證檔案", self._wrap(h1))
+        form.addRow("OAuth client.json", self._wrap(h_oac))
+        form.addRow("OAuth 狀態", self._wrap(h_oat))
         form.addRow("試算表 URL", self.ed_spreadsheet)
         # Show parsed spreadsheet ID for clarity
         self.lb_sheet_id = QtWidgets.QLabel("")
@@ -958,7 +1024,7 @@ class SettingsTab(QtWidgets.QWidget):
         form.addRow(self.cb_debug)
 
         btn_save = QtWidgets.QPushButton("儲存設定")
-        btn_test = QtWidgets.QPushButton("測試連線")
+        btn_test = QtWidgets.QPushButton("測試連線 / 登入")
         btn_save.clicked.connect(self._save)
         btn_test.clicked.connect(self._test_connection)
         hb = QtWidgets.QHBoxLayout()
@@ -966,6 +1032,33 @@ class SettingsTab(QtWidgets.QWidget):
         hb.addWidget(btn_test)
         hb.addStretch(1)
         form.addRow(self._wrap(hb))
+        self._refresh_oauth_status()
+
+        # Toggle visibility of auth-specific rows
+        def _toggle_auth_rows():
+            m = str(self.cb_auth.currentData() or 'service_account')
+            is_sa = (m == 'service_account')
+            # Iterate rows and toggle by label text
+            for i in range(form.rowCount()):
+                lbl_item = form.itemAt(i, QtWidgets.QFormLayout.ItemRole.LabelRole)
+                fld_item = form.itemAt(i, QtWidgets.QFormLayout.ItemRole.FieldRole)
+                if not lbl_item or not fld_item:
+                    continue
+                lbl = lbl_item.widget()
+                fld = fld_item.widget()
+                txt = lbl.text() if isinstance(lbl, QtWidgets.QLabel) else ''
+                if txt == '憑證檔案':
+                    if lbl: lbl.setVisible(is_sa)
+                    if fld: fld.setVisible(is_sa)
+                if txt in ('OAuth client.json', 'OAuth 狀態', '試算表 URL', '解析出 ID', '工作表名稱', '活動名稱', '相機來源', ''):
+                    # OAuth-related client and status are shown only for OAuth; the rest always show
+                    if txt.startswith('OAuth '):
+                        if lbl: lbl.setVisible(not is_sa)
+                        if fld: fld.setVisible(not is_sa)
+            # Also update logout status button
+            self._refresh_oauth_status()
+        _toggle_auth_rows()
+        self.cb_auth.currentIndexChanged.connect(_toggle_auth_rows)
 
     def _wrap(self, layout: QtWidgets.QLayout) -> QtWidgets.QWidget:
         w = QtWidgets.QWidget()
@@ -977,8 +1070,23 @@ class SettingsTab(QtWidgets.QWidget):
         if fn:
             self.ed_credentials.setText(fn)
 
+    def _choose_file_into(self, edit: QtWidgets.QLineEdit, title: str):
+        fn, _ = QtWidgets.QFileDialog.getOpenFileName(self, title, str(Path.cwd()))
+        if fn:
+            edit.setText(fn)
+
+    def _choose_save_into(self, edit: QtWidgets.QLineEdit, title: str):
+        fn, _ = QtWidgets.QFileDialog.getSaveFileName(self, title, str(Path.cwd()))
+        if fn:
+            edit.setText(fn)
+
     def _save(self):
         self.cfg.credentials_path = self.ed_credentials.text().strip()
+        self.cfg.auth_method = str(self.cb_auth.currentData() or 'service_account')
+        self.cfg.oauth_client_path = self.ed_oauth_client.text().strip()
+        # keep default token path managed by app if not set
+        if not self.cfg.oauth_token_path:
+            self.cfg.oauth_token_path = 'token.json'
         # Accept URL or ID, map to ID
         self.cfg.spreadsheet_id = self._extract_spreadsheet_id(self.ed_spreadsheet.text().strip())
         self.cfg.worksheet_name = self.ed_worksheet.text().strip()
@@ -1027,21 +1135,63 @@ class SettingsTab(QtWidgets.QWidget):
         sid = self._extract_spreadsheet_id(self.ed_spreadsheet.text().strip())
         email = self._get_service_account_email()
         from .google_sheets import GoogleSheetsClient
-        client = GoogleSheetsClient(self.ed_credentials.text().strip() or self.cfg.credentials_path,
-                                    sid,
-                                    self.ed_worksheet.text().strip() or self.cfg.worksheet_name)
+        # Build client according to auth method
+        method = self.cb_auth.currentData() or self.cfg.auth_method
+        client = GoogleSheetsClient(
+            self.ed_credentials.text().strip() or self.cfg.credentials_path,
+            sid,
+            self.ed_worksheet.text().strip() or self.cfg.worksheet_name,
+            auth_method=str(method),
+            oauth_client_path=self.ed_oauth_client.text().strip() or self.cfg.oauth_client_path,
+            oauth_token_path=self.cfg.oauth_token_path,
+        )
         try:
             client.connect()
         except Exception as e:
-            msg = (
-                f"連線失敗：{e}\n\n請確認：\n"
-                f"1) 試算表已分享給服務帳戶 email：{email or '(無法讀取)'}（可編輯）\n"
-                f"2) 試算表 URL/ID 正確（上方解析出 ID：{sid or '(無)'}）\n"
-                f"3) 已在 GCP 專案啟用 Google Sheets API 與 Drive API"
-            )
+            if (self.cb_auth.currentData() or 'service_account') == 'oauth':
+                msg = (
+                    f"連線失敗：{e}\n\n請確認：\n"
+                    f"1) 已使用正確 Google 帳號完成 OAuth 授權（會跳出瀏覽器）\n"
+                    f"2) 試算表 URL/ID 正確（上方解析出 ID：{sid or '(無)'}）\n"
+                    f"3) 已啟用 Google Sheets API 與 Drive API"
+                )
+            else:
+                msg = (
+                    f"連線失敗：{e}\n\n請確認：\n"
+                    f"1) 試算表已分享給服務帳戶 email：{email or '(無法讀取)'}（可編輯）\n"
+                    f"2) 試算表 URL/ID 正確（上方解析出 ID：{sid or '(無)'}）\n"
+                    f"3) 已在 GCP 專案啟用 Google Sheets API 與 Drive API"
+                )
             QtWidgets.QMessageBox.critical(self, "測試連線失敗", msg)
         else:
-            QtWidgets.QMessageBox.information(self, "測試連線成功", f"成功連線至試算表（ID={sid}）。\n服務帳戶：{email or '(未知)'}")
+            if (self.cb_auth.currentData() or 'service_account') == 'oauth':
+                QtWidgets.QMessageBox.information(self, "測試連線成功", f"成功連線至試算表（ID={sid}）。\n驗證方式：OAuth")
+                # refresh status to reflect new token
+                self._refresh_oauth_status()
+            else:
+                QtWidgets.QMessageBox.information(self, "測試連線成功", f"成功連線至試算表（ID={sid}）。\n服務帳戶：{email or '(未知)'}")
+
+    def _token_path(self) -> Path:
+        p = (self.cfg.oauth_token_path or 'token.json').strip()
+        return Path(p)
+
+    def _refresh_oauth_status(self):
+        is_oauth = (str(self.cb_auth.currentData() or 'service_account') == 'oauth')
+        tp = self._token_path()
+        has_token = tp.exists()
+        self.lb_oauth_status.setText("已登入" if has_token else "未登入 (首次測試會跳瀏覽器登入)")
+        self.btn_oauth_logout.setEnabled(is_oauth and has_token)
+
+    def _logout_oauth(self):
+        # Simple logout: remove local token so next connect will re-auth
+        try:
+            tp = self._token_path()
+            if tp.exists():
+                tp.unlink()
+            self._refresh_oauth_status()
+            QtWidgets.QMessageBox.information(self, "OAuth", "已登出並移除本機 token。下次測試連線會重新登入。")
+        except Exception as e:
+            QtWidgets.QMessageBox.warning(self, "OAuth", f"登出失敗：{e}")
 
     def _get_camera_names(self) -> list[str] | None:
         try:

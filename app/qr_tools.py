@@ -28,13 +28,18 @@ def load_attendees_csv(csv_path: str | Path) -> List[Attendee]:
     rows: List[Attendee] = []
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
-        headers = [h.strip() for h in (reader.fieldnames or [])]
-        if "id" not in headers or "name" not in headers:
-            raise ValueError("CSV 必須包含欄位 id, name")
+        raw_headers = [h for h in (reader.fieldnames or [])]
+        headers = [str(h).strip() for h in raw_headers]
+        # case-insensitive mapping for required columns
+        low_map = {str(h).strip().lower(): str(h).strip() for h in raw_headers if h is not None}
+        id_key = low_map.get("id")
+        name_key = low_map.get("name")
+        if not id_key or not name_key:
+            raise ValueError("CSV 必須包含欄位 id, name（不分大小寫）")
         for r in reader:
-            rid = str(r.get("id", "")).strip()
-            nm = str(r.get("name", "")).strip()
-            extra = {k: v for k, v in r.items() if k not in ("id", "name") and v is not None and str(v).strip() != ""}
+            rid = str(r.get(id_key, "")).strip()
+            nm = str(r.get(name_key, "")).strip()
+            extra = {k: v for k, v in r.items() if k not in (id_key, name_key) and v is not None and str(v).strip() != ""}
             if rid or nm:
                 rows.append(Attendee(id=rid, name=nm, extra=extra))
     return rows
@@ -102,6 +107,8 @@ class DesignOptions:
     text_anchor: str = "top"  # default top within region
     text_align: str = "center"   # one of: left, center, right
     text_margin: int = 40         # inner margin for text block
+    text_top_gap: int = 40        # vertical gap between QR bottom and first text line
+    text_bottom_margin: int = 40  # bottom padding to avoid clipping
     line_spacing_scale: float = 0.4
     auto_fit_text: bool = True    # shrink font to fit region if needed
     text_region: Optional[Tuple[float, float, float, float]] = None  # (x0,y0,x1,y1) normalized
@@ -431,13 +438,35 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
         text_color = _hex_to_rgb(options.text_color)
 
         # Compose lines: id, name, salon, seller (from extra)
-        salon = str(a.extra.get("salon", ""))
-        seller = str(a.extra.get("seller", ""))
+        # Be tolerant to CSV header casing (e.g., "Salon" vs "salon")
+        def _extra_ci(extra: Dict[str, Any], key: str) -> str:
+            try:
+                k_l = key.lower()
+                for k, v in extra.items():
+                    if str(k).lower() == k_l:
+                        return str(v)
+            except Exception:
+                pass
+            return ""
+        salon = _extra_ci(a.extra, "salon")
+        seller = _extra_ci(a.extra, "seller")
+        # keep label casing based on CSV headers for extras when possible
+        def _label_from_extra(extra: Dict[str, Any], key: str, default: str) -> str:
+            try:
+                k_l = key.lower()
+                for k in extra.keys():
+                    if str(k).lower() == k_l:
+                        return str(k)
+            except Exception:
+                pass
+            return default
+        salon_label = _label_from_extra(a.extra, "salon", "salon")
+        seller_label = _label_from_extra(a.extra, "seller", "seller")
         lines = [
             f"ID: {a.id}",
-            f"姓名: {a.name}",
-            f"Salon: {salon}",
-            f"Seller: {seller}",
+            f"name: {a.name}",
+            f"{salon_label}: {salon}",
+            f"{seller_label}: {seller}",
         ]
 
         # Try Qt text rendering for better font support; fallback to PIL if Qt not available
@@ -495,14 +524,44 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
             spacing = int(max(0.0, options.line_spacing_scale) * (max_h or options.font_size))
             if rows:
                 total_h += spacing * (len(rows) - 1)
-            margin = max(0, int(options.text_margin))
-            region_bottom = options.height - margin
+            # text_margin: only controls left/right padding (not vertical)
+            lr_margin = max(0, int(options.text_margin))
+            top_gap = max(0, int(getattr(options, 'text_top_gap', 40)))
+            bottom_margin = max(0, int(getattr(options, 'text_bottom_margin', 40)))
+            region_bottom = options.height - bottom_margin
             # Origin from point (Y) or below-QR region
             if options.text_point is not None:
                 _, yn = options.text_point
                 y = int(max(0.0, min(1.0, yn)) * options.height)
+                # auto-fit in point-anchored mode as well (match preview)
+                avail_h = max(0, region_bottom - y)
+                if options.auto_fit_text and total_h > avail_h and avail_h > 0:
+                    scale = max(0.1, avail_h / max(1, total_h))
+                    new_px = max(10, int(options.font_size * scale))
+                    if new_px != options.font_size:
+                        qf.setPixelSize(new_px)
+                        painter.setFont(qf)
+                        fm = QtGui.QFontMetricsF(qf)
+                        rows = []
+                        total_h = 0
+                        max_h = 0
+                        for line in lines:
+                            parts = line.split(":", 1)
+                            lab = parts[0].strip()
+                            val = parts[1].strip() if len(parts) > 1 else ""
+                            brL = fm.boundingRect(lab)
+                            brV = fm.boundingRect(val)
+                            wL = int(brL.width()); hL = int(fm.height())
+                            wR = int(brV.width()); hR = int(fm.height())
+                            h = max(hL, hR)
+                            rows.append((lab, val, wL, wR, h))
+                            total_h += h
+                            max_h = max(max_h, h)
+                        spacing = int(max(0.0, options.line_spacing_scale) * (max_h or new_px))
+                        if rows:
+                            total_h += spacing * (len(rows) - 1)
             else:
-                region_top = (qr_y + qr_target_w) + margin
+                region_top = (qr_y + qr_target_w) + top_gap
                 region_height = max(0, region_bottom - region_top)
                 if options.auto_fit_text and total_h > region_height and region_height > 0:
                     scale = max(0.1, region_height / total_h)
@@ -537,8 +596,8 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
                     y = region_top
             # Draw two columns (Qt baseline): header left, content right, with eliding
             cur_y = y + int(fm.ascent())
-            region_left = margin
-            region_right = options.width - margin
+            region_left = lr_margin
+            region_right = options.width - lr_margin
             total_w = max(0, region_right - region_left)
             min_gap = int(max(8, options.font_size * 0.40))
             for lab, val, wL, wR, h in rows:
@@ -587,14 +646,17 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
         spacing = int(max(0.0, options.line_spacing_scale) * max_h)
         if non_empty:
             total_h += spacing * (len(non_empty) - 1)
-        margin = max(0, int(options.text_margin))
+        # text_margin: only controls left/right padding (not vertical)
+        lr_margin = max(0, int(options.text_margin))
+        top_gap = max(0, int(getattr(options, 'text_top_gap', 40)))
+        bottom_margin = max(0, int(getattr(options, 'text_bottom_margin', 40)))
         # If a direct text point is provided, use it; else fall back to region logic
         if options.text_point is not None:
             xn, yn = options.text_point
             x_base = int(max(0.0, min(1.0, xn)) * options.width)
             y_top = int(max(0.0, min(1.0, yn)) * options.height)
             # auto-fit against space to the bottom of canvas (respect bottom margin)
-            region_bottom = options.height - margin
+            region_bottom = options.height - bottom_margin
             avail_h = max(0, region_bottom - y_top)
             if options.auto_fit_text and total_h > avail_h and avail_h > 0:
                 scale = max(0.1, avail_h / max(1, total_h))
@@ -627,8 +689,8 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
                 total_h += spacing * (len(non_empty) - 1)
             y = y_top
             # header left, content right; truncate to avoid overlap
-            region_left = margin
-            region_right = options.width - margin
+            region_left = lr_margin
+            region_right = options.width - lr_margin
             total_w = max(0, region_right - region_left)
             min_gap = int(max(8, options.font_size * 0.40))
             def _elide_pil(s: str, max_w: int) -> tuple[str, int]:
@@ -671,10 +733,10 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
         else:
             # Fallback: anchor within a region below QR (legacy)
             qr_bottom = qr_y + qr_target_w
-            region_left = margin
-            region_right = options.width - margin
-            region_top = qr_bottom + margin
-            region_bottom = options.height - margin
+            region_left = lr_margin
+            region_right = options.width - lr_margin
+            region_top = qr_bottom + top_gap
+            region_bottom = options.height - bottom_margin
             region_height = max(0, region_bottom - region_top)
             # optional auto-fit text: shrink font to fit region height
             if options.auto_fit_text and total_h > region_height and region_height > 0:
