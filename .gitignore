@@ -6,3 +6,6 @@
 *.csv
 *.log
 /client
+/setting
+/build
+/dist

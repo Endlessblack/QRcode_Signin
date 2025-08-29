@@ -3,13 +3,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any, Dict
+from .paths import config_file, ensure_dirs, oauth_client_file, oauth_token_file, OAUTH_CLIENT_FILENAME, OAUTH_TOKEN_FILENAME
 
 
 DEFAULTS: Dict[str, Any] = {
     "google": {
         "credentials_path": "credentials.json",
         "auth_method": "service_account",  # or 'oauth'
-        "oauth_client_path": "",           # client_secret.json for OAuth
+        "oauth_client_path": "",           # fixed to ./client/client.json for OAuth
         "oauth_token_path": "token.json",  # where to store authorized user token
         "spreadsheet_id": "",
         "worksheet_name": "Signin",
@@ -42,8 +43,10 @@ DEFAULTS: Dict[str, Any] = {
 
 
 class AppConfig:
-    def __init__(self, path: Path | str = "config.json") -> None:
-        self.path = Path(path)
+    def __init__(self, path: Path | str | None = None) -> None:
+        # Ensure required directories exist before reading/saving
+        ensure_dirs()
+        self.path = Path(path) if path is not None else config_file()
         self.data: Dict[str, Any] = json.loads(json.dumps(DEFAULTS))  # deep copy
         if self.path.exists():
             self.load()
@@ -59,6 +62,7 @@ class AppConfig:
 
     def save(self) -> None:
         try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
             with self.path.open("w", encoding="utf-8") as f:
                 json.dump(self.data, f, ensure_ascii=False, indent=2)
         except Exception:
@@ -171,16 +175,20 @@ class AppConfig:
 
     @property
     def oauth_client_path(self) -> str:
-        return str(self.data.get("google", {}).get("oauth_client_path", ""))
+        # Hardcode to ./client/<OAUTH_CLIENT_FILENAME>
+        return str(oauth_client_file())
 
     @oauth_client_path.setter
     def oauth_client_path(self, p: str) -> None:
-        self.data.setdefault("google", {})["oauth_client_path"] = p
+        # Keep only the filename in config (for backward compat), but value is ignored on read
+        self.data.setdefault("google", {})["oauth_client_path"] = OAUTH_CLIENT_FILENAME
 
     @property
     def oauth_token_path(self) -> str:
-        return str(self.data.get("google", {}).get("oauth_token_path", "token.json"))
+        # Hardcode to ./client/<OAUTH_TOKEN_FILENAME>
+        return str(oauth_token_file())
 
     @oauth_token_path.setter
     def oauth_token_path(self, p: str) -> None:
-        self.data.setdefault("google", {})["oauth_token_path"] = p
+        # Keep only the filename in config (for backward compat), but value is ignored on read
+        self.data.setdefault("google", {})["oauth_token_path"] = OAUTH_TOKEN_FILENAME

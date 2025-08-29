@@ -33,8 +33,18 @@ python -m venv .venv
 - 下載 JSON 憑證檔，存成 `credentials.json` 放在專案根目錄（或你指定的位置）。
 - 到你的目標 Google 試算表，將該試算表分享給 Service Account 的 email（例如 `my-bot@project.iam.gserviceaccount.com`），給「可編輯」權限。
 
-3) 建立設定檔
-- 複製 `config.example.json` 為 `config.json`，並填入：
+3) 建立設定與目錄結構（為單檔打包準備）
+- 設定檔固定路徑：`./setting/config.json`
+- OAuth 與 token 固定資料夾：`./client`
+- 建議建立以下結構：
+
+```
+./setting/config.json
+./client/client.json          (若使用 OAuth，檔名已固定)
+./client/token.json           (程式首次登入後自動產生/更新)
+```
+
+- `config.json` 內容需包含：
   - `google.credentials_path`：服務帳戶 JSON 路徑
   - `google.spreadsheet_id`：試算表 ID（URL 中的那串長字串）
   - `google.worksheet_name`：工作表名稱（不存在會自動建立）
@@ -92,8 +102,8 @@ python -m venv .venv
 - `app/ui.py`：PyQt 介面（分頁：產生、掃描、設定）
 - `app/qr_tools.py`：QR 產生與資料處理
 - `app/google_sheets.py`：Google Sheet 讀寫
-- `app/config.py`：設定檔讀寫
-- `config.example.json`：設定檔範本
+- `app/config.py`：設定檔讀寫（預設 `./setting/config.json`）
+- `app/paths.py`：集中管理 `./setting` 與 `./client` 路徑（支援打包）
 
 ---
 若你需要將其包成單一 EXE（免安裝 Python），可用 PyInstaller：

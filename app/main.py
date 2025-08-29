@@ -21,7 +21,8 @@ except Exception:  # ImportError when no package context
 def main() -> int:
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("QR 簽到")
-    cfg = AppConfig(Path("config.json"))
+    # Default config at ./setting/config.json (handles frozen runs)
+    cfg = AppConfig()
     setup_logging(cfg.debug)
     win = MainWindow(cfg)
     win.show()

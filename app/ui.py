@@ -980,8 +980,10 @@ class SettingsTab(QtWidgets.QWidget):
 
         # OAuth client + token paths
         self.ed_oauth_client = QtWidgets.QLineEdit(self.cfg.oauth_client_path)
+        self.ed_oauth_client.setReadOnly(True)  # hardcoded path; not editable
         btn_oauth_client = QtWidgets.QPushButton("瀏覽...")
-        btn_oauth_client.clicked.connect(lambda: self._choose_file_into(self.ed_oauth_client, "選擇 OAuth client.json"))
+        btn_oauth_client.setEnabled(False)      # disable since filename is fixed
+        btn_oauth_client.clicked.connect(lambda: None)
         h_oac = QtWidgets.QHBoxLayout(); h_oac.addWidget(self.ed_oauth_client); h_oac.addWidget(btn_oauth_client)
 
         # We manage token.json automatically; do not ask user for a path
@@ -1070,8 +1072,10 @@ class SettingsTab(QtWidgets.QWidget):
         if fn:
             self.ed_credentials.setText(fn)
 
-    def _choose_file_into(self, edit: QtWidgets.QLineEdit, title: str):
-        fn, _ = QtWidgets.QFileDialog.getOpenFileName(self, title, str(Path.cwd()))
+    def _choose_file_into(self, edit: QtWidgets.QLineEdit, title: str, start_dir: str | None = None):
+        from .paths import app_root
+        base = Path(start_dir) if start_dir else app_root()
+        fn, _ = QtWidgets.QFileDialog.getOpenFileName(self, title, str(base))
         if fn:
             edit.setText(fn)
 
@@ -1083,8 +1087,9 @@ class SettingsTab(QtWidgets.QWidget):
     def _save(self):
         self.cfg.credentials_path = self.ed_credentials.text().strip()
         self.cfg.auth_method = str(self.cb_auth.currentData() or 'service_account')
+        # OAuth client path is fixed under ./client; field is read-only
         self.cfg.oauth_client_path = self.ed_oauth_client.text().strip()
-        # keep default token path managed by app if not set
+        # token is managed under ./client; keep filename only
         if not self.cfg.oauth_token_path:
             self.cfg.oauth_token_path = 'token.json'
         # Accept URL or ID, map to ID
@@ -1172,8 +1177,13 @@ class SettingsTab(QtWidgets.QWidget):
                 QtWidgets.QMessageBox.information(self, "測試連線成功", f"成功連線至試算表（ID={sid}）。\n服務帳戶：{email or '(未知)'}")
 
     def _token_path(self) -> Path:
+        # Always points to ./client/token.json via config getter
         p = (self.cfg.oauth_token_path or 'token.json').strip()
         return Path(p)
+
+    def _client_dir(self) -> Path:
+        from .paths import client_dir
+        return client_dir()
 
     def _refresh_oauth_status(self):
         is_oauth = (str(self.cb_auth.currentData() or 'service_account') == 'oauth')
