@@ -54,8 +54,15 @@ class WorkerAppendSheet(QtCore.QObject):
             self.finished.emit(self.payload)
         except Exception:
             err = traceback.format_exc()
-            log.error("[API] Append failed: %s", err)
-            self.error.emit(err)
+            # Fallback: store offline into CSV
+            try:
+                from .offline_queue import append_payload
+                append_payload(self.payload)
+                log.warning("[API] Append failed, saved offline CSV. Error: %s", err)
+                self.error.emit("OFFLINE_SAVED:" + err)
+            except Exception:
+                log.error("[API] Append failed, and offline save also failed: %s", err)
+                self.error.emit(err)
 
 
 class InteractivePreview(QtWidgets.QLabel):
@@ -804,10 +811,13 @@ class ScanTab(QtWidgets.QWidget):
         ctrl = QtWidgets.QHBoxLayout()
         self.btn_start = QtWidgets.QPushButton("啟動相機")
         self.btn_stop = QtWidgets.QPushButton("停止")
+        self.btn_flush_offline = QtWidgets.QPushButton("上傳離線資料")
         self.btn_start.clicked.connect(self.start_camera)
         self.btn_stop.clicked.connect(self.stop_camera)
+        self.btn_flush_offline.clicked.connect(self._flush_offline)
         ctrl.addWidget(self.btn_start)
         ctrl.addWidget(self.btn_stop)
+        ctrl.addWidget(self.btn_flush_offline)
         ctrl.addStretch(1)
         layout.addLayout(ctrl)
 
@@ -930,8 +940,11 @@ class ScanTab(QtWidgets.QWidget):
         self._failsafe_timer.start(10000)  # 10s
 
     def _on_error(self, msg: str):
-        self._log("[API] 失敗：" + msg)
-        QtWidgets.QMessageBox.warning(self, "寫入 Google 失敗", msg)
+        if str(msg).startswith("OFFLINE_SAVED:"):
+            self._log("[API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。")
+        else:
+            self._log("[API] 失敗：" + msg)
+            QtWidgets.QMessageBox.warning(self, "寫入 Google 失敗", msg)
         self._on_done()
 
     def _on_done(self):
@@ -946,6 +959,12 @@ class ScanTab(QtWidgets.QWidget):
         # mark API slot available and process next
         self._api_processing = False
         self._start_next_job()
+
+    def _log(self, text: str):
+        from datetime import datetime
+        ts = datetime.now().strftime("%H:%M:%S")
+        self.log.info(text)
+        self.log_view.append(f"[{ts}] {text}")
 
     def _on_api_success(self, payload: dict):
         self._log(f"[API] 成功寫入：id={payload.get('id','')}, name={payload.get('name','')}")
@@ -1018,16 +1037,78 @@ class ScanTab(QtWidgets.QWidget):
         finally:
             super().resizeEvent(event)
 
-    def _log(self, text: str):
-        from datetime import datetime
-        ts = datetime.now().strftime("%H:%M:%S")
-        self.log.info(text)
-        self.log_view.append(f"[{ts}] {text}")
+    def _flush_offline(self):
+        # Start background flush of offline CSV to cloud
+        self.btn_flush_offline.setEnabled(False)
+        self._log("開始上傳離線資料...")
+        thread = QtCore.QThread()
+        worker = WorkerFlushOffline(self.cfg)
+        worker.moveToThread(thread)
+        thread.started.connect(worker.run)
+        worker.finished.connect(lambda ok, total: self._on_flush_done(ok, total))
+        worker.finished.connect(thread.quit)
+        worker.finished.connect(worker.deleteLater)
+        worker.error.connect(lambda e: self._on_flush_error(e))
+        thread.finished.connect(thread.deleteLater)
+        thread.start()
 
-    def _job_timeout(self):
-        self._log("[API] 寫入逾時，跳過此筆並繼續下一筆（10s）")
-        self._api_processing = False
-        self._start_next_job()
+    def _on_flush_done(self, ok: int, total: int):
+        self.btn_flush_offline.setEnabled(True)
+        if total == 0:
+            self._log("沒有離線資料可上傳。")
+            QtWidgets.QMessageBox.information(self, "離線資料", "目前沒有離線資料。")
+        else:
+            self._log(f"離線資料上傳完成：成功 {ok}/{total}")
+            QtWidgets.QMessageBox.information(self, "離線資料", f"上傳完成：成功 {ok}/{total}")
+
+    def _on_flush_error(self, e: str):
+        self.btn_flush_offline.setEnabled(True)
+        self._log(f"離線上傳失敗：{e}")
+        QtWidgets.QMessageBox.warning(self, "離線資料", f"上傳失敗：{e}")
+
+
+class WorkerFlushOffline(QtCore.QObject):
+    finished = QtCore.pyqtSignal(int, int)  # (ok, total)
+    error = QtCore.pyqtSignal(str)
+
+    def __init__(self, cfg: AppConfig):
+        super().__init__()
+        self.cfg = cfg
+
+    @QtCore.pyqtSlot()
+    def run(self):
+        from .offline_queue import read_payloads, write_payloads
+        log = setup_logging(self.cfg.debug)
+        try:
+            items = read_payloads()
+            total = len(items)
+            if not total:
+                self.finished.emit(0, 0)
+                return
+            client = GoogleSheetsClient(
+                self.cfg.credentials_path,
+                self.cfg.spreadsheet_id,
+                self.cfg.worksheet_name,
+                auth_method=self.cfg.auth_method,
+                oauth_client_path=self.cfg.oauth_client_path,
+                oauth_token_path=self.cfg.oauth_token_path,
+            )
+            client.connect()
+            remain = []
+            ok = 0
+            for p in items:
+                try:
+                    client.append_signin(p)
+                    ok += 1
+                except Exception:
+                    remain.append(p)
+            write_payloads(remain)
+            self.finished.emit(ok, total)
+        except Exception as e:
+            log = setup_logging(True)
+            log.error("Flush offline failed: %s", e)
+            self.error.emit(str(e))
+
 
 
 class SettingsTab(QtWidgets.QWidget):
@@ -1045,7 +1126,7 @@ class SettingsTab(QtWidgets.QWidget):
         self.cb_auth = QtWidgets.QComboBox()
         self.cb_auth.addItem("服務帳戶 JSON", userData="service_account")
         self.cb_auth.addItem("OAuth 使用者登入", userData="oauth")
-        cur_method = (self.cfg.auth_method or 'service_account').lower()
+        cur_method = (self.cfg.auth_method or 'oauth').lower()
         idx = max(0, self.cb_auth.findData(cur_method))
         self.cb_auth.setCurrentIndex(idx)
 

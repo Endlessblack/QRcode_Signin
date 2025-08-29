@@ -34,6 +34,7 @@ def config_file() -> Path:
 # Fixed filenames for OAuth client & token
 OAUTH_CLIENT_FILENAME = "client.json"
 OAUTH_TOKEN_FILENAME = "token.json"
+OFFLINE_QUEUE_FILENAME = "offline_queue.csv"
 
 
 def oauth_client_file() -> Path:
@@ -76,3 +77,7 @@ def _bundled_client_json_path() -> Path | None:
         return None
     p = base / "client" / OAUTH_CLIENT_FILENAME
     return p if p.exists() else None
+
+
+def offline_queue_file() -> Path:
+    return config_dir() / OFFLINE_QUEUE_FILENAME

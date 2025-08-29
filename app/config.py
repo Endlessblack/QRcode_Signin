@@ -9,7 +9,7 @@ from .paths import config_file, ensure_dirs, oauth_client_file, oauth_token_file
 DEFAULTS: Dict[str, Any] = {
     "google": {
         "credentials_path": "credentials.json",
-        "auth_method": "service_account",  # or 'oauth'
+        "auth_method": "oauth",  # default 'oauth' (or 'service_account')
         "oauth_client_path": "",           # fixed to ./client/client.json for OAuth
         "oauth_token_path": "token.json",  # where to store authorized user token
         "spreadsheet_id": "",
