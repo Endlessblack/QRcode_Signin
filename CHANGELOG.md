@@ -8,3 +8,4 @@
 - Modern UI with tabs: 產生 QR Code / 建立範本 / 掃描簽到 / 設定
 - Settings include spreadsheet URL parsing, camera source selection, and debug logging
 - Visible logs and error dialogs; writes to `logs/app.log`
+- Docs: Clarified where to place `client.json` for source runs and packaged EXE.

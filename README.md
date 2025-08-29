@@ -27,11 +27,19 @@ python -m venv .venv
 .\.venv\Scripts\pip install -r requirements.txt
 ```
 
-2) 建立 Google Service Account（服務帳戶）
-- 到 Google Cloud Console 建立專案並啟用 Google Sheets API、Google Drive API。
-- 建立 Service Account，並建立金鑰（JSON）。
-- 下載 JSON 憑證檔，存成 `credentials.json` 放在專案根目錄（或你指定的位置）。
-- 到你的目標 Google 試算表，將該試算表分享給 Service Account 的 email（例如 `my-bot@project.iam.gserviceaccount.com`），給「可編輯」權限。
+2) 選擇認證方式（兩種擇一）
+
+方式 A：OAuth（建議，一般使用者最直覺）
+- 在 Google Cloud Console 建立 OAuth 用戶端（桌面應用程式）。
+- 下載 OAuth 用戶端 JSON，重新命名為 `client.json`。
+- 將 `client.json` 放在 `./client/client.json`（路徑與檔名固定）。
+- 首次登入會跳出瀏覽器授權並在 `./client/token.json` 生成授權 Token。
+
+方式 B：Service Account（進階，自動化/伺服器情境）
+- 啟用 Google Sheets API、Google Drive API，建立 Service Account 與金鑰（JSON）。
+- 下載 JSON 憑證檔，放在你電腦任意位置（例如 `C:/secure/credentials.json`）。
+- 到目標 Google 試算表，將該試算表分享給 Service Account 的 email（例如 `my-bot@project.iam.gserviceaccount.com`），給「可編輯」。
+- 在設定檔 `./setting/config.json` 設定 `google.auth_method` 為 `service_account`，並指定 `google.credentials_path`。
 
 3) 建立設定與目錄結構（為單檔打包準備）
 - 設定檔固定路徑：`./setting/config.json`
@@ -49,6 +57,12 @@ python -m venv .venv
   - `google.spreadsheet_id`：試算表 ID（URL 中的那串長字串）
   - `google.worksheet_name`：工作表名稱（不存在會自動建立）
   - `event.name`：活動名稱（會寫入簽到紀錄）
+  - `google.auth_method`：`oauth` 或 `service_account`（預設 `oauth`）
+
+重要：`client.json` 應放在何處？
+- 原始碼執行（python -m）：將 `client.json` 放在專案根目錄下的 `./client/client.json`。
+- 打包後 EXE：將 `client.json` 放在 EXE 同層的 `./client/client.json`。
+- 本專案之打包設定會將 `client/client.json` 內嵌入 EXE，程式啟動時會自動複製到上述位置；若要換成自己的 `client.json`，直接覆蓋該檔案即可。
 
 4) 執行程式
 
@@ -91,6 +105,10 @@ python -m venv .venv
   - 檢查 `credentials.json` 路徑與檔案內容
   - 試算表是否分享給服務帳戶 email
   - `spreadsheet_id` 是否正確
+- `client.json` 放哪裡？
+  - 原始碼：`./client/client.json`
+  - 打包 EXE：`<EXE 所在資料夾>/client/client.json`
+  - 換成自己的 OAuth 憑證：直接覆蓋該檔案即可（`token.json` 會在下次授權時更新）。
 - 相機打不開：
   - 在設定頁調整相機索引（0,1,2...）
   - 檢查其他軟體是否佔用相機
@@ -127,4 +145,5 @@ python -m venv .venv
 
 注意：
 - 仍需在 EXE 同層準備 `./setting/config.json`
+- `client.json` 最終要位於 EXE 同層的 `./client/client.json`（可由內嵌機制自動複製或手動放置）
 - `token.json` 會在首次 OAuth 登入後自動建立於 `./client/token.json`
