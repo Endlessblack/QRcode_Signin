@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+import shutil
 
 
 def app_root() -> Path:
@@ -53,3 +54,25 @@ def ensure_dirs() -> None:
         client_dir().mkdir(parents=True, exist_ok=True)
     except Exception:
         pass
+    # If running from a bundled EXE and the packaged client.json exists,
+    # ensure it's available at ./client/client.json for the app to use.
+    try:
+        src = _bundled_client_json_path()
+        dst = oauth_client_file()
+        if src and src.exists() and not dst.exists():
+            shutil.copyfile(src, dst)
+    except Exception:
+        pass
+
+
+def _bundled_client_json_path() -> Path | None:
+    """Return the path to client.json inside a PyInstaller bundle (if present).
+
+    When bundling, include it via: --add-data "client/client.json;client"
+    so it ends up at <_MEIPASS>/client/client.json during runtime.
+    """
+    base = Path(getattr(sys, "_MEIPASS", "")) if getattr(sys, "frozen", False) else None
+    if not base:
+        return None
+    p = base / "client" / OAUTH_CLIENT_FILENAME
+    return p if p.exists() else None

@@ -114,3 +114,17 @@ python -m venv .venv
 ```
 
 打包完成的執行檔位於 `dist/QRcode_Signin.exe`。
+
+### 打包（包含內嵌 OAuth client.json）
+
+若要把 `client/client.json` 一起內嵌進 EXE（程式會在啟動時自動複製到執行檔同層的 `./client/client.json`）：
+
+```bash
+.\\.venv\\Scripts\\pyinstaller -F -w -n QRcode_Signin ^
+  --add-data "client\\client.json;client" ^
+  app\\main.py
+```
+
+注意：
+- 仍需在 EXE 同層準備 `./setting/config.json`
+- `token.json` 會在首次 OAuth 登入後自動建立於 `./client/token.json`
