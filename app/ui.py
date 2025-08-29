@@ -784,6 +784,9 @@ class ScanTab(QtWidgets.QWidget):
         self._cooldown = False  # short debounce to avoid duplicate frames
         self._failsafe_timer: Optional[QtCore.QTimer] = None
         self._jobs: list[tuple[QtCore.QThread, WorkerAppendSheet]] = []
+        self._toast: Optional[QtWidgets.QWidget] = None
+        self._toast_anim: Optional[QtCore.QPropertyAnimation] = None
+        self._last_detect_ms: int = 0  # throttle QR decode (>=200ms)
         self._build()
         self.log = setup_logging(self.cfg.debug)
 
@@ -834,7 +837,8 @@ class ScanTab(QtWidgets.QWidget):
             QtWidgets.QMessageBox.critical(self, "相機無法開啟", msg)
             return
         self._log(f"相機已啟動（索引 {idx}）")
-        self.timer.start(30)
+        # Keep preview responsive; detection will be throttled separately
+        self.timer.start(33)
 
     def stop_camera(self):
         self.timer.stop()
@@ -857,9 +861,15 @@ class ScanTab(QtWidgets.QWidget):
         pix = QtGui.QPixmap.fromImage(img).scaled(self.preview.width(), self.preview.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
         self.preview.setPixmap(pix)
 
-        # Detect QR with short cooldown debounce
+        # Detect QR with:
+        # - short cooldown (on success)
+        # - throttle: at least 200ms interval between decode attempts
         if self._cooldown:
             return
+        now_ms = int(QtCore.QDateTime.currentMSecsSinceEpoch())
+        if now_ms - self._last_detect_ms < 200:
+            return
+        self._last_detect_ms = now_ms
         data, points, _ = self.detector.detectAndDecode(frame)
         if data:
             # start short cooldown (does not block API queue)
@@ -939,6 +949,74 @@ class ScanTab(QtWidgets.QWidget):
 
     def _on_api_success(self, payload: dict):
         self._log(f"[API] 成功寫入：id={payload.get('id','')}, name={payload.get('name','')}")
+        self._show_success_toast()
+
+    def _show_success_toast(self):
+        # Create toast lazily and reuse to avoid overlap
+        if self._toast is None:
+            w = QtWidgets.QFrame(self)
+            w.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
+            w.setStyleSheet(
+                "QFrame { background-color: rgba(0,0,0,180); border-radius: 12px; }"
+            )
+            lay = QtWidgets.QHBoxLayout(w)
+            lay.setContentsMargins(16, 10, 16, 10)
+            lay.setSpacing(8)
+            # Check icon (Unicode) styled as label
+            ico = QtWidgets.QLabel("✔")
+            f = ico.font(); f.setPointSize(16); f.setBold(True); ico.setFont(f)
+            ico.setStyleSheet("color: #D2B48C;")  # 土黃色
+            txt = QtWidgets.QLabel("簽到成功")
+            f2 = txt.font(); f2.setPointSize(14); f2.setBold(True); txt.setFont(f2)
+            txt.setStyleSheet("color: #D2B48C;")
+            lay.addWidget(ico)
+            lay.addWidget(txt)
+            lay.addStretch(1)
+
+            # Opacity effect
+            eff = QtWidgets.QGraphicsOpacityEffect(w)
+            w.setGraphicsEffect(eff)
+            self._toast = w
+            self._toast_anim = QtCore.QPropertyAnimation(eff, b"opacity", self)
+            self._toast_anim.setStartValue(1.0)
+            self._toast_anim.setEndValue(0.0)
+            self._toast_anim.setDuration(3000)
+            self._toast_anim.finished.connect(lambda: self._toast.hide() if self._toast else None)
+
+        # Position toast at top-center of the preview area
+        w = self._toast
+        assert w is not None
+        w.adjustSize()
+        # Place 16px below the top edge of the preview label
+        base = self.preview
+        x = base.x() + (base.width() - w.width()) // 2
+        y = base.y() + 16
+        w.move(max(0, x), max(0, y))
+        w.show()
+
+        # Restart animation (no overlap)
+        anim = self._toast_anim
+        assert anim is not None
+        # Reset to fully visible and replay fade-out
+        eff = self._toast.graphicsEffect()
+        if isinstance(eff, QtWidgets.QGraphicsOpacityEffect):
+            eff.setOpacity(1.0)
+        if anim.state() == QtCore.QAbstractAnimation.State.Running:
+            anim.stop()
+        anim.start()
+
+    def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
+        # Keep toast centered on preview when resizing
+        try:
+            if self._toast and self._toast.isVisible():
+                w = self._toast
+                w.adjustSize()
+                base = self.preview
+                x = base.x() + (base.width() - w.width()) // 2
+                y = base.y() + 16
+                w.move(max(0, x), max(0, y))
+        finally:
+            super().resizeEvent(event)
 
     def _log(self, text: str):
         from datetime import datetime
