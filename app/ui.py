@@ -853,7 +853,19 @@ class ScanTab(QtWidgets.QWidget):
                 f"請在設定頁切換相機來源或重試。"
             )
             self._log(msg)
-            QtWidgets.QMessageBox.warning(self, "相機無法開啟", msg)
+            # Provide Windows privacy guidance if applicable
+            if sys.platform == 'win32':
+                box = QtWidgets.QMessageBox(self)
+                box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                box.setWindowTitle("相機無法開啟")
+                box.setText(msg + "\n\n若是 Windows，請確認『允許桌面應用程式存取相機』已開啟。")
+                btn_open = box.addButton("開啟相機權限設定", QtWidgets.QMessageBox.ButtonRole.AcceptRole)
+                box.addButton("關閉", QtWidgets.QMessageBox.ButtonRole.RejectRole)
+                box.exec()
+                if box.clickedButton() == btn_open:
+                    self._open_privacy_settings_windows()
+            else:
+                QtWidgets.QMessageBox.warning(self, "相機無法開啟", msg)
             return
         w = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         h = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -1455,22 +1467,89 @@ class SettingsTab(QtWidgets.QWidget):
         except Exception:
             return None
 
+    def _open_privacy_settings_windows(self):
+        try:
+            # Open Windows 10/11 Camera privacy settings
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl("ms-settings:privacy-webcam"))
+        except Exception:
+            pass
+
+    def _maybe_warn_camera_privacy(self, names: list[str] | None, found: list[tuple[int, str]]):
+        # Heuristic: if on Windows and no usable cameras found (or only OBS),
+        # suggest enabling privacy permission for desktop apps.
+        try:
+            if sys.platform != "win32":
+                return
+            if found:
+                # If only OBS virtual camera appears, still nudge the user
+                all_names = [n.lower() for _, n in found]
+                if not all_names:
+                    return
+                only_obs = all(n.find("obs") != -1 for n in all_names)
+                if not only_obs:
+                    return
+            else:
+                # no cameras at all
+                pass
+
+            msg = (
+                "找不到可用的實體相機，可能是 Windows 相機權限關閉所致。\n\n"
+                "請到『隱私權與安全性 → 相機』，將『允許桌面應用程式存取相機』設為開啟，\n"
+                "並確認本應用程式（Python/Qt/OpenCV）在清單中為『允許』。\n\n"
+                "變更設定後可點『刷新』重新檢查。"
+            )
+            box = QtWidgets.QMessageBox(self)
+            box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+            box.setWindowTitle("相機權限可能被停用")
+            box.setText(msg)
+            btn_open = box.addButton("開啟相機權限設定", QtWidgets.QMessageBox.ButtonRole.AcceptRole)
+            box.addButton("稍後再說", QtWidgets.QMessageBox.ButtonRole.RejectRole)
+            box.exec()
+            if box.clickedButton() == btn_open:
+                self._open_privacy_settings_windows()
+        except Exception:
+            # do not block enumeration on UI errors
+            pass
+
     def _populate_cameras(self):
         sel_idx = int(self.cfg.camera_index)
         names = self._get_camera_names()
         found: list[tuple[int, str]] = []
+
+        def _opened(i: int) -> bool:
+            cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+            ok = bool(cap and cap.isOpened())
+            if ok:
+                cap.release()
+                return True
+            # Try MSMF as a fallback — some built-in cameras are MF-only
+            cap = cv2.VideoCapture(i, getattr(cv2, 'CAP_MSMF', 1400))
+            ok = bool(cap and cap.isOpened())
+            if ok:
+                cap.release()
+                return True
+            if cap:
+                cap.release()
+            return False
+
         if names:
             for i, name in enumerate(names):
-                cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-                if cap is not None and cap.isOpened():
-                    found.append((i, name))
-                    cap.release()
+                try:
+                    if _opened(i):
+                        found.append((i, name))
+                except Exception:
+                    pass
         else:
             for i in range(10):
-                cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-                if cap is not None and cap.isOpened():
-                    found.append((i, f"Camera {i}"))
-                    cap.release()
+                try:
+                    if _opened(i):
+                        found.append((i, f"Camera {i}"))
+                except Exception:
+                    pass
+
+        # Warn about privacy if applicable
+        self._maybe_warn_camera_privacy(names, found)
+
         self.cb_camera.clear()
         if found:
             idx_list = []
