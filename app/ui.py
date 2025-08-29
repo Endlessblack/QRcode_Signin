@@ -29,6 +29,7 @@ from .qr_tools import (
 class WorkerAppendSheet(QtCore.QObject):
     finished = QtCore.pyqtSignal(dict)
     error = QtCore.pyqtSignal(str)
+    offline_saved = QtCore.pyqtSignal(dict)
 
     def __init__(self, cfg: AppConfig, payload: dict):
         super().__init__()
@@ -59,6 +60,8 @@ class WorkerAppendSheet(QtCore.QObject):
                 from .offline_queue import append_payload
                 append_payload(self.payload)
                 log.warning("[API] Append failed, saved offline CSV. Error: %s", err)
+                # Emit offline-saved success for UI to show success toast
+                self.offline_saved.emit(self.payload)
                 self.error.emit("OFFLINE_SAVED:" + err)
             except Exception:
                 log.error("[API] Append failed, and offline save also failed: %s", err)
@@ -791,6 +794,7 @@ class ScanTab(QtWidgets.QWidget):
         self._cooldown = False  # short debounce to avoid duplicate frames
         self._failsafe_timer: Optional[QtCore.QTimer] = None
         self._jobs: list[tuple[QtCore.QThread, WorkerAppendSheet]] = []
+        self._flush_jobs: list[tuple[QtCore.QThread, 'WorkerFlushOffline']] = []
         self._toast: Optional[QtWidgets.QWidget] = None
         self._toast_anim: Optional[QtCore.QPropertyAnimation] = None
         self._last_detect_ms: int = 0  # throttle QR decode (>=200ms)
@@ -838,15 +842,22 @@ class ScanTab(QtWidgets.QWidget):
         if self.cap is not None:
             return
         idx = int(self.cfg.camera_index)
-        self.cap = cv2.VideoCapture(idx, cv2.CAP_DSHOW)
-        if not self.cap.isOpened():
-            self.cap.release()
+        self.cap = self._open_camera(idx)
+        if self.cap is None or not self.cap.isOpened():
+            if self.cap is not None:
+                self.cap.release()
             self.cap = None
-            msg = f"相機無法開啟，索引：{idx}"
+            msg = (
+                f"相機無法開啟或畫面無效（索引 {idx}）。\n"
+                f"提示：有些設備在索引0為IR/深度鏡頭，索引1才是彩色鏡頭。\n"
+                f"請在設定頁切換相機來源或重試。"
+            )
             self._log(msg)
-            QtWidgets.QMessageBox.critical(self, "相機無法開啟", msg)
+            QtWidgets.QMessageBox.warning(self, "相機無法開啟", msg)
             return
-        self._log(f"相機已啟動（索引 {idx}）")
+        w = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        h = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self._log(f"相機已啟動（索引 {idx}），解析度：{w}x{h}")
         # Keep preview responsive; detection will be throttled separately
         self.timer.start(33)
 
@@ -857,6 +868,64 @@ class ScanTab(QtWidgets.QWidget):
             self.cap = None
         self.preview.clear()
         self._log("相機已停止")
+
+    def _open_camera(self, index: int) -> Optional[cv2.VideoCapture]:
+        # Try multiple backends, pixel formats, and resolutions. Validate frames.
+        def _try_backend(backend: int) -> Optional[cv2.VideoCapture]:
+            cap = cv2.VideoCapture(index, backend)
+            if not cap or not cap.isOpened():
+                try:
+                    if cap:
+                        cap.release()
+                finally:
+                    return None
+            try:
+                cap.set(cv2.CAP_PROP_CONVERT_RGB, 1)
+                cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+            except Exception:
+                pass
+
+            # Test combos
+            fourccs = [
+                ('MJPG', cv2.VideoWriter_fourcc(*'MJPG')),
+                ('YUY2', cv2.VideoWriter_fourcc(*'YUY2')),
+                ('', 0),
+            ]
+            resolutions = [(1280, 720), (1920, 1080), (640, 480)]
+
+            for _name, code in fourccs:
+                try:
+                    if code:
+                        cap.set(cv2.CAP_PROP_FOURCC, code)
+                except Exception:
+                    pass
+                for w, h in resolutions:
+                    try:
+                        cap.set(cv2.CAP_PROP_FRAME_WIDTH, w)
+                        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
+                    except Exception:
+                        pass
+                    # Warm up and validate
+                    valid = False
+                    for _ in range(10):
+                        ok, frame = cap.read()
+                        if not ok or frame is None:
+                            QtCore.QThread.msleep(15)
+                            continue
+                        fh, fw = frame.shape[:2]
+                        if fh >= 240 and fw >= 320:
+                            valid = True
+                            break
+                    if valid:
+                        return cap
+            cap.release()
+            return None
+
+        for backend in [getattr(cv2, 'CAP_DSHOW', 700), getattr(cv2, 'CAP_MSMF', 1400), getattr(cv2, 'CAP_ANY', 0)]:
+            cap = _try_backend(backend)
+            if cap is not None:
+                return cap
+        return None
 
     def _next_frame(self):
         if self.cap is None:
@@ -920,6 +989,8 @@ class ScanTab(QtWidgets.QWidget):
         worker.finished.connect(thread.quit)
         worker.finished.connect(worker.deleteLater)
         worker.error.connect(self._on_error)
+        # When offline CSV saved successfully, treat as a 'success' for UX
+        worker.offline_saved.connect(lambda _p=payload: self._on_offline_saved_success(_p))
         worker.finished.connect(lambda _p=payload: self._on_api_success(_p))
         thread.finished.connect(self._on_done)
         # Keep strong refs until finished
@@ -966,8 +1037,19 @@ class ScanTab(QtWidgets.QWidget):
         self.log.info(text)
         self.log_view.append(f"[{ts}] {text}")
 
+    def _job_timeout(self):
+        # Failsafe triggered when a single append job hangs too long
+        self._log("[API] 寫入逾時，跳過此筆並繼續下一筆（10s）")
+        self._api_processing = False
+        self._start_next_job()
+
     def _on_api_success(self, payload: dict):
         self._log(f"[API] 成功寫入：id={payload.get('id','')}, name={payload.get('name','')}")
+        self._show_success_toast()
+
+    def _on_offline_saved_success(self, payload: dict):
+        # Mirror API success UX when offline CSV is saved successfully
+        self._log(f"[OFFLINE] 已暫存本機 CSV：id={payload.get('id','')}, name={payload.get('name','')}")
         self._show_success_toast()
 
     def _show_success_toast(self):
@@ -1050,6 +1132,9 @@ class ScanTab(QtWidgets.QWidget):
         worker.finished.connect(worker.deleteLater)
         worker.error.connect(lambda e: self._on_flush_error(e))
         thread.finished.connect(thread.deleteLater)
+        # Keep strong reference until finished to avoid QThread destroyed warning
+        self._flush_jobs.append((thread, worker))
+        thread.finished.connect(lambda: self._flush_jobs.remove((thread, worker)) if (thread, worker) in self._flush_jobs else None)
         thread.start()
 
     def _on_flush_done(self, ok: int, total: int):

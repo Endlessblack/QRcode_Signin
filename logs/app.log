@@ -366,3 +366,1250 @@ PermissionError
 2025-08-29 13:37:34,791 [DEBUG] app: Logging initialized. Debug=True
 2025-08-29 13:42:41,714 [INFO] app: 相機已啟動（索引 0）
 2025-08-29 13:43:52,593 [INFO] app: 相機已停止
+2025-08-29 13:45:24,837 [INFO] app: 相機已停止
+2025-08-29 13:45:34,183 [INFO] app: 相機已啟動（索引 1）
+2025-08-29 13:45:49,230 [INFO] app: 相機已停止
+2025-08-29 13:45:58,088 [INFO] app: 相機已啟動（索引 0）
+2025-08-29 13:46:03,610 [INFO] app: 相機已停止
+2025-08-29 13:46:04,753 [INFO] app: 相機已啟動（索引 0）
+2025-08-29 13:46:10,237 [INFO] app: 相機已停止
+2025-08-29 13:46:22,715 [INFO] app: 相機已啟動（索引 1）
+2025-08-29 13:46:30,234 [INFO] app: 相機已停止
+2025-08-29 13:46:36,854 [INFO] app: 相機已啟動（索引 0）
+2025-08-29 13:46:46,790 [INFO] app: 相機已停止
+2025-08-29 13:46:56,581 [INFO] app: 相機已啟動（索引 1）
+2025-08-29 13:47:03,653 [INFO] app: 相機已停止
+2025-08-29 13:47:18,786 [INFO] app: 相機已啟動（索引 0）
+2025-08-29 13:48:39,862 [INFO] app: 相機已停止
+2025-08-29 13:48:54,645 [INFO] app: 相機已啟動（索引 1）
+2025-08-29 13:50:18,944 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 13:50:36,166 [INFO] app: 相機已啟動（索引 0）
+2025-08-29 13:50:49,258 [INFO] app: 偵測到 QR：{'id': '000002', 'name': 'Olivia', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Luxe Locks Studio', 'Licence': 
+2025-08-29 13:50:49,259 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 13:50:49,260 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 13:50:49,261 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 13:52:07,954 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 13:52:32,605 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 13:52:39,350 [INFO] app: 相機已停止
+2025-08-29 13:52:42,553 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 13:53:01,968 [INFO] app: 偵測到 QR：{'id': '000002', 'name': 'Olivia', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Luxe Locks Studio', 'Licence': 
+2025-08-29 13:53:01,969 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 13:53:01,970 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 13:53:01,972 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 13:53:38,591 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 13:53:46,650 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 13:53:57,584 [INFO] app: 相機已停止
+2025-08-29 13:53:58,550 [INFO] app: 開始上傳離線資料...
+2025-08-29 13:54:09,988 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 13:54:18,345 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 13:54:26,986 [INFO] app: 相機已停止
+2025-08-29 13:54:35,545 [INFO] app: 相機已啟動（索引 1），解析度：1280x720
+2025-08-29 13:54:55,749 [INFO] app: 相機已停止
+2025-08-29 13:54:58,194 [INFO] app: 相機已啟動（索引 1），解析度：1280x720
+2025-08-29 13:55:12,688 [INFO] app: 相機已停止
+2025-08-29 13:55:15,474 [INFO] app: 相機已啟動（索引 1），解析度：1280x720
+2025-08-29 13:55:31,230 [INFO] app: 相機已停止
+2025-08-29 13:55:32,032 [INFO] app: 相機已停止
+2025-08-29 13:55:34,437 [INFO] app: 相機已啟動（索引 1），解析度：1280x720
+2025-08-29 13:55:50,284 [INFO] app: 相機已停止
+2025-08-29 13:56:00,460 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 13:56:23,072 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 13:56:35,045 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 13:56:40,423 [INFO] app: 相機已停止
+2025-08-29 13:56:52,037 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 13:57:03,170 [INFO] app: 相機已停止
+2025-08-29 13:57:07,382 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 13:57:16,450 [INFO] app: 相機已停止
+2025-08-29 13:57:52,017 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 13:59:59,266 [INFO] app: 開始上傳離線資料...
+2025-08-29 14:02:03,976 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 14:02:13,319 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:02:32,709 [INFO] app: 相機已停止
+2025-08-29 14:02:34,898 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:02:39,356 [INFO] app: 相機已停止
+2025-08-29 14:02:48,343 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:02:57,120 [INFO] app: 相機已停止
+2025-08-29 14:02:59,756 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:03:11,157 [INFO] app: 偵測到 QR：{'id': '000002', 'name': 'Olivia', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Luxe Locks Studio', 'Licence': 
+2025-08-29 14:03:11,159 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:03:11,163 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:03:11,168 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:03:15,619 [INFO] app: [API] Append success for id=000002 name=Olivia
+2025-08-29 14:03:15,628 [INFO] app: [API] 成功寫入：id=000002, name=Olivia
+2025-08-29 14:03:21,508 [INFO] app: 偵測到 QR：{'id': '000002', 'name': 'Olivia', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Luxe Locks Studio', 'Licence': 
+2025-08-29 14:03:21,510 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:03:21,512 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:03:21,517 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:03:24,349 [INFO] app: [API] Append success for id=000002 name=Olivia
+2025-08-29 14:03:24,350 [INFO] app: [API] 成功寫入：id=000002, name=Olivia
+2025-08-29 14:03:33,171 [INFO] app: 偵測到 QR：{'id': '000004', 'name': 'Harper', 'event': '活動', 'extra': {'SELLER': 'Doge', 'SALON': 'Velvet Tresses Salon', 'Licence'
+2025-08-29 14:03:33,172 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:03:33,174 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:03:33,178 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:03:36,047 [INFO] app: [API] Append success for id=000004 name=Harper
+2025-08-29 14:03:36,057 [INFO] app: [API] 成功寫入：id=000004, name=Harper
+2025-08-29 14:03:38,745 [INFO] app: 偵測到 QR：{'id': '000005', 'name': 'Lucas', 'event': '活動', 'extra': {'SELLER': 'Doge', 'SALON': 'Velvet Tresses Salon', 'Licence':
+2025-08-29 14:03:38,748 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:03:38,751 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:03:38,759 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:03:41,285 [INFO] app: [API] Append success for id=000005 name=Lucas
+2025-08-29 14:03:41,294 [INFO] app: [API] 成功寫入：id=000005, name=Lucas
+2025-08-29 14:03:43,846 [INFO] app: 偵測到 QR：{'id': '000005', 'name': 'Lucas', 'event': '活動', 'extra': {'SELLER': 'Doge', 'SALON': 'Velvet Tresses Salon', 'Licence':
+2025-08-29 14:03:43,848 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:03:43,848 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:03:43,852 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:03:46,098 [INFO] app: [API] Append success for id=000005 name=Lucas
+2025-08-29 14:03:46,118 [INFO] app: [API] 成功寫入：id=000005, name=Lucas
+2025-08-29 14:03:49,393 [INFO] app: 偵測到 QR：{'id': '000005', 'name': 'Lucas', 'event': '活動', 'extra': {'SELLER': 'Doge', 'SALON': 'Velvet Tresses Salon', 'Licence':
+2025-08-29 14:03:49,395 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:03:49,397 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:03:49,399 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:03:51,735 [INFO] app: [API] Append success for id=000005 name=Lucas
+2025-08-29 14:03:51,766 [INFO] app: [API] 成功寫入：id=000005, name=Lucas
+2025-08-29 14:03:54,684 [INFO] app: 偵測到 QR：{'id': '000006', 'name': 'Amelia', 'event': '活動', 'extra': {'SELLER': 'Doge', 'SALON': 'Velvet Tresses Salon', 'Licence'
+2025-08-29 14:03:54,688 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:03:54,691 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:03:54,696 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:03:58,818 [INFO] app: [API] Append success for id=000006 name=Amelia
+2025-08-29 14:03:58,836 [INFO] app: [API] 成功寫入：id=000006, name=Amelia
+2025-08-29 14:04:00,734 [INFO] app: 偵測到 QR：{'id': '000006', 'name': 'Amelia', 'event': '活動', 'extra': {'SELLER': 'Doge', 'SALON': 'Velvet Tresses Salon', 'Licence'
+2025-08-29 14:04:00,736 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:04:00,738 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:04:00,741 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:04:01,610 [INFO] app: 偵測到 QR：{'id': '000006', 'name': 'Amelia', 'event': '活動', 'extra': {'SELLER': 'Doge', 'SALON': 'Velvet Tresses Salon', 'Licence'
+2025-08-29 14:04:01,611 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:04:03,126 [INFO] app: [API] Append success for id=000006 name=Amelia
+2025-08-29 14:04:03,174 [INFO] app: [API] 成功寫入：id=000006, name=Amelia
+2025-08-29 14:04:03,184 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:04:03,187 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:04:05,080 [INFO] app: [API] Append success for id=000006 name=Amelia
+2025-08-29 14:04:05,083 [INFO] app: [API] 成功寫入：id=000006, name=Amelia
+2025-08-29 14:04:13,254 [INFO] app: 偵測到 QR：{'id': '000007', 'name': 'James', 'event': '活動', 'extra': {'SELLER': 'Doge', 'SALON': 'Velvet Tresses Salon', 'Licence':
+2025-08-29 14:04:13,256 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:04:13,257 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:04:13,261 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:04:15,704 [INFO] app: [API] Append success for id=000007 name=James
+2025-08-29 14:04:15,727 [INFO] app: [API] 成功寫入：id=000007, name=James
+2025-08-29 14:04:19,144 [INFO] app: 偵測到 QR：{'id': '000008', 'name': 'Chloe', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Glow & Flow Hair Lounge', 'Licen
+2025-08-29 14:04:19,145 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:04:19,146 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:04:19,148 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:04:21,410 [INFO] app: [API] Append success for id=000008 name=Chloe
+2025-08-29 14:04:21,416 [INFO] app: [API] 成功寫入：id=000008, name=Chloe
+2025-08-29 14:04:25,404 [INFO] app: 偵測到 QR：{'id': '000009', 'name': 'Daniel', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Glow & Flow Hair Lounge', 'Lice
+2025-08-29 14:04:25,407 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:04:25,409 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:04:25,414 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:04:28,490 [INFO] app: [API] Append success for id=000009 name=Daniel
+2025-08-29 14:04:28,507 [INFO] app: [API] 成功寫入：id=000009, name=Daniel
+2025-08-29 14:04:35,518 [INFO] app: 偵測到 QR：{'id': '000011', 'name': 'Sophia', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Glow & Flow Hair Lounge', 'Lice
+2025-08-29 14:04:35,521 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:04:35,523 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:04:35,529 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:04:38,350 [INFO] app: [API] Append success for id=000011 name=Sophia
+2025-08-29 14:04:38,352 [INFO] app: [API] 成功寫入：id=000011, name=Sophia
+2025-08-29 14:05:45,011 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 14:06:03,824 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:07:04,007 [INFO] app: 相機已停止
+2025-08-29 14:07:06,627 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:07:27,372 [INFO] app: 相機已停止
+2025-08-29 14:07:36,659 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:07:43,346 [INFO] app: 偵測到 QR：{'id': '000011', 'name': 'Sophia', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Glow & Flow Hair Lounge', 'Lice
+2025-08-29 14:07:43,350 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:07:43,353 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:07:43,356 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:07:53,319 [INFO] app: 偵測到 QR：{'id': '000011', 'name': 'Sophia', 'event': '活動', 'extra': {'SELLER': 'Chris', 'SALON': 'Glow & Flow Hair Lounge', 'Lice
+2025-08-29 14:07:53,320 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:07:53,340 [INFO] app: [API] 寫入逾時，跳過此筆並繼續下一筆（10s）
+2025-08-29 14:07:53,341 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:07:53,342 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:07:59,060 [INFO] app: 開始上傳離線資料...
+2025-08-29 14:07:59,064 [INFO] app: 沒有離線資料可上傳。
+2025-08-29 14:08:03,344 [INFO] app: [API] 寫入逾時，跳過此筆並繼續下一筆（10s）
+2025-08-29 14:11:43,782 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 14:11:55,884 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:12:07,414 [INFO] app: 相機已停止
+2025-08-29 14:12:20,296 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:13:12,308 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 14:13:43,894 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:14:04,271 [INFO] app: 相機已停止
+2025-08-29 14:14:09,792 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:15:31,068 [INFO] app: 相機已停止
+2025-08-29 14:15:40,636 [INFO] app: 相機已停止
+2025-08-29 14:15:49,660 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:16:03,096 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:16:03,097 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:16:03,098 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:16:03,100 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:16:13,090 [INFO] app: [API] 寫入逾時，跳過此筆並繼續下一筆（10s）
+2025-08-29 14:19:07,573 [DEBUG] app: Logging initialized. Debug=True
+2025-08-29 14:19:30,917 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:19:49,764 [INFO] app: 相機已停止
+2025-08-29 14:19:51,797 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:20:04,038 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:20:04,040 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:20:04,043 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:20:04,049 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:20:14,040 [INFO] app: [API] 寫入逾時，跳過此筆並繼續下一筆（10s）
+2025-08-29 14:20:29,317 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:20:29,318 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:20:29,319 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:20:29,322 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:20:30,169 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:20:30,186 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:20:35,590 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:20:35,591 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:20:35,592 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:20:35,595 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:20:36,332 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:20:36,352 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:20:37,404 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:20:37,405 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:20:37,406 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:20:37,410 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:20:38,278 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:20:38,285 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:20:41,574 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:20:41,576 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:20:41,578 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:20:41,580 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:20:42,460 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:20:42,466 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:21:20,503 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:21:20,506 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:21:50,314 [INFO] app: 開始上傳離線資料...
+2025-08-29 14:21:55,340 [INFO] app: 離線資料上傳完成：成功 5/5
+2025-08-29 14:22:14,447 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:22:14,448 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:22:14,449 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:22:14,450 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:22:15,235 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:22:15,262 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:22:16,036 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:22:16,038 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:22:16,040 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:22:16,046 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:22:17,035 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:22:17,065 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:22:17,617 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:22:17,618 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:22:17,619 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:22:17,621 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:22:18,418 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:22:18,426 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:22:30,879 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:22:30,881 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:22:30,882 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:22:30,885 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:22:31,687 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:22:31,698 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:22:32,518 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:22:32,520 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:22:32,521 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:22:32,524 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:22:33,335 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 52, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:22:33,346 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:22:41,888 [INFO] app: 開始上傳離線資料...
+2025-08-29 14:22:46,518 [INFO] app: 離線資料上傳完成：成功 5/5
+2025-08-29 14:27:28,783 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:27:39,758 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:27:39,760 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:27:39,764 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:27:39,769 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:27:42,372 [INFO] app: [API] Append success for id=000001 name=Ethan
+2025-08-29 14:27:42,373 [INFO] app: [API] 成功寫入：id=000001, name=Ethan
+2025-08-29 14:28:33,560 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:28:45,343 [INFO] app: 相機已停止
+2025-08-29 14:28:53,999 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:29:22,942 [INFO] app: 相機已停止
+2025-08-29 14:29:40,105 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:29:59,296 [INFO] app: 相機已停止
+2025-08-29 14:30:07,493 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:30:28,114 [INFO] app: 相機已停止
+2025-08-29 14:31:39,767 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:32:03,457 [INFO] app: 相機已停止
+2025-08-29 14:32:05,038 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:32:08,337 [INFO] app: 相機已停止
+2025-08-29 14:32:19,437 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-08-29 14:32:40,153 [INFO] app: 相機已停止
+2025-08-29 14:32:51,735 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-08-29 14:33:00,971 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:00,975 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:00,981 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:00,992 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:02,209 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:33:02,213 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:33:02,225 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:33:07,208 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:07,209 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:07,210 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:07,211 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:07,920 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:33:07,926 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:33:07,929 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:33:09,026 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:09,029 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:09,030 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:09,033 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:09,764 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:33:09,765 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:33:09,766 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:33:11,746 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:11,747 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:11,748 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:11,753 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:12,580 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:33:12,581 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:33:12,584 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:33:24,054 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:24,056 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:24,058 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:24,062 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:26,488 [INFO] app: [API] Append success for id=000001 name=Ethan
+2025-08-29 14:33:26,501 [INFO] app: [API] 成功寫入：id=000001, name=Ethan
+2025-08-29 14:33:33,153 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:33,155 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:33,156 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:33,159 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:34,951 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:34,953 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:35,234 [INFO] app: [API] Append success for id=000001 name=Ethan
+2025-08-29 14:33:35,241 [INFO] app: [API] 成功寫入：id=000001, name=Ethan
+2025-08-29 14:33:35,249 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:35,253 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:37,134 [INFO] app: [API] Append success for id=000001 name=Ethan
+2025-08-29 14:33:37,139 [INFO] app: [API] 成功寫入：id=000001, name=Ethan
+2025-08-29 14:33:37,241 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:37,244 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:37,246 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:37,247 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:39,141 [INFO] app: [API] Append success for id=000001 name=Ethan
+2025-08-29 14:33:39,144 [INFO] app: [API] 成功寫入：id=000001, name=Ethan
+2025-08-29 14:33:40,909 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:40,910 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:40,911 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:40,913 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:41,793 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:41,794 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:42,881 [INFO] app: [API] Append success for id=000001 name=Ethan
+2025-08-29 14:33:42,884 [INFO] app: [API] 成功寫入：id=000001, name=Ethan
+2025-08-29 14:33:42,887 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:42,889 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:43,816 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:33:43,818 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:33:44,931 [INFO] app: [API] Append success for id=000001 name=Ethan
+2025-08-29 14:33:44,933 [INFO] app: [API] 成功寫入：id=000001, name=Ethan
+2025-08-29 14:33:44,943 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:33:44,945 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:33:46,940 [INFO] app: [API] Append success for id=000001 name=Ethan
+2025-08-29 14:33:46,952 [INFO] app: [API] 成功寫入：id=000001, name=Ethan
+2025-08-29 14:34:00,330 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:34:00,332 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:34:00,333 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:34:00,334 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:34:01,105 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:34:01,108 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:34:01,114 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:34:01,200 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:34:01,201 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:34:01,202 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:34:01,204 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:34:01,937 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:34:01,947 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:34:01,949 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:34:03,239 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:34:03,241 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:34:03,241 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:34:03,244 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:34:03,996 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:34:04,001 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:34:04,005 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:34:04,105 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:34:04,106 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:34:04,107 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:34:04,109 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:34:04,879 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:34:04,887 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:34:04,890 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:34:27,922 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:34:27,923 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:34:27,924 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:34:27,926 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:34:28,696 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:34:28,717 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:34:28,719 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:34:29,944 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:34:29,945 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:34:29,946 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:34:29,948 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:34:30,759 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:34:30,780 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:34:30,784 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
+2025-08-29 14:34:32,376 [INFO] app: 偵測到 QR：{'id': '000001', 'name': 'Ethan', 'event': '活動', 'extra': {'SELLER': 'Tony', 'SALON': 'Luxe Locks Studio', 'Licence': 'y
+2025-08-29 14:34:32,379 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-08-29 14:34:32,380 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-08-29 14:34:32,384 [INFO] app: [API] Connecting to Google Sheet ...
+2025-08-29 14:34:33,256 [WARNING] app: [API] Append failed, saved offline CSV. Error: Traceback (most recent call last):
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 168, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [-1]: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>404.</b> <ins>That’s an error.</ins>
+  <p>The requested URL <code>/v4/spreadsheets/?includeGridData=false</code> was not found on this server.  <ins>That’s all we know.</ins>
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\Github\QRcode_Signin\app\ui.py", line 53, in run
+    client.append_signin(self.payload)
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 60, in append_signin
+    self.connect()
+  File "d:\Github\QRcode_Signin\app\google_sheets.py", line 37, in connect
+    sh = gc.open_by_key(self.spreadsheet_id)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\QRcode_Signin\.venv\Lib\site-packages\gspread\client.py", line 171, in open_by_key
+    raise SpreadsheetNotFound(ex.response) from ex
+gspread.exceptions.SpreadsheetNotFound: <Response [404]>
+
+2025-08-29 14:34:33,262 [INFO] app: [OFFLINE] 已暫存本機 CSV：id=000001, name=Ethan
+2025-08-29 14:34:33,264 [INFO] app: [API] 線上寫入失敗，已暫存至本機離線 CSV，稍後可點『上傳離線資料』再同步。
