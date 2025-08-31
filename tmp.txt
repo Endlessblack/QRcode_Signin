@@ -1,0 +1,80 @@
+    config_changed = QtCore.pyqtSignal()
+
+    def __init__(self, cfg: AppConfig):
+        super().__init__()
+        self.cfg = cfg
+        self._build()
+
+    def _build(self):
+        form = QtWidgets.QFormLayout(self)
+
+        # Auth method
+        self.cb_auth = QtWidgets.QComboBox()
+        self.cb_auth.addItem("服務帳戶 JSON", userData="service_account")
+        self.cb_auth.addItem("OAuth 使用者登入", userData="oauth")
+        cur_method = (self.cfg.auth_method or 'oauth').lower()
+        idx = max(0, self.cb_auth.findData(cur_method))
+        self.cb_auth.setCurrentIndex(idx)
+
+        self.ed_credentials = QtWidgets.QLineEdit(self.cfg.credentials_path)
+        btn_cred = QtWidgets.QPushButton("瀏覽...")
+        btn_cred.clicked.connect(self._choose_credentials)
+        h1 = QtWidgets.QHBoxLayout()
+        h1.addWidget(self.ed_credentials)
+        h1.addWidget(btn_cred)
+
+        # OAuth client + token paths
+        self.ed_oauth_client = QtWidgets.QLineEdit(self.cfg.oauth_client_path)
+        self.ed_oauth_client.setReadOnly(True)  # hardcoded path; not editable
+        btn_oauth_client = QtWidgets.QPushButton("瀏覽...")
+        btn_oauth_client.setEnabled(False)      # disable since filename is fixed
+        btn_oauth_client.clicked.connect(lambda: None)
+        h_oac = QtWidgets.QHBoxLayout(); h_oac.addWidget(self.ed_oauth_client); h_oac.addWidget(btn_oauth_client)
+
+        # We manage token.json automatically; do not ask user for a path
+        self.lb_oauth_status = QtWidgets.QLabel("")
+        self.btn_oauth_logout = QtWidgets.QPushButton("登出 (清除 OAuth token)")
+        self.btn_oauth_logout.clicked.connect(self._logout_oauth)
+        h_oat = QtWidgets.QHBoxLayout(); h_oat.addWidget(self.lb_oauth_status); h_oat.addStretch(1); h_oat.addWidget(self.btn_oauth_logout)
+
+        # Spreadsheet URL instead of ID; display mapped URL
+        self.ed_spreadsheet = QtWidgets.QLineEdit(self._to_sheet_url(self.cfg.spreadsheet_id))
+        self.ed_worksheet = QtWidgets.QLineEdit(self.cfg.worksheet_name)
+        self.ed_event = QtWidgets.QLineEdit(self.cfg.event_name)
+        # Camera combobox + refresh button
+        self.cb_camera = QtWidgets.QComboBox()
+        btn_cam_refresh = QtWidgets.QPushButton("刷新")
+        btn_cam_refresh.clicked.connect(self._populate_cameras)
+        cam_row = QtWidgets.QHBoxLayout()
+        cam_row.addWidget(self.cb_camera)
+        cam_row.addWidget(btn_cam_refresh)
+        self._populate_cameras()
+
+        form.addRow("驗證方式", self.cb_auth)
+        form.addRow("憑證檔案", self._wrap(h1))
+        form.addRow("OAuth client.json", self._wrap(h_oac))
+        form.addRow("OAuth 狀態", self._wrap(h_oat))
+        form.addRow("試算表 URL", self.ed_spreadsheet)
+        # Show parsed spreadsheet ID for clarity
+        self.lb_sheet_id = QtWidgets.QLabel("")
+        self.lb_sheet_id.setStyleSheet("color:#8ab4f8")
+        self._update_sheet_id_label()
+        self.ed_spreadsheet.textChanged.connect(self._update_sheet_id_label)
+        form.addRow("解析出 ID", self.lb_sheet_id)
+        form.addRow("工作表名稱", self.ed_worksheet)
+        form.addRow("活動名稱", self.ed_event)
+        form.addRow("相機來源", self._wrap(cam_row))
+
+        # Debug toggle
+        self.cb_debug = QtWidgets.QCheckBox("啟用除錯紀錄 (logs/app.log)")
+        self.cb_debug.setChecked(self.cfg.debug)
+        form.addRow(self.cb_debug)
+
+        btn_save = QtWidgets.QPushButton("儲存設定")
+        btn_test = QtWidgets.QPushButton("測試連線 / 登入")
+        btn_save.clicked.connect(self._save)
+        btn_test.clicked.connect(self._test_connection)
+        hb = QtWidgets.QHBoxLayout()
+        hb.addWidget(btn_save)
+        hb.addWidget(btn_test)
+        hb.addStretch(1)
