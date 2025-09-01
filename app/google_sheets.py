@@ -86,3 +86,24 @@ class GoogleSheetsClient:
 
         row = [base.get(h, "") for h in headers]
         self._ws.append_row(row)
+
+    # Read all records as list of dicts (header row determines keys)
+    def fetch_records(self) -> List[Dict[str, Any]]:
+        if self._ws is None:
+            self.connect()
+        assert self._ws is not None
+        try:
+            return self._ws.get_all_records()
+        except Exception:
+            # Fallback: manual conversion
+            values = self._ws.get_all_values()
+            if not values:
+                return []
+            headers = [str(h).strip() for h in (values[0] or [])]
+            out: List[Dict[str, Any]] = []
+            for row in values[1:]:
+                d: Dict[str, Any] = {}
+                for i, h in enumerate(headers):
+                    d[h] = row[i] if i < len(row) else ""
+                out.append(d)
+            return out

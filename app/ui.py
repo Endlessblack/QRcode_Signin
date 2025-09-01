@@ -171,6 +171,9 @@ class GenerateTab(QtWidgets.QWidget):
     def __init__(self, cfg: AppConfig):
         super().__init__()
         self.cfg = cfg
+        self._cloud_linked = False
+        self._cloud_sid: str | None = None
+        self._cloud_ws: str | None = None
         self._build()
     
     def eventFilter(self, obj: QtCore.QObject, ev: QtCore.QEvent) -> bool:
@@ -193,25 +196,27 @@ class GenerateTab(QtWidgets.QWidget):
         # file row
         self.file_edit = QtWidgets.QLineEdit()
         self.file_edit.setPlaceholderText("選擇名單 CSV 檔 (含 id,name)...")
-        btn_browse = QtWidgets.QPushButton("選擇檔案")
-        btn_browse.clicked.connect(self._choose_file)
+        self.btn_browse = QtWidgets.QPushButton("選擇檔案")
+        self.btn_browse.clicked.connect(self._choose_file)
         hfile = QtWidgets.QHBoxLayout(); hfile.setContentsMargins(0,0,0,0)
-        hfile.addWidget(self.file_edit, 1); hfile.addWidget(btn_browse)
+        hfile.addWidget(self.file_edit, 1); hfile.addWidget(self.btn_browse)
         fl.addRow("名單檔案", self._wrap(hfile))
         # output row
         self.out_edit = QtWidgets.QLineEdit(self.cfg.qr_folder)
-        btn_out = QtWidgets.QPushButton("輸出資料夾")
-        btn_out.clicked.connect(self._choose_out)
+        self.btn_out = QtWidgets.QPushButton("輸出資料夾")
+        self.btn_out.clicked.connect(self._choose_out)
         hout = QtWidgets.QHBoxLayout(); hout.setContentsMargins(0,0,0,0)
-        hout.addWidget(self.out_edit, 1); hout.addWidget(btn_out)
+        hout.addWidget(self.out_edit, 1); hout.addWidget(self.btn_out)
         fl.addRow("輸出資料夾", self._wrap(hout))
-        # cloud link row (URL + connect)
+        # cloud link row (URL + worksheet + connect)
         self.cloud_edit = QtWidgets.QLineEdit()
         self.cloud_edit.setPlaceholderText("貼上 Google 試算表網址或 ID（雲端）")
-        btn_cloud = QtWidgets.QPushButton("連結雲端")
-        btn_cloud.clicked.connect(self._link_cloud)
+        self.cloud_ws = QtWidgets.QLineEdit(self.cfg.worksheet_name)
+        self.cloud_ws.setPlaceholderText("分頁名稱")
+        self.btn_cloud = QtWidgets.QPushButton("連結雲端")
+        self.btn_cloud.clicked.connect(self._link_cloud)
         hcloud = QtWidgets.QHBoxLayout(); hcloud.setContentsMargins(0,0,0,0)
-        hcloud.addWidget(self.cloud_edit, 1); hcloud.addWidget(btn_cloud)
+        hcloud.addWidget(self.cloud_edit, 1); hcloud.addWidget(self.cloud_ws, 0); hcloud.addWidget(self.btn_cloud)
         fl.addRow("雲端試算表", self._wrap(hcloud))
         local_group.setLayout(fl)
         layout.addWidget(local_group)
@@ -487,20 +492,43 @@ class GenerateTab(QtWidgets.QWidget):
         return s
 
     def _link_cloud(self):
-        url = self.cloud_edit.text().strip()
-        if not url:
-            QtWidgets.QMessageBox.information(self, "雲端試算表", "請先貼上網址或 ID")
-            return
-        sid = self._extract_sheet_id(url)
-        if not sid:
-            QtWidgets.QMessageBox.warning(self, "雲端試算表", "無法解析試算表 ID，請確認網址是否正確。")
-            return
-        try:
-            self.cfg.spreadsheet_id = sid
-            self.cfg.save()
-            self.status.setText(f"已連結雲端試算表（ID={sid}）")
-        except Exception:
-            pass
+        # Toggle link mode: when linking, disable local file/dir and show state
+        if not self._cloud_linked:
+            url = self.cloud_edit.text().strip()
+            if not url:
+                QtWidgets.QMessageBox.information(self, "雲端試算表", "請先貼上網址或 ID")
+                return
+            sid = self._extract_sheet_id(url)
+            if not sid:
+                QtWidgets.QMessageBox.warning(self, "雲端試算表", "無法解析試算表 ID，請確認網址是否正確。")
+                return
+            ws = (self.cloud_ws.text() or self.cfg.worksheet_name).strip()
+            if not ws:
+                QtWidgets.QMessageBox.information(self, "雲端試算表", "請輸入分頁名稱（工作表名稱）。")
+                return
+            self._cloud_sid = sid
+            self._cloud_ws = ws
+            self._cloud_linked = True
+            self.btn_cloud.setText("連結中")
+            # Disable local controls
+            for w in (self.file_edit, self.out_edit, self.btn_browse, self.btn_out):
+                try:
+                    w.setEnabled(False)
+                except Exception:
+                    pass
+            self.status.setText(f"已連結雲端（ID={sid}，分頁={ws}）")
+        else:
+            # Unlink
+            self._cloud_linked = False
+            self._cloud_sid = None
+            self._cloud_ws = None
+            self.btn_cloud.setText("連結雲端")
+            for w in (self.file_edit, self.out_edit, self.btn_browse, self.btn_out):
+                try:
+                    w.setEnabled(True)
+                except Exception:
+                    pass
+            self.status.setText("")
 
     def _update_preview_alignment(self):
         try:
@@ -539,7 +567,10 @@ class GenerateTab(QtWidgets.QWidget):
         out_dir = self.out_edit.text().strip() or self.cfg.qr_folder
         event = self.event_edit.text().strip() or self.cfg.event_name
         try:
-            attendees = load_attendees_csv(csv_path)
+            if self._cloud_linked and self._cloud_sid and self._cloud_ws:
+                attendees = self._load_attendees_from_cloud(self._cloud_sid, self._cloud_ws)
+            else:
+                attendees = load_attendees_csv(csv_path)
             if self.cb_use_design.isChecked():
                 opts = DesignOptions(
                     width=int(self.sp_width.value()),
@@ -566,6 +597,46 @@ class GenerateTab(QtWidgets.QWidget):
             self.status.setText(f"完成產生 {count} 張 圖片 → {out_dir}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "發生錯誤", str(e))
+
+    def _load_attendees_from_cloud(self, sid: str, ws: str) -> list[Attendee]:
+        from .google_sheets import GoogleSheetsClient
+        records: list[dict] = []
+        client = GoogleSheetsClient(
+            self.cfg.credentials_path,
+            sid,
+            ws,
+            auth_method=self.cfg.auth_method,
+            oauth_client_path=self.cfg.oauth_client_path,
+            oauth_token_path=self.cfg.oauth_token_path,
+        )
+        client.connect()
+        records = client.fetch_records()
+        def ci_get(d: dict, key: str) -> str:
+            lk = key.lower()
+            for k, v in d.items():
+                try:
+                    if str(k).strip().lower() == lk:
+                        return str(v).strip()
+                except Exception:
+                    continue
+            return ""
+        attendees: list[Attendee] = []
+        for rec in records:
+            rid = ci_get(rec, 'id') or ci_get(rec, 'ID')
+            nm = ci_get(rec, 'name') or ci_get(rec, 'NAME')
+            extra: dict[str, str] = {}
+            for k, v in rec.items():
+                kk = str(k).strip()
+                if kk.lower() in ('id', 'name'):
+                    continue
+                vs = str(v).strip()
+                if vs != "":
+                    extra[kk] = vs
+            if rid or nm:
+                attendees.append(Attendee(id=rid, name=nm, extra=extra))
+        if not attendees:
+            raise RuntimeError("雲端試算表沒有可用資料（需含 ID/NAME 欄位）")
+        return attendees
 
     def _attach_color_button(self, edit: QtWidgets.QLineEdit) -> QtWidgets.QWidget:
         btn = QtWidgets.QPushButton("…")
@@ -1934,13 +2005,16 @@ class TemplateTab(QtWidgets.QWidget):
         btns.addWidget(btn_export)
         layout.addLayout(btns)
 
-        # Cloud write row: URL + button
+        # Cloud write row: URL + worksheet name + button
         cloud_row = QtWidgets.QHBoxLayout(); cloud_row.setSpacing(8)
         self.ed_cloud_url = QtWidgets.QLineEdit()
         self.ed_cloud_url.setPlaceholderText("貼上 Google 試算表 URL 或 ID（雲端）")
+        self.ed_cloud_ws = QtWidgets.QLineEdit(self.cfg.worksheet_name)
+        self.ed_cloud_ws.setPlaceholderText("分頁名稱")
         btn_cloud_write = QtWidgets.QPushButton("寫入雲端試算表")
         btn_cloud_write.clicked.connect(self._write_cloud_template)
         cloud_row.addWidget(self.ed_cloud_url, 1)
+        cloud_row.addWidget(self.ed_cloud_ws, 0)
         cloud_row.addWidget(btn_cloud_write, 0)
         layout.addLayout(cloud_row)
 
@@ -2027,34 +2101,38 @@ class TemplateTab(QtWidgets.QWidget):
 
     def _write_cloud_template(self):
         from .google_sheets import GoogleSheetsClient
-        # Build headers: id, name + extras from config
-        headers = ["id", "name", *self.cfg.extra_fields]
+        from .logger import setup_logging
+        log = setup_logging(self.cfg.debug)
+        # Build headers from current template: ID, NAME, and extras（ID/NAME 大寫）
+        headers = ["ID", "NAME", *self.cfg.extra_fields]
         sid = self._extract_spreadsheet_id(self.ed_cloud_url.text())
+        wsname = (self.ed_cloud_ws.text() or self.cfg.worksheet_name).strip()
         if not sid:
             QtWidgets.QMessageBox.information(self, "雲端試算表", "請先貼上試算表 URL 或 ID。")
             return
+        if not wsname:
+            QtWidgets.QMessageBox.information(self, "雲端試算表", "請輸入分頁名稱（工作表名稱）。")
+            return
         try:
+            log.info("[TEMPLATE] Connecting to sheet sid=%s ws=%s", sid, wsname)
             client = GoogleSheetsClient(
                 self.cfg.credentials_path,
                 sid,
-                self.cfg.worksheet_name,
+                wsname,
                 auth_method=self.cfg.auth_method,
                 oauth_client_path=self.cfg.oauth_client_path,
                 oauth_token_path=self.cfg.oauth_token_path,
             )
             client.connect()
-            # 利用私有方法以便快速確保表頭（union，不會清除原有欄位）
-            try:
-                client._ensure_headers(headers)  # type: ignore[attr-defined]
-            except Exception:
-                # Fallback: 直接取第一列合併更新
-                ws = client._ws  # type: ignore[attr-defined]
-                if ws is not None:
-                    exist = ws.row_values(1) or []
-                    new_headers = list(dict.fromkeys(exist + headers))
-                    ws.update('1:1', [new_headers])
-            QtWidgets.QMessageBox.information(self, "雲端試算表", "已寫入表頭（id, name 以及自訂欄位）。")
+            # 覆寫第1列為模板表頭（不包含 timestamp/event/raw）
+            ws = getattr(client, "_ws", None)
+            if ws is None:
+                raise RuntimeError("工作表未建立或連線失敗")
+            ws.update('1:1', [headers])
+            log.info("[TEMPLATE] Headers written exactly: %s", headers)
+            QtWidgets.QMessageBox.information(self, "雲端試算表", f"已寫入表頭至『{wsname}』（id, name 以及自訂欄位）。")
         except Exception as e:
+            log.error("[TEMPLATE] Cloud write failed: %s", e)
             QtWidgets.QMessageBox.warning(self, "雲端試算表", f"寫入失敗：{e}")
 
 

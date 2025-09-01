@@ -50,8 +50,8 @@ def export_template_csv(path: str | Path, extra_fields: list[str] | None = None)
     extras = [e for e in (extra_fields or ["salon", "seller"]) if e not in ("id", "name")]
     with path.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f)
-        # 只輸出標題列；不包含示例資料列
-        writer.writerow(["id", "name", *extras])
+        # 只輸出標題列；不包含示例資料列（ID/NAME 以大寫寫入）
+        writer.writerow(["ID", "NAME", *extras])
 
 
 def generate_qr_images(attendees: List[Attendee], event_name: str, out_dir: str | Path) -> int:
