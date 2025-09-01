@@ -23,23 +23,63 @@ class Attendee:
     extra: Dict[str, Any]
 
 
-def load_attendees_csv(csv_path: str | Path) -> List[Attendee]:
+def load_attendees_csv(csv_path: str | Path,
+                       synonyms: Optional[Dict[str, List[str]]] = None) -> List[Attendee]:
     path = Path(csv_path)
     rows: List[Attendee] = []
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
         raw_headers = [h for h in (reader.fieldnames or [])]
-        headers = [str(h).strip() for h in raw_headers]
-        # case-insensitive mapping for required columns
-        low_map = {str(h).strip().lower(): str(h).strip() for h in raw_headers if h is not None}
-        id_key = low_map.get("id")
-        name_key = low_map.get("name")
+        syn = synonyms or {}
+        name_syns = syn.get("name", ["name", "NAME", "姓名", "名子", "名字", "暱稱", "稱呼"])  # noqa: E501
+        seller_syns = syn.get("seller", ["seller", "SELLER", "業務", "業務員", "負責", "負責人"])  # noqa: E501
+        salon_syns = syn.get("salon", ["salon", "SALON", "沙龍", "店家", "店名", "公司"])  # noqa: E501
+        # case-insensitive mapping for essentials（id, name 可相容大小寫；name 支援中文同義）
+        def _find_key(headers: list[str], candidates: list[str]) -> str | None:
+            for c in candidates:
+                cl = str(c).strip().lower()
+                for h in headers:
+                    hs = str(h).strip()
+                    if hs.lower() == cl:
+                        return h
+            return None
+
+        id_key = _find_key([str(h) for h in raw_headers], ["id", "ID"])
+        name_key = _find_key([str(h) for h in raw_headers], list(name_syns))
         if not id_key or not name_key:
-            raise ValueError("CSV 必須包含欄位 id, name（不分大小寫）")
+            raise ValueError("CSV 必須包含欄位 ID 與 NAME（可用姓名/名子/暱稱等對應）")
+
+        # seller/salon 同義詞（若存在，映射到 seller/salon 這兩個鍵）
+
         for r in reader:
             rid = str(r.get(id_key, "")).strip()
             nm = str(r.get(name_key, "")).strip()
-            extra = {k: v for k, v in r.items() if k not in (id_key, name_key) and v is not None and str(v).strip() != ""}
+
+            # 找 seller/salon 值
+            def _get_by_syn(syns: list[str]) -> tuple[str, str | None]:
+                for c in syns:
+                    key = _find_key(list(r.keys()), [c])
+                    if key is not None:
+                        val = str(r.get(key, "")).strip()
+                        if val:
+                            return val, key
+                return "", None
+
+            seller_val, seller_key = _get_by_syn(seller_syns)
+            salon_val, salon_key = _get_by_syn(salon_syns)
+
+            # 整理 extra，排除已映射鍵
+            exclude = {id_key, name_key}
+            if seller_key:
+                exclude.add(seller_key)
+            if salon_key:
+                exclude.add(salon_key)
+            extra = {k: v for k, v in r.items() if k not in exclude and v is not None and str(v).strip() != ""}
+            if seller_val:
+                extra["seller"] = seller_val
+            if salon_val:
+                extra["salon"] = salon_val
+
             if rid or nm:
                 rows.append(Attendee(id=rid, name=nm, extra=extra))
     return rows
@@ -483,11 +523,11 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
             return default
         salon_label = _label_from_extra(a.extra, "salon", "salon")
         seller_label = _label_from_extra(a.extra, "seller", "seller")
+        # 僅顯示 NAME / SELLER / SALON（ID 只放入 QR，不顯示文字）
         lines = [
-            f"ID: {a.id}",
-            f"name: {a.name}",
-            f"{salon_label}: {salon}",
-            f"{seller_label}: {seller}",
+            f"NAME: {a.name}",
+            f"SELLER: {seller}",
+            f"SALON: {salon}",
         ]
 
         # Try Qt text rendering for better font support; fallback to PIL if Qt not available

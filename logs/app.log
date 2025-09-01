@@ -20,3 +20,107 @@
 2025-09-01 15:04:25,754 [INFO] app: [TEMPLATE] Headers written exactly: ['ID', 'NAME', 'SELLER', 'SALON', 'MAIL']
 2025-09-01 15:05:58,842 [INFO] app: [TEMPLATE] Connecting to sheet sid=1E56YZ0P5s1HNlr_3We1JgGM-bdRKLa1ORqiXXlArnO4 ws=Signin
 2025-09-01 15:06:01,751 [INFO] app: [TEMPLATE] Headers written exactly: ['ID', 'NAME', 'SELLER', 'SALON', 'MAIL']
+2025-09-01 15:35:53,903 [INFO] app: [TEMPLATE] Connecting to sheet sid=1E56YZ0P5s1HNlr_3We1JgGM-bdRKLa1ORqiXXlArnO4 ws=名單
+2025-09-01 15:35:56,023 [INFO] app: [TEMPLATE] Headers written exactly: ['ID', 'NAME', 'SELLER', 'SALON', 'MAIL']
+2025-09-01 15:41:10,726 [INFO] app: [TEMPLATE] Connecting to sheet sid=1E56YZ0P5s1HNlr_3We1JgGM-bdRKLa1ORqiXXlArnO4 ws=名單
+2025-09-01 15:41:12,596 [INFO] app: [TEMPLATE] Headers written exactly: ['ID', 'NAME', 'SELLER', 'SALON', 'MAIL']
+2025-09-01 15:45:12,510 [INFO] app: 相機已啟動（索引 0），解析度：640x480
+2025-09-01 15:45:22,345 [INFO] app: 相機已停止
+2025-09-01 15:45:36,059 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-09-01 15:45:48,197 [INFO] app: 偵測到 QR：{'id': '4ea431fc-af4d-4094-b570-f4704f12f039', 'name': 'Silverbooty', 'event': '250901_test', 'extra': {'SELLER': 'Robic
+2025-09-01 15:45:48,234 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:45:48,290 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:45:48,294 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:45:49,106 [INFO] app: 偵測到 QR：{'id': '4ea431fc-af4d-4094-b570-f4704f12f039', 'name': 'Silverbooty', 'event': '250901_test', 'extra': {'SELLER': 'Robic
+2025-09-01 15:45:49,107 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:45:52,994 [INFO] app: [API] Append success for id=4ea431fc-af4d-4094-b570-f4704f12f039 name=Silverbooty
+2025-09-01 15:45:53,005 [INFO] app: [API] 成功寫入：id=4ea431fc-af4d-4094-b570-f4704f12f039, name=Silverbooty
+2025-09-01 15:45:53,217 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:45:53,225 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:45:56,558 [INFO] app: [API] Append success for id=4ea431fc-af4d-4094-b570-f4704f12f039 name=Silverbooty
+2025-09-01 15:45:56,560 [INFO] app: [API] 成功寫入：id=4ea431fc-af4d-4094-b570-f4704f12f039, name=Silverbooty
+2025-09-01 15:46:00,566 [INFO] app: 相機已停止
+2025-09-01 15:46:04,459 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-09-01 15:46:13,267 [INFO] app: 相機已停止
+2025-09-01 15:47:11,668 [INFO] app: 相機已啟動（索引 1），解析度：640x480
+2025-09-01 15:47:20,932 [INFO] app: 偵測到 QR：{'id': '4ea431fc-af4d-4094-b570-f4704f12f039', 'name': 'Silverbooty', 'event': '250901_test', 'extra': {'SELLER': 'Robic
+2025-09-01 15:47:20,932 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:47:20,934 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:47:20,937 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:47:23,054 [INFO] app: [API] Append success for id=4ea431fc-af4d-4094-b570-f4704f12f039 name=Silverbooty
+2025-09-01 15:47:23,056 [INFO] app: [API] 成功寫入：id=4ea431fc-af4d-4094-b570-f4704f12f039, name=Silverbooty
+2025-09-01 15:47:36,603 [INFO] app: 偵測到 QR：{'id': '4ea431fc-af4d-4094-b570-f4704f12f039', 'name': 'Silverbooty', 'event': '250901_test', 'extra': {'SELLER': 'Robic
+2025-09-01 15:47:36,606 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:47:36,609 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:47:36,615 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:47:37,489 [INFO] app: 偵測到 QR：{'id': '4ea431fc-af4d-4094-b570-f4704f12f039', 'name': 'Silverbooty', 'event': '250901_test', 'extra': {'SELLER': 'Robic
+2025-09-01 15:47:37,491 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:47:38,386 [INFO] app: 偵測到 QR：{'id': '4ea431fc-af4d-4094-b570-f4704f12f039', 'name': 'Silverbooty', 'event': '250901_test', 'extra': {'SELLER': 'Robic
+2025-09-01 15:47:38,388 [INFO] app: 已加入佇列，待寫入（佇列長度 2）
+2025-09-01 15:47:38,621 [INFO] app: [API] Append success for id=4ea431fc-af4d-4094-b570-f4704f12f039 name=Silverbooty
+2025-09-01 15:47:38,622 [INFO] app: [API] 成功寫入：id=4ea431fc-af4d-4094-b570-f4704f12f039, name=Silverbooty
+2025-09-01 15:47:38,635 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:47:38,641 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:47:41,041 [INFO] app: [API] Append success for id=4ea431fc-af4d-4094-b570-f4704f12f039 name=Silverbooty
+2025-09-01 15:47:41,043 [INFO] app: [API] 成功寫入：id=4ea431fc-af4d-4094-b570-f4704f12f039, name=Silverbooty
+2025-09-01 15:47:41,056 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:47:41,064 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:47:43,185 [INFO] app: [API] Append success for id=4ea431fc-af4d-4094-b570-f4704f12f039 name=Silverbooty
+2025-09-01 15:47:43,188 [INFO] app: [API] 成功寫入：id=4ea431fc-af4d-4094-b570-f4704f12f039, name=Silverbooty
+2025-09-01 15:47:53,568 [INFO] app: 偵測到 QR：{'id': '4ea431fc-af4d-4094-b570-f4704f12f039', 'name': 'Silverbooty', 'event': '250901_test', 'extra': {'SELLER': 'Robic
+2025-09-01 15:47:53,570 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:47:53,572 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:47:53,574 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:47:55,678 [INFO] app: [API] Append success for id=4ea431fc-af4d-4094-b570-f4704f12f039 name=Silverbooty
+2025-09-01 15:47:55,683 [INFO] app: [API] 成功寫入：id=4ea431fc-af4d-4094-b570-f4704f12f039, name=Silverbooty
+2025-09-01 15:48:14,623 [INFO] app: 偵測到 QR：{'id': '20c9a40b-7ec1-49fd-99fa-82c55a3e3204', 'name': 'Sharpbait', 'event': '250901_test', 'extra': {'SELLER': 'Tedney'
+2025-09-01 15:48:14,626 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:48:14,629 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:48:14,634 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:48:17,088 [INFO] app: [API] Append success for id=20c9a40b-7ec1-49fd-99fa-82c55a3e3204 name=Sharpbait
+2025-09-01 15:48:17,090 [INFO] app: [API] 成功寫入：id=20c9a40b-7ec1-49fd-99fa-82c55a3e3204, name=Sharpbait
+2025-09-01 15:48:20,060 [INFO] app: 偵測到 QR：{'id': '20c9a40b-7ec1-49fd-99fa-82c55a3e3204', 'name': 'Sharpbait', 'event': '250901_test', 'extra': {'SELLER': 'Tedney'
+2025-09-01 15:48:20,063 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:48:20,068 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:48:20,070 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:48:22,481 [INFO] app: [API] Append success for id=20c9a40b-7ec1-49fd-99fa-82c55a3e3204 name=Sharpbait
+2025-09-01 15:48:22,486 [INFO] app: [API] 成功寫入：id=20c9a40b-7ec1-49fd-99fa-82c55a3e3204, name=Sharpbait
+2025-09-01 15:48:24,942 [INFO] app: 偵測到 QR：{'id': '39be2ea7-8015-450c-a5b0-bd0d8f7061ea', 'name': 'No--Eye', 'event': '250901_test', 'extra': {'SELLER': 'Chrisalie
+2025-09-01 15:48:24,943 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:48:24,944 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:48:24,947 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:48:25,831 [INFO] app: 偵測到 QR：{'id': '39be2ea7-8015-450c-a5b0-bd0d8f7061ea', 'name': 'No--Eye', 'event': '250901_test', 'extra': {'SELLER': 'Chrisalie
+2025-09-01 15:48:25,832 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:48:26,733 [INFO] app: 偵測到 QR：{'id': '39be2ea7-8015-450c-a5b0-bd0d8f7061ea', 'name': 'No--Eye', 'event': '250901_test', 'extra': {'SELLER': 'Chrisalie
+2025-09-01 15:48:26,735 [INFO] app: 已加入佇列，待寫入（佇列長度 2）
+2025-09-01 15:48:27,629 [INFO] app: 偵測到 QR：{'id': '39be2ea7-8015-450c-a5b0-bd0d8f7061ea', 'name': 'No--Eye', 'event': '250901_test', 'extra': {'SELLER': 'Chrisalie
+2025-09-01 15:48:27,631 [INFO] app: 已加入佇列，待寫入（佇列長度 3）
+2025-09-01 15:48:27,650 [INFO] app: [API] Append success for id=39be2ea7-8015-450c-a5b0-bd0d8f7061ea name=No--Eye
+2025-09-01 15:48:27,658 [INFO] app: [API] 成功寫入：id=39be2ea7-8015-450c-a5b0-bd0d8f7061ea, name=No--Eye
+2025-09-01 15:48:27,664 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:48:27,676 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:48:30,206 [INFO] app: [API] Append success for id=39be2ea7-8015-450c-a5b0-bd0d8f7061ea name=No--Eye
+2025-09-01 15:48:30,208 [INFO] app: [API] 成功寫入：id=39be2ea7-8015-450c-a5b0-bd0d8f7061ea, name=No--Eye
+2025-09-01 15:48:30,223 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:48:30,230 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:48:34,021 [INFO] app: [API] Append success for id=39be2ea7-8015-450c-a5b0-bd0d8f7061ea name=No--Eye
+2025-09-01 15:48:34,024 [INFO] app: [API] 成功寫入：id=39be2ea7-8015-450c-a5b0-bd0d8f7061ea, name=No--Eye
+2025-09-01 15:48:34,044 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:48:34,068 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:48:37,285 [INFO] app: [API] Append success for id=39be2ea7-8015-450c-a5b0-bd0d8f7061ea name=No--Eye
+2025-09-01 15:48:37,286 [INFO] app: [API] 成功寫入：id=39be2ea7-8015-450c-a5b0-bd0d8f7061ea, name=No--Eye
+2025-09-01 15:48:57,517 [INFO] app: 偵測到 QR：{'id': '58a3f9c3-1d77-4390-8a40-24349b081b78', 'name': 'Steelshore', 'event': '250901_test', 'extra': {'SELLER': 'Jesthi
+2025-09-01 15:48:57,520 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:48:57,524 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:48:57,530 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:48:58,452 [INFO] app: 偵測到 QR：{'id': '58a3f9c3-1d77-4390-8a40-24349b081b78', 'name': 'Steelshore', 'event': '250901_test', 'extra': {'SELLER': 'Jesthi
+2025-09-01 15:48:58,456 [INFO] app: 已加入佇列，待寫入（佇列長度 1）
+2025-09-01 15:49:01,553 [INFO] app: [API] Append success for id=58a3f9c3-1d77-4390-8a40-24349b081b78 name=Steelshore
+2025-09-01 15:49:01,560 [INFO] app: [API] 成功寫入：id=58a3f9c3-1d77-4390-8a40-24349b081b78, name=Steelshore
+2025-09-01 15:49:01,570 [INFO] app: [API] 開始寫入 Google Sheet ...
+2025-09-01 15:49:01,578 [INFO] app: [API] Connecting to Google Sheet ...
+2025-09-01 15:49:03,668 [INFO] app: [API] Append success for id=58a3f9c3-1d77-4390-8a40-24349b081b78 name=Steelshore
+2025-09-01 15:49:03,669 [INFO] app: [API] 成功寫入：id=58a3f9c3-1d77-4390-8a40-24349b081b78, name=Steelshore
+2025-09-01 15:49:17,336 [INFO] app: 偵測到 QR：{'id': '58a3f9c3-1d77-4390-8a40-24349b081b78', 'name': 'Steelshore', 'event': '250901_test', 'extra': {'SELLER': 'Jesthi
+2025-09-01 15:49:17,337 [INFO] app: 活動名稱不符：期望『250901_test111』，QR內容為『250901_test』
+2025-09-01 15:49:39,666 [INFO] app: 相機已停止

@@ -23,7 +23,7 @@ class GoogleSheetsClient:
         self._client = None
         self._ws = None
 
-    def connect(self) -> None:
+    def connect(self, ensure_default_headers: bool = False) -> None:
         if self.auth_method == 'oauth':
             # OAuth installed-app flow; opens browser on first run to create token
             if self.oauth_client_path:
@@ -41,7 +41,9 @@ class GoogleSheetsClient:
             ws = sh.add_worksheet(title=self.worksheet_name, rows=1000, cols=26)
         self._client = gc
         self._ws = ws
-        self._ensure_headers(["timestamp", "event", "id", "name", "raw"])  # basic headers
+        # 僅在需要時建立預設表頭；一般讀取或模板寫入不自動建立
+        if ensure_default_headers:
+            self._ensure_headers(["timestamp", "event", "id", "name", "raw"])  # basic headers for sign-in logs
 
     def _ensure_headers(self, headers: List[str]) -> None:
         assert self._ws is not None
@@ -57,7 +59,8 @@ class GoogleSheetsClient:
 
     def append_signin(self, payload: Dict[str, Any]) -> None:
         if self._ws is None:
-            self.connect()
+            # 寫入簽到資料時才建立預設表頭
+            self.connect(ensure_default_headers=True)
         assert self._ws is not None
 
         # Build row based on headers

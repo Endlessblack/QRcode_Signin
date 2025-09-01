@@ -38,7 +38,23 @@ DEFAULTS: Dict[str, Any] = {
         "auto_fit_text": True,
         "text_point": None,
     },
-    "ui": {"theme": "dark", "generate_button_align": "right"},
+    "ui": {
+        "theme": "dark",
+        # generate page UI remembers
+        "last_csv_path": "",
+        "cloud_url": "",
+        "cloud_ws": "",
+        "preview_zoom": 25,
+        # template page remembers
+        "template_cloud_url": "",
+        "template_cloud_ws": "",
+    },
+    # field mapping synonyms for canonical NAME/SELLER/SALON
+    "mapping": {
+        "name": ["name", "NAME", "姓名", "名子", "名字", "暱稱", "稱呼"],
+        "seller": ["seller", "SELLER", "業務", "業務員", "負責", "負責人"],
+        "salon": ["salon", "SALON", "沙龍", "店家", "店名", "公司"],
+    },
     "debug": False,
 }
 
@@ -184,6 +200,26 @@ class AppConfig:
     @generate_button_align.setter
     def generate_button_align(self, v: str) -> None:
         self.data.setdefault("ui", {})["generate_button_align"] = str(v)
+
+    # Generic UI getters
+    def get_ui(self, key: str, default: Any = None) -> Any:
+        try:
+            return self.data.get("ui", {}).get(key, default)
+        except Exception:
+            return default
+
+    def set_ui(self, key: str, value: Any) -> None:
+        self.data.setdefault("ui", {})[key] = value
+
+    # Mapping getters
+    def get_mapping(self, key: str, default: Any = None) -> Any:
+        try:
+            return self.data.get("mapping", {}).get(key, default)
+        except Exception:
+            return default
+
+    def set_mapping(self, key: str, value: Any) -> None:
+        self.data.setdefault("mapping", {})[key] = value
 
     # Google auth extras
     @property

@@ -218,6 +218,19 @@ class GenerateTab(QtWidgets.QWidget):
         hcloud = QtWidgets.QHBoxLayout(); hcloud.setContentsMargins(0,0,0,0)
         hcloud.addWidget(self.cloud_edit, 1); hcloud.addWidget(self.cloud_ws, 0); hcloud.addWidget(self.btn_cloud)
         fl.addRow("雲端試算表", self._wrap(hcloud))
+        # 讀取先前儲存的 UI 值
+        try:
+            last_csv = str(self.cfg.get_ui('last_csv_path', ''))
+            if last_csv:
+                self.file_edit.setText(last_csv)
+            cloud_url = str(self.cfg.get_ui('cloud_url', ''))
+            if cloud_url:
+                self.cloud_edit.setText(cloud_url)
+            cloud_ws = str(self.cfg.get_ui('cloud_ws', ''))
+            if cloud_ws:
+                self.cloud_ws.setText(cloud_ws)
+        except Exception:
+            pass
         local_group.setLayout(fl)
         layout.addWidget(local_group)
 
@@ -391,7 +404,11 @@ class GenerateTab(QtWidgets.QWidget):
         zoom_bar.addWidget(QtWidgets.QLabel("預覽縮放"))
         self.sl_preview_zoom = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
         self.sl_preview_zoom.setRange(5, 100)
-        self.sl_preview_zoom.setValue(25)
+        try:
+            z = int(self.cfg.get_ui('preview_zoom', 25))
+        except Exception:
+            z = 25
+        self.sl_preview_zoom.setValue(max(5, min(100, z)))
         # 固定寬度，避免隨視窗大小改變長度
         self.sl_preview_zoom.setFixedWidth(220)
         self.sl_preview_zoom.setSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
@@ -464,6 +481,7 @@ class GenerateTab(QtWidgets.QWidget):
         fn, _ = QtWidgets.QFileDialog.getOpenFileName(self, "選擇 CSV", str(Path.cwd()), "CSV (*.csv)")
         if fn:
             self.file_edit.setText(fn)
+            self._save_ui_sources()
 
     def _choose_out(self):
         dn = QtWidgets.QFileDialog.getExistingDirectory(self, "選擇輸出資料夾", str(Path.cwd()))
@@ -474,12 +492,23 @@ class GenerateTab(QtWidgets.QWidget):
                 self.cfg.save()
             except Exception:
                 pass
+        self._save_ui_sources()
 
     # Simple helper to wrap a layout into a QWidget (used by form rows)
     def _wrap(self, layout: QtWidgets.QLayout) -> QtWidgets.QWidget:
         w = QtWidgets.QWidget()
         w.setLayout(layout)
         return w
+
+    def _save_ui_sources(self):
+        try:
+            self.cfg.set_ui('last_csv_path', self.file_edit.text().strip())
+            self.cfg.set_ui('cloud_url', self.cloud_edit.text().strip())
+            self.cfg.set_ui('cloud_ws', self.cloud_ws.text().strip())
+            self.cfg.set_ui('preview_zoom', int(self.sl_preview_zoom.value()))
+            self.cfg.save()
+        except Exception:
+            pass
 
     def _extract_sheet_id(self, s: str) -> str:
         import re
@@ -570,7 +599,7 @@ class GenerateTab(QtWidgets.QWidget):
             if self._cloud_linked and self._cloud_sid and self._cloud_ws:
                 attendees = self._load_attendees_from_cloud(self._cloud_sid, self._cloud_ws)
             else:
-                attendees = load_attendees_csv(csv_path)
+                attendees = load_attendees_csv(csv_path, synonyms=self._mapping_synonyms())
             if self.cb_use_design.isChecked():
                 opts = DesignOptions(
                     width=int(self.sp_width.value()),
@@ -621,22 +650,68 @@ class GenerateTab(QtWidgets.QWidget):
                     continue
             return ""
         attendees: list[Attendee] = []
+        # Synonyms for mapping to canonical NAME/SELLER/SALON
+        syns = self._mapping_synonyms()
+        name_syns = syns.get('name', []) or ["name"]
+        seller_syns = syns.get('seller', []) or ["seller"]
+        salon_syns = syns.get('salon', []) or ["salon"]
+
+        def _first_nonempty_by_syn(d: dict, syns: list[str]) -> tuple[str, str | None]:
+            for s in syns:
+                val = ci_get(d, s)
+                if val:
+                    # 找到實際鍵名
+                    for k in d.keys():
+                        if str(k).strip().lower() == str(s).lower():
+                            return val, k
+            return "", None
+
         for rec in records:
             rid = ci_get(rec, 'id') or ci_get(rec, 'ID')
-            nm = ci_get(rec, 'name') or ci_get(rec, 'NAME')
+            nm, name_key = _first_nonempty_by_syn(rec, name_syns)
+            seller_val, seller_key = _first_nonempty_by_syn(rec, seller_syns)
+            salon_val, salon_key = _first_nonempty_by_syn(rec, salon_syns)
             extra: dict[str, str] = {}
             for k, v in rec.items():
                 kk = str(k).strip()
-                if kk.lower() in ('id', 'name'):
+                if kk.lower() in ('id',) or (name_key and kk == name_key) or (seller_key and kk == seller_key) or (salon_key and kk == salon_key):
                     continue
                 vs = str(v).strip()
                 if vs != "":
                     extra[kk] = vs
+            if seller_val:
+                extra['seller'] = seller_val
+            if salon_val:
+                extra['salon'] = salon_val
             if rid or nm:
                 attendees.append(Attendee(id=rid, name=nm, extra=extra))
         if not attendees:
             raise RuntimeError("雲端試算表沒有可用資料（需含 ID/NAME 欄位）")
         return attendees
+
+    def _mapping_synonyms(self) -> dict:
+        # Read synonyms from config.mapping; ensure canonical英文字串存在
+        def _norm_list(v):
+            out = []
+            try:
+                for x in (v or []):
+                    s = str(x).strip()
+                    if s and s not in out:
+                        out.append(s)
+            except Exception:
+                pass
+            return out
+        syn = {
+            'name': _norm_list(self.cfg.get_mapping('name', ["name", "NAME", "姓名"])) or ["name"],
+            'seller': _norm_list(self.cfg.get_mapping('seller', ["seller", "SELLER", "業務"])) or ["seller"],
+            'salon': _norm_list(self.cfg.get_mapping('salon', ["salon", "SALON", "沙龍"])) or ["salon"],
+        }
+        # 保證 canonical 也在列表
+        for k, canon in (('name','name'),('seller','seller'),('salon','salon')):
+            lows = [s.lower() for s in syn[k]]
+            if canon not in lows:
+                syn[k].append(canon)
+        return syn
 
     def _attach_color_button(self, edit: QtWidgets.QLineEdit) -> QtWidgets.QWidget:
         btn = QtWidgets.QPushButton("…")
@@ -826,11 +901,11 @@ class GenerateTab(QtWidgets.QWidget):
                     except Exception:
                         continue
                 return default
+            # 僅顯示 NAME / SELLER / SALON（ID 僅寫入 QR，不顯示）
             lines = [
-                f"ID: {sample.id}",
-                f"name: {sample.name}",
-                f"{_label_from_extra(sample.extra,'salon','salon')}: {_ci(sample.extra,'salon')}",
-                f"{_label_from_extra(sample.extra,'seller','seller')}: {_ci(sample.extra,'seller')}",
+                f"NAME: {sample.name}",
+                f"SELLER: {_ci(sample.extra,'seller')}",
+                f"SALON: {_ci(sample.extra,'salon')}",
             ]
             # Draw via Qt for better text rendering
             # text_margin 僅控制左右內距（不影響上下）
@@ -869,10 +944,9 @@ class GenerateTab(QtWidgets.QWidget):
             # two-column measure: label left, value right
             fm = QtGui.QFontMetricsF(qf)
             pairs = [
-                ("ID", f"{sample.id}"),
-                ("name", f"{sample.name}"),
-                (_label_from_extra(sample.extra,'salon','salon'), f"{_ci(sample.extra,'salon')}")
-                ,(_label_from_extra(sample.extra,'seller','seller'), f"{_ci(sample.extra,'seller')}")
+                ("NAME", f"{sample.name}"),
+                ("SELLER", f"{_ci(sample.extra,'seller')}") ,
+                ("SALON", f"{_ci(sample.extra,'salon')}")
             ]
             rows = []  # (lab, val, wL, wR, h)
             total_h = 0
@@ -1318,6 +1392,14 @@ class ScanTab(QtWidgets.QWidget):
         self.table.setItem(row, 2, QtWidgets.QTableWidgetItem(str(payload.get("name", ""))))
         self.table.setItem(row, 3, QtWidgets.QTableWidgetItem(data))
 
+        # 驗證活動名稱是否一致
+        expected_event = (self.cfg.event_name or '').strip()
+        got_event = str(payload.get('event', '')).strip()
+        if expected_event and got_event and got_event != expected_event:
+            self._log(f"活動名稱不符：期望『{expected_event}』，QR內容為『{got_event}』")
+            QtWidgets.QMessageBox.warning(self, "簽到失敗", "簽到失敗活動名稱不符")
+            return
+
         # Enqueue payload and process
         self.queue.append(payload)
         self._log(f"已加入佇列，待寫入（佇列長度 {len(self.queue)}）")
@@ -1628,6 +1710,21 @@ class SettingsTab(QtWidgets.QWidget):
         self.ed_spreadsheet.textChanged.connect(self._update_sheet_id_label)
         form.addRow("解析出 ID", self.lb_sheet_id)
         form.addRow("工作表名稱", self.ed_worksheet)
+        # 欄位映射（逗號分隔）
+        try:
+            name_map = ','.join(self.cfg.get_mapping('name', ["name", "姓名"]))
+            seller_map = ','.join(self.cfg.get_mapping('seller', ["seller", "業務"]))
+            salon_map = ','.join(self.cfg.get_mapping('salon', ["salon", "沙龍"]))
+        except Exception:
+            name_map = 'name,姓名'
+            seller_map = 'seller,業務'
+            salon_map = 'salon,沙龍'
+        self.ed_map_name = QtWidgets.QLineEdit(name_map)
+        self.ed_map_seller = QtWidgets.QLineEdit(seller_map)
+        self.ed_map_salon = QtWidgets.QLineEdit(salon_map)
+        form.addRow("姓名/NAME 同義詞", self.ed_map_name)
+        form.addRow("業務/SELLER 同義詞", self.ed_map_seller)
+        form.addRow("沙龍/SALON 同義詞", self.ed_map_salon)
         # Theme toggle
         self.cb_theme = QtWidgets.QComboBox()
         self.cb_theme.addItem("夜間", userData="dark")
@@ -1733,6 +1830,20 @@ class SettingsTab(QtWidgets.QWidget):
         except Exception:
             self.cfg.camera_index = 0
         self.cfg.debug = bool(self.cb_debug.isChecked())
+        # Save mapping synonyms from UI（逗號或頓號分隔）
+        def _parse_syn(s: str) -> list[str]:
+            parts = []
+            for x in (s or '').replace('，', ',').split(','):
+                t = x.strip()
+                if t and t not in parts:
+                    parts.append(t)
+            return parts
+        try:
+            self.cfg.set_mapping('name', _parse_syn(self.ed_map_name.text()))
+            self.cfg.set_mapping('seller', _parse_syn(self.ed_map_seller.text()))
+            self.cfg.set_mapping('salon', _parse_syn(self.ed_map_salon.text()))
+        except Exception:
+            pass
         # UI 主題（產生按鈕固定靠右，不再存對齊）
         try:
             self.cfg.theme = str(self.cb_theme.currentData() or 'dark')
@@ -2130,6 +2241,13 @@ class TemplateTab(QtWidgets.QWidget):
                 raise RuntimeError("工作表未建立或連線失敗")
             ws.update('1:1', [headers])
             log.info("[TEMPLATE] Headers written exactly: %s", headers)
+            try:
+                # Save last used URL and worksheet
+                self.cfg.set_ui('template_cloud_url', self.ed_cloud_url.text().strip())
+                self.cfg.set_ui('template_cloud_ws', wsname)
+                self.cfg.save()
+            except Exception:
+                pass
             QtWidgets.QMessageBox.information(self, "雲端試算表", f"已寫入表頭至『{wsname}』（id, name 以及自訂欄位）。")
         except Exception as e:
             log.error("[TEMPLATE] Cloud write failed: %s", e)
