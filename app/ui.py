@@ -175,47 +175,80 @@ class GenerateTab(QtWidgets.QWidget):
 
     def _build(self):
         layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(10)
 
-        # Row: file + browse
-        file_layout = QtWidgets.QHBoxLayout()
+        # 本地資料（名單檔案 + 輸出資料夾 + 雲端連結）
+        local_group = QtWidgets.QGroupBox("資料來源")
+        fl = QtWidgets.QFormLayout()
+        # file row
         self.file_edit = QtWidgets.QLineEdit()
         self.file_edit.setPlaceholderText("選擇名單 CSV 檔 (含 id,name)...")
         btn_browse = QtWidgets.QPushButton("選擇檔案")
         btn_browse.clicked.connect(self._choose_file)
-        file_layout.addWidget(self.file_edit)
-        file_layout.addWidget(btn_browse)
-        layout.addLayout(file_layout)
-
-        # Row: output folder
-        out_layout = QtWidgets.QHBoxLayout()
+        hfile = QtWidgets.QHBoxLayout(); hfile.setContentsMargins(0,0,0,0)
+        hfile.addWidget(self.file_edit, 1); hfile.addWidget(btn_browse)
+        fl.addRow("名單檔案", self._wrap(hfile))
+        # output row
         self.out_edit = QtWidgets.QLineEdit(self.cfg.qr_folder)
         btn_out = QtWidgets.QPushButton("輸出資料夾")
         btn_out.clicked.connect(self._choose_out)
-        out_layout.addWidget(self.out_edit)
-        out_layout.addWidget(btn_out)
-        layout.addLayout(out_layout)
+        hout = QtWidgets.QHBoxLayout(); hout.setContentsMargins(0,0,0,0)
+        hout.addWidget(self.out_edit, 1); hout.addWidget(btn_out)
+        fl.addRow("輸出資料夾", self._wrap(hout))
+        # cloud link row (URL + connect)
+        self.cloud_edit = QtWidgets.QLineEdit()
+        self.cloud_edit.setPlaceholderText("貼上 Google 試算表網址或 ID（雲端）")
+        btn_cloud = QtWidgets.QPushButton("連結雲端")
+        btn_cloud.clicked.connect(self._link_cloud)
+        hcloud = QtWidgets.QHBoxLayout(); hcloud.setContentsMargins(0,0,0,0)
+        hcloud.addWidget(self.cloud_edit, 1); hcloud.addWidget(btn_cloud)
+        fl.addRow("雲端試算表", self._wrap(hcloud))
+        local_group.setLayout(fl)
+        layout.addWidget(local_group)
 
-        # Row: event name
-        event_layout = QtWidgets.QHBoxLayout()
+        # Row: event name + generate button（對齊由設定控制）
+        self.event_layout = QtWidgets.QHBoxLayout()
         self.event_edit = QtWidgets.QLineEdit(self.cfg.event_name)
         self.event_edit.setPlaceholderText("活動名稱")
-        event_layout.addWidget(QtWidgets.QLabel("活動名稱"))
-        event_layout.addWidget(self.event_edit)
-        layout.addLayout(event_layout)
+        self.event_edit.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.btn_generate = QtWidgets.QPushButton("批次產生 QR Code")
+        self.btn_generate.clicked.connect(self._generate)
+        self.lbl_event = QtWidgets.QLabel("活動名稱")
+        self._apply_generate_button_alignment()
+        layout.addLayout(self.event_layout)
 
         # Design panel
         design_group = QtWidgets.QGroupBox("圖面設計（預設 4:5 1080x1350）")
+        design_group.setObjectName("design_group")
         grid = QtWidgets.QGridLayout()
+        grid.setHorizontalSpacing(8)
+        grid.setVerticalSpacing(6)
+        try:
+            grid.setContentsMargins(6, 6, 6, 6)
+            grid.setColumnMinimumWidth(0, 96)
+            grid.setColumnMinimumWidth(2, 0)  # 第2欄預設不佔寬，統一讓主欄（第1欄）填滿
+        except Exception:
+            pass
 
         self.cb_use_design = QtWidgets.QCheckBox("使用設計版輸出（含文字/顏色/字型）")
         self.cb_use_design.setChecked(True)
 
-        self.sp_width = QtWidgets.QSpinBox(); self.sp_width.setRange(300, 4000); self.sp_width.setValue(1080)
-        self.sp_height = QtWidgets.QSpinBox(); self.sp_height.setRange(300, 4000); self.sp_height.setValue(1350)
+        self.sp_width = QtWidgets.QSpinBox(); self.sp_width.setRange(300, 4000); self.sp_width.setValue(1080); self.sp_width.setMinimumWidth(100)
+        self.sp_width.setKeyboardTracking(True)
+        self.sp_height = QtWidgets.QSpinBox(); self.sp_height.setRange(300, 4000); self.sp_height.setValue(1350); self.sp_height.setMinimumWidth(100)
+        self.sp_height.setKeyboardTracking(True)
         self.sl_qr_ratio = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
-        self.sl_qr_ratio.setRange(10, 100); self.sl_qr_ratio.setValue(70)
-        self.lb_qr_ratio = QtWidgets.QLabel("70%")
-        self.sl_qr_ratio.valueChanged.connect(lambda v: self.lb_qr_ratio.setText(f"{v}%"))
+        self.sl_qr_ratio.setRange(5, 100); self.sl_qr_ratio.setValue(70)
+        # 允許在設計區塊伸縮
+        self.sl_qr_ratio.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        # 直接輸入百分比的欄位
+        self.sp_qr_ratio = QtWidgets.QSpinBox(); self.sp_qr_ratio.setRange(5, 100); self.sp_qr_ratio.setSuffix("%"); self.sp_qr_ratio.setMinimumWidth(72)
+        self.sp_qr_ratio.setValue(70)
+        self.sp_qr_ratio.setKeyboardTracking(True)
+        # 雙向同步：滑桿 <-> 數字輸入
+        self.sl_qr_ratio.valueChanged.connect(self.sp_qr_ratio.setValue)
+        self.sp_qr_ratio.valueChanged.connect(self.sl_qr_ratio.setValue)
 
         self.ed_bg = QtWidgets.QLineEdit("#FFFFFF"); self.bg_input = self._attach_color_button(self.ed_bg)
         self.ed_qr = QtWidgets.QLineEdit("#000000"); self.qr_input = self._attach_color_button(self.ed_qr)
@@ -223,6 +256,11 @@ class GenerateTab(QtWidgets.QWidget):
 
         # Font combo (installed fonts)
         self.font_combo = QtWidgets.QFontComboBox()
+        # 允許在設計區塊伸縮
+        try:
+            self.font_combo.setMinimumWidth(0)
+        except Exception:
+            pass
         try:
             self.font_combo.setFontFilters(
                 QtWidgets.QFontComboBox.FontFilter.ScalableFonts
@@ -230,11 +268,18 @@ class GenerateTab(QtWidgets.QWidget):
         except Exception:
             pass
         self.lb_font_meta = QtWidgets.QLabel("")
-        self.sp_font_size = QtWidgets.QSpinBox(); self.sp_font_size.setRange(10, 500); self.sp_font_size.setValue(48)
+        self.sp_font_size = QtWidgets.QSpinBox(); self.sp_font_size.setRange(10, 500); self.sp_font_size.setValue(48); self.sp_font_size.setMinimumWidth(100)
+        self.sp_font_size.setKeyboardTracking(True)
         # font weight (細分字重)
         self.cb_font_weight = QtWidgets.QComboBox()
-        self.cb_font_weight.addItems(["Regular", "Medium", "SemiBold", "Bold", "ExtraBold", "Black"])
-        self.cb_font_weight.setCurrentText("Regular")
+        # 中文顯示，userData 綁定英文字（供內部使用）
+        self.cb_font_weight.addItem("一般", userData="regular")
+        self.cb_font_weight.addItem("中等", userData="medium")
+        self.cb_font_weight.addItem("半粗", userData="semibold")
+        self.cb_font_weight.addItem("粗體", userData="bold")
+        self.cb_font_weight.addItem("特粗", userData="extrabold")
+        self.cb_font_weight.addItem("黑體", userData="black")
+        self.cb_font_weight.setCurrentIndex(0)
         
         # Optional background image to replace solid color
         self.ed_bg_img = QtWidgets.QLineEdit("")
@@ -247,74 +292,130 @@ class GenerateTab(QtWidgets.QWidget):
         self.cb_text_align.setCurrentText("置中")
         self.cb_text_align.hide()
         # Text margin (inner padding)
-        self.sp_text_margin = QtWidgets.QSpinBox(); self.sp_text_margin.setRange(0, 400); self.sp_text_margin.setValue(40)
-        self.dsb_line_spacing = QtWidgets.QDoubleSpinBox(); self.dsb_line_spacing.setRange(0.0, 2.0); self.dsb_line_spacing.setSingleStep(0.1); self.dsb_line_spacing.setValue(0.4)
+        self.sp_text_margin = QtWidgets.QSpinBox(); self.sp_text_margin.setRange(0, 400); self.sp_text_margin.setValue(40); self.sp_text_margin.setMinimumWidth(100)
+        self.sp_text_margin.setKeyboardTracking(True)
+        self.dsb_line_spacing = QtWidgets.QDoubleSpinBox(); self.dsb_line_spacing.setRange(0.0, 2.0); self.dsb_line_spacing.setSingleStep(0.1); self.dsb_line_spacing.setValue(0.4); self.dsb_line_spacing.setMinimumWidth(100)
+        self.dsb_line_spacing.setKeyboardTracking(True)
         self.cb_auto_fit = QtWidgets.QCheckBox("自動縮放文字以適配可用區域")
         self.cb_auto_fit.setChecked(True)
         # Vertical paddings (top gap and bottom margin)
-        self.sp_top_gap = QtWidgets.QSpinBox(); self.sp_top_gap.setRange(0, 400); self.sp_top_gap.setValue(40)
-        self.sp_bottom_margin = QtWidgets.QSpinBox(); self.sp_bottom_margin.setRange(0, 400); self.sp_bottom_margin.setValue(40)
+        self.sp_top_gap = QtWidgets.QSpinBox(); self.sp_top_gap.setRange(0, 400); self.sp_top_gap.setValue(40); self.sp_top_gap.setMinimumWidth(100)
+        self.sp_top_gap.setKeyboardTracking(True)
+        self.sp_bottom_margin = QtWidgets.QSpinBox(); self.sp_bottom_margin.setRange(0, 400); self.sp_bottom_margin.setValue(40); self.sp_bottom_margin.setMinimumWidth(100)
+        self.sp_bottom_margin.setKeyboardTracking(True)
 
         r = 0
         grid.addWidget(self.cb_use_design, r, 0, 1, 3); r += 1
         grid.addWidget(QtWidgets.QLabel("寬度"), r, 0); grid.addWidget(self.sp_width, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("高度"), r, 0); grid.addWidget(self.sp_height, r, 1); r += 1
-        grid.addWidget(QtWidgets.QLabel("QR 寬度占比"), r, 0); grid.addWidget(self.sl_qr_ratio, r, 1); grid.addWidget(self.lb_qr_ratio, r, 2); r += 1
+        grid.addWidget(QtWidgets.QLabel("QR 寬度占比"), r, 0)
+        # 同一欄位包含：滑桿 + 百分比數字
+        w_qr = QtWidgets.QWidget(); hb_qr = QtWidgets.QHBoxLayout(); hb_qr.setContentsMargins(0,0,0,0)
+        hb_qr.addWidget(self.sl_qr_ratio, 1)
+        self.sp_qr_ratio.setFixedWidth(72)
+        hb_qr.addSpacing(8)
+        hb_qr.addWidget(self.sp_qr_ratio, 0)
+        w_qr.setLayout(hb_qr)
+        grid.addWidget(w_qr, r, 1)
+        r += 1
         grid.addWidget(QtWidgets.QLabel("背景色"), r, 0); grid.addWidget(self.bg_input, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("QR 顏色"), r, 0); grid.addWidget(self.qr_input, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("文字顏色"), r, 0); grid.addWidget(self.text_input, r, 1); r += 1
-        grid.addWidget(QtWidgets.QLabel("字型"), r, 0); 
-        hfont = QtWidgets.QHBoxLayout(); hfont.addWidget(self.font_combo); hfont.addStretch(1); hfont.addWidget(QtWidgets.QLabel("字重")); hfont.addWidget(self.cb_font_weight)
-        wfont = QtWidgets.QWidget(); wfont.setLayout(hfont)
-        grid.addWidget(wfont, r, 1, 1, 2); r += 1
+        grid.addWidget(QtWidgets.QLabel("字型"), r, 0)
+        # 同一欄位包含：字型選單 + 字重
+        self.font_combo.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        w_font = QtWidgets.QWidget(); hb_font = QtWidgets.QHBoxLayout(); hb_font.setContentsMargins(0,0,0,0)
+        hb_font.addWidget(self.font_combo, 1)
+        hb_font.addSpacing(8)
+        lb_fw = QtWidgets.QLabel("字重")
+        hb_font.addWidget(lb_fw, 0)
+        self.cb_font_weight.setSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        hb_font.addWidget(self.cb_font_weight, 0)
+        w_font.setLayout(hb_font)
+        grid.addWidget(w_font, r, 1)
+        r += 1
         grid.addWidget(QtWidgets.QLabel("字型大小"), r, 0); grid.addWidget(self.sp_font_size, r, 1); r += 1
-        grid.addWidget(QtWidgets.QLabel("實際字型"), r, 0); grid.addWidget(self.lb_font_meta, r, 1, 1, 2); r += 1
-        grid.addWidget(QtWidgets.QLabel("圖面路徑(可替代背景色)"), r, 0)
-        hbg = QtWidgets.QHBoxLayout()
-        hbg.addWidget(self.ed_bg_img)
-        hbg.addWidget(btn_bg_img)
-        wbg = QtWidgets.QWidget()
-        wbg.setLayout(hbg)
-        # 別忘了把 wbg 放進 (r,1..2) 並且遞增 r
-        grid.addWidget(wbg, r, 1, 1, 2)
+        grid.addWidget(QtWidgets.QLabel("實際字型"), r, 0)
+        grid.addWidget(self.lb_font_meta, r, 1)
+        # 右列留空以保持右緣對齊
+        r += 1
+        grid.addWidget(QtWidgets.QLabel("圖面路徑（可替代背景色）"), r, 0)
+        # 同一欄位包含：路徑輸入 + 選擇按鈕（靠右）
+        w_bg = QtWidgets.QWidget(); hb_bg = QtWidgets.QHBoxLayout(); hb_bg.setContentsMargins(0,0,0,0)
+        hb_bg.addWidget(self.ed_bg_img, 1)
+        hb_bg.addSpacing(8)
+        hb_bg.addWidget(btn_bg_img, 0)
+        w_bg.setLayout(hb_bg)
+        grid.addWidget(w_bg, r, 1)
         r += 1
 
-        grid.addWidget(QtWidgets.QLabel("Text Margin"), r, 0); grid.addWidget(self.sp_text_margin, r, 1); r += 1
-        grid.addWidget(QtWidgets.QLabel("Line Spacing"), r, 0); grid.addWidget(self.dsb_line_spacing, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("文字邊距"), r, 0); grid.addWidget(self.sp_text_margin, r, 1); r += 1
+        grid.addWidget(QtWidgets.QLabel("行距"), r, 0); grid.addWidget(self.dsb_line_spacing, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("上方距離"), r, 0); grid.addWidget(self.sp_top_gap, r, 1); r += 1
         grid.addWidget(QtWidgets.QLabel("底部邊界"), r, 0); grid.addWidget(self.sp_bottom_margin, r, 1); r += 1
-        grid.addWidget(self.cb_auto_fit, r, 0, 1, 2); r += 1
+        # 只放在中間欄，左右留白以對齊
+        grid.addWidget(self.cb_auto_fit, r, 1); r += 1
+
+        # 讓中間欄位可彈性伸展，避免控件擠壓或重疊
+        grid.setColumnStretch(0, 0)
+        grid.setColumnStretch(1, 1)
+        grid.setColumnStretch(2, 0)
 
 
 
         design_group.setLayout(grid)
-        # Place design panel and preview side-by-side
-        row = QtWidgets.QHBoxLayout()
-        row.addWidget(design_group, 1)
+        # 使用 Splitter 固定左右區塊，並允許使用者拖曳調整「圖面區塊」大小
+        splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Horizontal)
+        splitter.setChildrenCollapsible(False)
+        # 左側：設計面板（直接放 GroupBox）
+        splitter.addWidget(design_group)
+        # 右側：預覽控制 + Scroll 預覽
+        right_widget = QtWidgets.QWidget()
+        right = QtWidgets.QVBoxLayout(right_widget)
+        right.setContentsMargins(0, 0, 0, 0)
+        zoom_bar = QtWidgets.QHBoxLayout()
+        zoom_bar.addWidget(QtWidgets.QLabel("預覽縮放"))
+        self.sl_preview_zoom = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
+        self.sl_preview_zoom.setRange(5, 100)
+        self.sl_preview_zoom.setValue(25)
+        # 固定寬度，避免隨視窗大小改變長度
+        self.sl_preview_zoom.setFixedWidth(220)
+        self.sl_preview_zoom.setSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.lb_preview_zoom = QtWidgets.QLabel("25%")
+        self.sl_preview_zoom.valueChanged.connect(lambda v: self.lb_preview_zoom.setText(f"{int(v)}%"))
+        self.sl_preview_zoom.valueChanged.connect(self._preview)
+        zoom_bar.addWidget(self.sl_preview_zoom)
+        zoom_bar.addWidget(self.lb_preview_zoom)
+        right.addLayout(zoom_bar)
+        # Scroll 容器，避免預覽縮放改變右側區域寬度造成晃動
         self.preview_label = InteractivePreview()
         self.preview_label.setMinimumSize(360, 360)
-        self.preview_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.preview_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignTop)
         self.preview_label.setStyleSheet("background:#1c1c1c;border:1px solid #333;border-radius:6px")
         self.preview_label.anchorChanged.connect(self._on_anchor_changed)
-        row.addWidget(self.preview_label, 1)
-        layout.addLayout(row)
+        self.sc_preview = QtWidgets.QScrollArea()
+        self.sc_preview.setWidgetResizable(False)
+        self.sc_preview.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self.sc_preview.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignTop)
+        self.sc_preview.setMinimumSize(360, 360)
+        self.sc_preview.setWidget(self.preview_label)
+        right.addWidget(self.sc_preview, 1)
+        splitter.addWidget(right_widget)
+        splitter.setStretchFactor(0, 2)
+        splitter.setStretchFactor(1, 1)
+        layout.addWidget(splitter)
         # Load initial values from config and persist on change
         self._load_design_from_config()
         self._bind_persist_signals()
 
-        # Row: button (only generate here)
-        btn_layout = QtWidgets.QHBoxLayout()
-        self.btn_generate = QtWidgets.QPushButton("批次產生 QR Code")
-        self.btn_generate.clicked.connect(self._generate)
-        btn_layout.addStretch(1)
-        btn_layout.addWidget(self.btn_generate)
+        #（已將『批次產生 QR Code』移到活動名稱右側）
         self.sp_text_margin.valueChanged.connect(self._preview)
-        layout.addLayout(btn_layout)
 
         # Wire live preview updates（保留一份就好，移除下方重覆段落）
         self.sp_width.valueChanged.connect(self._preview)
         self.sp_height.valueChanged.connect(self._preview)
         self.sl_qr_ratio.valueChanged.connect(self._preview)
+        self.sp_qr_ratio.valueChanged.connect(self._preview)
         self.ed_bg.textChanged.connect(self._preview)
         self.ed_qr.textChanged.connect(self._preview)
         self.ed_text.textChanged.connect(self._preview)
@@ -328,8 +429,11 @@ class GenerateTab(QtWidgets.QWidget):
         self.sp_bottom_margin.valueChanged.connect(self._preview)
         self.cb_auto_fit.toggled.connect(self._preview)
 
-        # Status
+        # Status（固定高度，避免文字變動導致視窗大小更動）
         self.status = QtWidgets.QLabel()
+        self.status.setWordWrap(True)
+        self.status.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.status.setMaximumHeight(40)
         layout.addWidget(self.status)
         layout.addStretch(1)
         QtCore.QTimer.singleShot(0, self._preview)
@@ -351,6 +455,66 @@ class GenerateTab(QtWidgets.QWidget):
             except Exception:
                 pass
 
+    # Simple helper to wrap a layout into a QWidget (used by form rows)
+    def _wrap(self, layout: QtWidgets.QLayout) -> QtWidgets.QWidget:
+        w = QtWidgets.QWidget()
+        w.setLayout(layout)
+        return w
+
+    def _extract_sheet_id(self, s: str) -> str:
+        import re
+        s = (s or "").strip()
+        if not s:
+            return ""
+        m = re.search(r"/spreadsheets/d/([a-zA-Z0-9-_]+)", s)
+        if m:
+            return m.group(1)
+        return s
+
+    def _link_cloud(self):
+        url = self.cloud_edit.text().strip()
+        if not url:
+            QtWidgets.QMessageBox.information(self, "雲端試算表", "請先貼上網址或 ID")
+            return
+        sid = self._extract_sheet_id(url)
+        if not sid:
+            QtWidgets.QMessageBox.warning(self, "雲端試算表", "無法解析試算表 ID，請確認網址是否正確。")
+            return
+        try:
+            self.cfg.spreadsheet_id = sid
+            self.cfg.save()
+            self.status.setText(f"已連結雲端試算表（ID={sid}）")
+        except Exception:
+            pass
+
+    def _apply_generate_button_alignment(self):
+        # 清空 event_layout 再依設定重建
+        lay = self.event_layout
+        while lay.count():
+            it = lay.takeAt(0)
+            w = it.widget()
+            if w:
+                w.setParent(None)
+        align = (self.cfg.generate_button_align or 'right').lower()
+        if align == 'left':
+            # 活動名稱 | [產生按鈕] [活動名稱輸入]
+            lay.addWidget(self.lbl_event)
+            lay.addWidget(self.btn_generate, 0)
+            lay.addWidget(self.event_edit, 1)
+        else:
+            # 活動名稱 | [活動名稱輸入] [產生按鈕]
+            lay.addWidget(self.lbl_event)
+            lay.addWidget(self.event_edit, 1)
+            lay.addWidget(self.btn_generate, 0)
+
+    # Called from SettingsTab after save via MainWindow
+    def apply_ui_prefs(self, cfg: AppConfig):
+        self.cfg = cfg
+        try:
+            self._apply_generate_button_alignment()
+        except Exception:
+            pass
+
     # Export template moved to TemplateTab
     
     def _generate(self):
@@ -363,7 +527,7 @@ class GenerateTab(QtWidgets.QWidget):
                 opts = DesignOptions(
                     width=int(self.sp_width.value()),
                     height=int(self.sp_height.value()),
-                    qr_ratio=float(self.sl_qr_ratio.value()) / 100.0,
+                    qr_ratio=float(self.sp_qr_ratio.value()) / 100.0,
                     bg_color=self.ed_bg.text().strip(),
                     qr_color=self.ed_qr.text().strip(),
                     text_color=self.ed_text.text().strip(),
@@ -390,15 +554,45 @@ class GenerateTab(QtWidgets.QWidget):
         btn = QtWidgets.QPushButton("…")
         btn.setFixedWidth(28)
         btn.clicked.connect(lambda: self._pick_color_into(edit))
+        # 取消固定寬度，讓欄位可隨容器伸縮
+        try:
+            edit.setMinimumWidth(0)
+            edit.setMaximumWidth(16777215)
+            edit.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+            # 顏色輸入即時反映為底色色塊
+            edit.textChanged.connect(lambda *_: self._apply_color_swatch(edit))
+        except Exception:
+            pass
         lay = QtWidgets.QHBoxLayout(); lay.setContentsMargins(0,0,0,0)
         lay.addWidget(edit); lay.addWidget(btn)
         w = QtWidgets.QWidget(); w.setLayout(lay)
+        # 初始化一次色塊
+        try:
+            self._apply_color_swatch(edit)
+        except Exception:
+            pass
         return w
+
+    def _apply_color_swatch(self, edit: QtWidgets.QLineEdit) -> None:
+        txt = (edit.text() or "").strip()
+        c = QtGui.QColor(txt if txt else "#000000")
+        if not c.isValid():
+            edit.setStyleSheet("")
+            return
+        # 根據亮度決定前景色
+        r, g, b, _a = c.red(), c.green(), c.blue(), c.alpha()
+        luminance = (0.299 * r + 0.587 * g + 0.114 * b)
+        fg = "#000000" if luminance > 186 else "#FFFFFF"
+        edit.setStyleSheet(f"QLineEdit {{ background: {c.name()}; color: {fg}; border: 1px solid #333; border-radius: 6px; padding: 4px 6px; }}")
 
     def _pick_color_into(self, edit: QtWidgets.QLineEdit):
         c = QtWidgets.QColorDialog.getColor(QtGui.QColor(edit.text().strip() or "#000000"), self, "選擇顏色")
         if c.isValid():
             edit.setText(c.name())
+            try:
+                self._apply_color_swatch(edit)
+            except Exception:
+                pass
 
     def _choose_bg_image(self):
         fn, _ = QtWidgets.QFileDialog.getOpenFileName(self, "選擇圖面", str(Path.cwd()), "Image Files (*.png *.jpg *.jpeg)")
@@ -419,7 +613,7 @@ class GenerateTab(QtWidgets.QWidget):
         opts = DesignOptions(
             width=int(self.sp_width.value()),
             height=int(self.sp_height.value()),
-            qr_ratio=float(self.sl_qr_ratio.value()) / 100.0,
+            qr_ratio=float(self.sp_qr_ratio.value()) / 100.0,
             bg_color=self.ed_bg.text().strip(),
             qr_color=self.ed_qr.text().strip(),
             text_color=self.ed_text.text().strip(),
@@ -477,11 +671,36 @@ class GenerateTab(QtWidgets.QWidget):
             else:
                 canvas = Image.new("RGB", (opts.width, opts.height), _hex_to_rgb_local(opts.bg_color))
             draw = PILImageDraw.Draw(canvas)
-            qr_target_w = int(opts.width * max(0.1, min(1.0, opts.qr_ratio)))
-            qr_target_w = max(50, min(qr_target_w, opts.width - 80))
+            # 計算 QR 區塊：文字錨點以上、扣除上方與左右邊界
+            lr_margin = max(0, int(getattr(opts, 'text_margin', 40)))
+            top_bound = max(0, int(getattr(opts, 'text_top_gap', 40)))
+            # 取得文字錨點（若未設定，使用預覽的預設錨點）
+            try:
+                if hasattr(self, 'text_anchor_norm') and self.text_anchor_norm:
+                    yn = float(self.text_anchor_norm[1])
+                else:
+                    yn = float(self.preview_label.normPoint()[1])
+            except Exception:
+                yn = 0.8
+            region_left = lr_margin
+            region_right = max(region_left + 1, opts.width - lr_margin)
+            region_top = top_bound
+            # 底界也套用上邊界：以錨點往上再留出上邊界
+            region_bottom = int(max(0.0, min(1.0, yn)) * opts.height) - top_bound
+            if region_bottom <= region_top:
+                region_bottom = region_top + 1
+            region_w = max(1, region_right - region_left)
+            region_h = max(1, region_bottom - region_top)
+
+            # 根據占比計算目標寬，再限制不能超過區塊可用寬高
+            qr_target_w = int(opts.width * max(0.05, min(1.0, float(getattr(opts, 'qr_ratio', 0.7)))))
+            qr_target_w = max(50, min(qr_target_w, region_w, region_h))
             qr_resized = qr_img.resize((qr_target_w, qr_target_w), Image.Resampling.LANCZOS)
-            qr_x = (opts.width - qr_target_w) // 2
-            qr_y = 40
+
+            cx = region_left + region_w / 2.0
+            cy = region_top + region_h / 2.0
+            qr_x = int(round(cx - qr_target_w / 2.0))
+            qr_y = int(round(cy - qr_target_w / 2.0))
             canvas.paste(qr_resized, (qr_x, qr_y))
             # font
             # Use the same font loader as generator and show resolved info
@@ -498,7 +717,7 @@ class GenerateTab(QtWidgets.QWidget):
             except Exception:
                 from PIL import ImageFont as PILImageFont2
                 font = PILImageFont2.load_default()
-                self.lb_font_meta.setText("default")
+                self.lb_font_meta.setText("預設")
             text_color = _hex_to_rgb_local(opts.text_color)
             # Case-insensitive lookup for extras and consistent labels
             def _ci(d: dict, key: str) -> str:
@@ -639,9 +858,19 @@ class GenerateTab(QtWidgets.QWidget):
                 cur_y += h + spacing
             painter.end()
 
-            pix = QtGui.QPixmap.fromImage(qimg).scaled(self.preview_label.width(), self.preview_label.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
-            self.preview_label.setPixmap(pix)
+            # 預覽縮放：預設 25%，可由控制桿調整
+            try:
+                zoom_pct = int(self.sl_preview_zoom.value())
+            except Exception:
+                zoom_pct = 25
+            # 介面限定 5%~100%
+            zoom = max(0.05, min(1.0, float(zoom_pct) / 100.0))
+            sw = max(1, int(opts.width * zoom))
+            sh = max(1, int(opts.height * zoom))
+            self.preview_label.setFixedSize(sw, sh)
             self.preview_label.setCanvasSize(opts.width, opts.height)
+            pix = QtGui.QPixmap.fromImage(qimg).scaled(sw, sh, QtCore.Qt.AspectRatioMode.KeepAspectRatio, QtCore.Qt.TransformationMode.SmoothTransformation)
+            self.preview_label.setPixmap(pix)
         except Exception as e:
             QtWidgets.QMessageBox.warning(self, "預覽失敗", str(e))
 
@@ -661,6 +890,10 @@ class GenerateTab(QtWidgets.QWidget):
         self.sp_width.valueChanged.connect(lambda *_: self._save_design_to_config())
         self.sp_height.valueChanged.connect(lambda *_: self._save_design_to_config())
         self.sl_qr_ratio.valueChanged.connect(lambda *_: self._save_design_to_config())
+        try:
+            self.sp_qr_ratio.valueChanged.connect(lambda *_: self._save_design_to_config())
+        except Exception:
+            pass
         self.ed_bg.textChanged.connect(lambda *_: self._save_design_to_config())
         self.ed_qr.textChanged.connect(lambda *_: self._save_design_to_config())
         self.ed_text.textChanged.connect(lambda *_: self._save_design_to_config())
@@ -688,13 +921,14 @@ class GenerateTab(QtWidgets.QWidget):
             self.cfg.set_design("use_design", bool(self.cb_use_design.isChecked()))
             self.cfg.set_design("width", int(self.sp_width.value()))
             self.cfg.set_design("height", int(self.sp_height.value()))
-            self.cfg.set_design("qr_ratio", float(self.sl_qr_ratio.value()) / 100.0)
+            self.cfg.set_design("qr_ratio", float(self.sp_qr_ratio.value()) / 100.0)
             self.cfg.set_design("bg_color", self.ed_bg.text().strip())
             self.cfg.set_design("qr_color", self.ed_qr.text().strip())
             self.cfg.set_design("text_color", self.ed_text.text().strip())
             self.cfg.set_design("font_family", self.font_combo.currentFont().family())
             self.cfg.set_design("font_size", int(self.sp_font_size.value()))
-            self.cfg.set_design("font_weight", (self.cb_font_weight.currentText() or "regular"))
+            # 使用 userData（英文）保存字重
+            self.cfg.set_design("font_weight", str(self.cb_font_weight.currentData() or "regular"))
             # background image path may be empty
             try:
                 self.cfg.set_design("bg_image_path", self.ed_bg_img.text().strip())
@@ -718,6 +952,10 @@ class GenerateTab(QtWidgets.QWidget):
             self.sp_width.setValue(int(self.cfg.get_design("width", 1080)))
             self.sp_height.setValue(int(self.cfg.get_design("height", 1350)))
             self.sl_qr_ratio.setValue(int(float(self.cfg.get_design("qr_ratio", 0.7)) * 100))
+            try:
+                self.sp_qr_ratio.setValue(self.sl_qr_ratio.value())
+            except Exception:
+                pass
             self.ed_bg.setText(str(self.cfg.get_design("bg_color", "#FFFFFF")))
             self.ed_qr.setText(str(self.cfg.get_design("qr_color", "#000000")))
             self.ed_text.setText(str(self.cfg.get_design("text_color", "#000000")))
@@ -726,7 +964,11 @@ class GenerateTab(QtWidgets.QWidget):
                 self.font_combo.setCurrentFont(QtGui.QFont(fam))
             self.sp_font_size.setValue(int(self.cfg.get_design("font_size", 48)))
             fw = str(self.cfg.get_design("font_weight", "regular"))
-            idx = self.cb_font_weight.findText(fw)
+            # 根據 userData（英文字串）匹配對應的中文項目
+            try:
+                idx = next((i for i in range(self.cb_font_weight.count()) if str(self.cb_font_weight.itemData(i)) == fw), -1)
+            except Exception:
+                idx = -1
             if idx >= 0:
                 self.cb_font_weight.setCurrentIndex(idx)
             self.ed_bg_img.setText(str(self.cfg.get_design("bg_image_path", "")))
@@ -765,18 +1007,10 @@ class GenerateTab(QtWidgets.QWidget):
 
     def _map_weight(self) -> str:
         try:
-            t = (self.cb_font_weight.currentText() or '').strip().lower()
+            data = self.cb_font_weight.currentData()
+            return str(data or 'regular')
         except Exception:
-            t = 'regular'
-        mapping = {
-            'regular': 'regular',
-            'medium': 'medium',
-            'semibold': 'semibold',
-            'bold': 'bold',
-            'extrabold': 'extrabold',
-            'black': 'black',
-        }
-        return mapping.get(t, 'regular')
+            return 'regular'
 
 
 class ScanTab(QtWidgets.QWidget):
@@ -834,7 +1068,7 @@ class ScanTab(QtWidgets.QWidget):
 
         # Table of scans
         self.table = QtWidgets.QTableWidget(0, 4)
-        self.table.setHorizontalHeaderLabels(["時間", "ID", "name", "內容"])
+        self.table.setHorizontalHeaderLabels(["時間", "ID", "姓名", "內容"])
         self.table.horizontalHeader().setStretchLastSection(True)
         layout.addWidget(self.table)
 
@@ -1218,6 +1452,12 @@ class SettingsTab(QtWidgets.QWidget):
 
     def _build(self):
         form = QtWidgets.QFormLayout(self)
+        try:
+            form.setLabelAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
+            form.setHorizontalSpacing(12)
+            form.setVerticalSpacing(8)
+        except Exception:
+            pass
 
         # Auth method
         self.cb_auth = QtWidgets.QComboBox()
@@ -1244,12 +1484,17 @@ class SettingsTab(QtWidgets.QWidget):
 
         # We manage token.json automatically; do not ask user for a path
         self.lb_oauth_status = QtWidgets.QLabel("")
+        self.lb_oauth_status.setWordWrap(False)
+        self.lb_oauth_status.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
         self.btn_oauth_logout = QtWidgets.QPushButton("登出 (清除 OAuth token)")
         self.btn_oauth_logout.clicked.connect(self._logout_oauth)
         h_oat = QtWidgets.QHBoxLayout(); h_oat.addWidget(self.lb_oauth_status); h_oat.addStretch(1); h_oat.addWidget(self.btn_oauth_logout)
 
         # Spreadsheet URL instead of ID; display mapped URL
         self.ed_spreadsheet = QtWidgets.QLineEdit(self._to_sheet_url(self.cfg.spreadsheet_id))
+        btn_open_sheet = QtWidgets.QPushButton("開啟試算表")
+        btn_open_sheet.clicked.connect(self._open_sheet_in_browser)
+        h_url = QtWidgets.QHBoxLayout(); h_url.addWidget(self.ed_spreadsheet, 1); h_url.addWidget(btn_open_sheet)
         self.ed_worksheet = QtWidgets.QLineEdit(self.cfg.worksheet_name)
         self.ed_event = QtWidgets.QLineEdit(self.cfg.event_name)
         # Camera combobox + refresh button
@@ -1265,14 +1510,24 @@ class SettingsTab(QtWidgets.QWidget):
         form.addRow("憑證檔案", self._wrap(h1))
         form.addRow("OAuth client.json", self._wrap(h_oac))
         form.addRow("OAuth 狀態", self._wrap(h_oat))
-        form.addRow("試算表 URL", self.ed_spreadsheet)
+        form.addRow("試算表 URL", self._wrap(h_url))
         # Show parsed spreadsheet ID for clarity
         self.lb_sheet_id = QtWidgets.QLabel("")
+        self.lb_sheet_id.setWordWrap(False)
+        self.lb_sheet_id.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
         self.lb_sheet_id.setStyleSheet("color:#8ab4f8")
         self._update_sheet_id_label()
         self.ed_spreadsheet.textChanged.connect(self._update_sheet_id_label)
         form.addRow("解析出 ID", self.lb_sheet_id)
         form.addRow("工作表名稱", self.ed_worksheet)
+        # Theme toggle
+        self.cb_theme = QtWidgets.QComboBox()
+        self.cb_theme.addItem("夜間", userData="dark")
+        self.cb_theme.addItem("白晝", userData="light")
+        cur_theme = (self.cfg.theme or 'dark').lower()
+        idx_theme = max(0, self.cb_theme.findData(cur_theme))
+        self.cb_theme.setCurrentIndex(idx_theme)
+        form.addRow("介面主題", self.cb_theme)
         form.addRow("活動名稱", self.ed_event)
         form.addRow("相機來源", self._wrap(cam_row))
 
@@ -1358,6 +1613,11 @@ class SettingsTab(QtWidgets.QWidget):
         except Exception:
             self.cfg.camera_index = 0
         self.cfg.debug = bool(self.cb_debug.isChecked())
+        # theme
+        try:
+            self.cfg.theme = str(self.cb_theme.currentData() or 'dark')
+        except Exception:
+            self.cfg.theme = 'dark'
         self.cfg.save()
         QtWidgets.QMessageBox.information(self, "設定", "已儲存")
         self.config_changed.emit()
@@ -1382,6 +1642,19 @@ class SettingsTab(QtWidgets.QWidget):
     def _update_sheet_id_label(self):
         sid = self._extract_spreadsheet_id(self.ed_spreadsheet.text())
         self.lb_sheet_id.setText(sid or "(未解析到 ID)")
+
+    def _open_sheet_in_browser(self):
+        try:
+            raw = (self.ed_spreadsheet.text() or "").strip()
+            if not raw:
+                return
+            # 接受 ID 或 URL
+            url = raw if raw.startswith("http") else self._to_sheet_url(self._extract_spreadsheet_id(raw))
+            if not url:
+                return
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
+        except Exception:
+            pass
 
     def _get_service_account_email(self) -> str:
         import json
@@ -1543,7 +1816,7 @@ class SettingsTab(QtWidgets.QWidget):
             for i in range(10):
                 try:
                     if _opened(i):
-                        found.append((i, f"Camera {i}"))
+                        found.append((i, f"相機 {i}"))
                 except Exception:
                     pass
 
@@ -1609,6 +1882,9 @@ class TemplateTab(QtWidgets.QWidget):
         layout.addLayout(btns)
 
         self.status = QtWidgets.QLabel()
+        self.status.setWordWrap(True)
+        self.status.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        self.status.setMaximumHeight(40)
         layout.addWidget(self.status)
         layout.addStretch(1)
 
@@ -1675,6 +1951,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.cfg = cfg
         self.setWindowTitle(f"QR 簽到 v{__version__}")
         self.resize(1000, 700)
+        # 鎖定最小尺寸，避免說明/狀態文字變化導致視窗自動縮放
+        self.setMinimumSize(1000, 700)
         self._init_ui()
 
     def _init_ui(self):
@@ -1693,34 +1971,129 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tab_template = TemplateTab(self.cfg)
         self.tab_settings.config_changed.connect(self._on_config_changed)
 
-        tabs.addTab(self.tab_scan, "首頁簽到")
-        tabs.addTab(self.tab_generate, "產生 QR Code")
-        tabs.addTab(self.tab_template, "建立範本")
-        tabs.addTab(self.tab_settings, "設定")
+        # Wrap each tab with scroll area; 產生/範本/設定允許水平與垂直捲動，首頁簽到僅需垂直
+        tabs.addTab(self._make_scroll(self.tab_scan, allow_h=False), "首頁簽到")
+        tabs.addTab(self._make_scroll(self.tab_generate, allow_h=True), "產生 QR Code")
+        tabs.addTab(self._make_scroll(self.tab_template, allow_h=True), "建立範本")
+        tabs.addTab(self._make_scroll(self.tab_settings, allow_h=True), "設定")
 
         # Style
         self._apply_style()
 
-    def _apply_style(self):
-        self.setStyleSheet(
-            """
-            QMainWindow { background: #111; }
-            QWidget { color: #eee; font-size: 14px; }
-            QLineEdit, QSpinBox, QTextEdit, QComboBox, QTableWidget, QTableView {
-                background: #1c1c1c; color: #eee; border: 1px solid #333; border-radius: 6px; padding: 4px 6px;
-            }
-            QPushButton { background: #2d6cdf; color: white; border: none; padding: 8px 14px; border-radius: 8px; }
-            QPushButton:hover { background: #3b78e7; }
-            QPushButton:disabled { background: #555; }
-            QTabWidget::pane { border: 1px solid #333; }
-            /* Tab labels: unselected on white with black text */
-            QTabBar::tab { background: #ffffff; color: #000000; padding: 8px 12px; border-top-left-radius: 6px; border-top-right-radius: 6px; }
-            QTabBar::tab:selected { background: #2d6cdf; color: #ffffff; }
-            QTabBar::tab:hover:!selected { background: #f2f2f2; }
-            QHeaderView::section { background: #222; color: #aaa; padding: 6px; border: none; }
-            QLabel { color: #bbb; }
-            """
+    def _make_scroll(self, inner: QtWidgets.QWidget, allow_h: bool = True) -> QtWidgets.QScrollArea:
+        sa = QtWidgets.QScrollArea()
+        sa.setWidgetResizable(True)
+        sa.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        sa.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        sa.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded if allow_h else QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         )
+        # 放入容器以確保適當的 sizeHint 與邊距
+        container = QtWidgets.QWidget()
+        lay = QtWidgets.QVBoxLayout(container)
+        lay.setContentsMargins(12, 12, 12, 12)
+        lay.setSpacing(10)
+        lay.addWidget(inner)
+        sa.setWidget(container)
+        return sa
+
+    def _apply_style(self):
+        theme = (self.cfg.theme or 'dark').lower()
+        if theme == 'light':
+            css = """
+            QMainWindow { background: #f3f3f3; }
+            QWidget { color: #111; font-size: 14px; }
+
+            QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QFontComboBox, QDateTimeEdit {
+                min-height: 32px; background: #ffffff; color: #111; border: 1px solid #c9c9c9; border-radius: 6px; padding: 4px 6px;
+            }
+            QTextEdit { min-height: 32px; background: #ffffff; color: #111; border: 1px solid #c9c9c9; border-radius: 6px; padding: 6px; }
+            QTableWidget, QTableView { background: #ffffff; color: #111; border: 1px solid #c9c9c9; border-radius: 6px; }
+
+            QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus, QFontComboBox:focus, QTextEdit:focus { border-color: #0e639c; }
+            QComboBox:hover, QFontComboBox:hover { border-color: #0e639c; }
+
+            QPushButton { background: #0e639c; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; min-height: 36px; }
+            QPushButton:hover { background: #1177bb; }
+            QPushButton:pressed { background: #0b4f7a; padding-top: 9px; padding-bottom: 7px; }
+            QPushButton:disabled { background: #bdbdbd; color: #777; }
+
+            QSlider { min-width: 220px; max-width: 220px; }
+            QSlider::groove:horizontal { height: 6px; background: #cfcfcf; border-radius: 3px; }
+            QSlider::handle:horizontal { background: #0e639c; width: 16px; margin: -6px 0; border-radius: 8px; }
+            QSlider::handle:horizontal:hover { background: #1177bb; }
+            QSlider::handle:horizontal:pressed { background: #0b4f7a; }
+
+            QScrollBar:vertical { background: #e9e9e9; width: 12px; margin: 0; }
+            QScrollBar::handle:vertical { background: #c1c1c1; min-height: 24px; border-radius: 6px; }
+            QScrollBar::handle:vertical:hover { background: #adadad; }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+
+            QTabWidget::pane { border: 1px solid #c9c9c9; }
+            QTabBar::tab { background: #ffffff; color: #111; padding: 8px 12px; border-top-left-radius: 6px; border-top-right-radius: 6px; }
+            QTabBar::tab:selected { background: #0e639c; color: #ffffff; }
+            QTabBar::tab:hover:!selected { background: #f5f5f5; }
+
+            QHeaderView::section { background: #efefef; color: #444; padding: 6px; border: none; }
+            QLabel { color: #333; }
+
+            QGroupBox#design_group QSlider { min-width: 0px; max-width: 16777215px; }
+            QGroupBox#design_group QSpinBox, QGroupBox#design_group QDoubleSpinBox { min-width: 0px; max-width: 16777215px; }
+            QGroupBox#design_group QComboBox { min-width: 0px; max-width: 16777215px; }
+            QGroupBox#design_group QFontComboBox { min-width: 0px; max-width: 16777215px; }
+            """
+        else:
+            # VS Code 深色系（黑色底）：背景 #000000、控制 #252526、邊框 #3c3c3c、文字 #d4d4d4、主色 #0e639c
+            css = """
+            QMainWindow { background: #000000; }
+            QWidget { color: #d4d4d4; font-size: 14px; }
+
+            QGroupBox { border: 1px solid #3c3c3c; border-radius: 6px; margin-top: 12px; }
+            QGroupBox::title { subcontrol-origin: margin; left: 8px; padding: 0 4px; color: #d4d4d4; }
+
+            QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QFontComboBox, QDateTimeEdit {
+                min-height: 32px; background: #252526; color: #d4d4d4; border: 1px solid #3c3c3c; border-radius: 6px; padding: 4px 6px;
+            }
+            QTextEdit { min-height: 32px; background: #252526; color: #d4d4d4; border: 1px solid #3c3c3c; border-radius: 6px; padding: 6px; }
+            QTableWidget, QTableView { background: #252526; color: #d4d4d4; border: 1px solid #3c3c3c; border-radius: 6px; }
+
+            QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus, QFontComboBox:focus, QTextEdit:focus { border-color: #0e639c; }
+            QComboBox:hover, QFontComboBox:hover { border-color: #0e639c; }
+
+            QPushButton { background: #0e639c; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; min-height: 36px; }
+            QPushButton:hover { background: #1177bb; }
+            QPushButton:pressed { background: #0b4f7a; padding-top: 9px; padding-bottom: 7px; }
+            QPushButton:disabled { background: #3c3c3c; color: #777; }
+
+            QCheckBox::indicator { width: 18px; height: 18px; }
+            QCheckBox::indicator:hover { border: 1px solid #0e639c; }
+
+            QSlider { min-width: 220px; max-width: 220px; }
+            QSlider::groove:horizontal { height: 6px; background: #3c3c3c; border-radius: 3px; }
+            QSlider::handle:horizontal { background: #0e639c; width: 16px; margin: -6px 0; border-radius: 8px; }
+            QSlider::handle:horizontal:hover { background: #1177bb; }
+            QSlider::handle:horizontal:pressed { background: #0b4f7a; }
+
+            QScrollBar:vertical { background: #2a2a2a; width: 12px; margin: 0; }
+            QScrollBar::handle:vertical { background: #3c3c3c; min-height: 24px; border-radius: 6px; }
+            QScrollBar::handle:vertical:hover { background: #4a4a4a; }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+
+            QTabWidget::pane { border: 1px solid #3c3c3c; }
+            QTabBar::tab { background: #2b2b2b; color: #d4d4d4; padding: 8px 12px; border-top-left-radius: 6px; border-top-right-radius: 6px; }
+            QTabBar::tab:selected { background: #0e639c; color: #ffffff; }
+            QTabBar::tab:hover:!selected { background: #333333; }
+
+            QHeaderView::section { background: #2b2b2b; color: #bfbfbf; padding: 6px; border: none; }
+            QLabel { color: #d4d4d4; }
+
+            /* 設計區塊內：取消固定寬度，允許伸縮 */
+            QGroupBox#design_group QSlider { min-width: 0px; max-width: 16777215px; }
+            QGroupBox#design_group QSpinBox, QGroupBox#design_group QDoubleSpinBox { min-width: 0px; max-width: 16777215px; }
+            QGroupBox#design_group QComboBox { min-width: 0px; max-width: 16777215px; }
+            QGroupBox#design_group QFontComboBox { min-width: 0px; max-width: 16777215px; }
+            """
+        self.setStyleSheet(css)
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         # Persist template fields on exit so they’re available next launch
@@ -1737,3 +2110,5 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sheets_client = GoogleSheetsClient(
             self.cfg.credentials_path, self.cfg.spreadsheet_id, self.cfg.worksheet_name
         )
+        # Re-apply theme if changed
+        self._apply_style()

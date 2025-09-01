@@ -38,6 +38,7 @@ DEFAULTS: Dict[str, Any] = {
         "auto_fit_text": True,
         "text_point": None,
     },
+    "ui": {"theme": "dark", "generate_button_align": "right"},
     "debug": False,
 }
 
@@ -160,6 +161,29 @@ class AppConfig:
 
     def set_design(self, key: str, value: Any) -> None:
         self.data.setdefault("design", {})[key] = value
+
+    # UI theme
+    @property
+    def theme(self) -> str:
+        try:
+            return str(self.data.get("ui", {}).get("theme", "dark")).lower()
+        except Exception:
+            return "dark"
+
+    @theme.setter
+    def theme(self, t: str) -> None:
+        self.data.setdefault("ui", {})["theme"] = str(t)
+
+    @property
+    def generate_button_align(self) -> str:
+        try:
+            return str(self.data.get("ui", {}).get("generate_button_align", "right")).lower()
+        except Exception:
+            return "right"
+
+    @generate_button_align.setter
+    def generate_button_align(self, v: str) -> None:
+        self.data.setdefault("ui", {})["generate_button_align"] = str(v)
 
     # Google auth extras
     @property

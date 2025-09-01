@@ -421,13 +421,34 @@ def generate_qr_posters(attendees: List[Attendee], event_name: str, out_dir: str
             canvas = Image.new("RGB", (options.width, options.height), _hex_to_rgb(options.bg_color))
         draw = ImageDraw.Draw(canvas)
 
-        # Compute QR size and position (centered horizontally, placed upper area)
-        qr_target_w = int(options.width * max(0.1, min(1.0, options.qr_ratio)))
-        qr_target_w = max(50, min(qr_target_w, options.width - options.margin * 2))
+        # Compute QR block: above text anchor, minus top and side margins
+        lr_margin = max(0, int(options.text_margin))
+        top_bound = max(0, int(getattr(options, 'text_top_gap', 40)))
+        if options.text_point is not None:
+            _, yn = options.text_point
+            anchor_y = int(max(0.0, min(1.0, float(yn))) * options.height)
+        else:
+            # default anchor Y if not provided
+            anchor_y = int(0.8 * options.height)
+        region_left = lr_margin
+        region_right = max(region_left + 1, options.width - lr_margin)
+        region_top = top_bound
+        # 底界也套用上邊界：以錨點往上再留出上邊界
+        region_bottom = anchor_y - top_bound
+        if region_bottom <= region_top:
+            region_bottom = region_top + 1
+        region_w = max(1, region_right - region_left)
+        region_h = max(1, region_bottom - region_top)
+        # QR target size by ratio, clamped to block
+        qr_target_w = int(options.width * max(0.05, min(1.0, options.qr_ratio)))
+        qr_target_w = max(50, min(qr_target_w, region_w, region_h))
         # Resize QR to square target
         qr_resized = qr_img.resize((qr_target_w, qr_target_w), Image.Resampling.LANCZOS)
-        qr_x = (options.width - qr_target_w) // 2
-        qr_y = options.margin
+        # Center QR within the region
+        cx = region_left + region_w / 2.0
+        cy = region_top + region_h / 2.0
+        qr_x = int(round(cx - qr_target_w / 2.0))
+        qr_y = int(round(cy - qr_target_w / 2.0))
         canvas.paste(qr_resized, (qr_x, qr_y))
 
         # Prepare font
