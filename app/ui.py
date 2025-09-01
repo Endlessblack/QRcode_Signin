@@ -172,6 +172,15 @@ class GenerateTab(QtWidgets.QWidget):
         super().__init__()
         self.cfg = cfg
         self._build()
+    
+    def eventFilter(self, obj: QtCore.QObject, ev: QtCore.QEvent) -> bool:
+        try:
+            if hasattr(self, 'sc_preview') and obj is self.sc_preview.viewport():
+                if ev.type() == QtCore.QEvent.Type.Resize:
+                    self._update_preview_alignment()
+        except Exception:
+            pass
+        return super().eventFilter(obj, ev)
 
     def _build(self):
         layout = QtWidgets.QVBoxLayout(self)
@@ -396,9 +405,15 @@ class GenerateTab(QtWidgets.QWidget):
         self.sc_preview = QtWidgets.QScrollArea()
         self.sc_preview.setWidgetResizable(False)
         self.sc_preview.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
-        self.sc_preview.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignTop)
+        # 預設置中；若內容超過可視範圍，於 _update_preview_alignment 切換為左上
+        self.sc_preview.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.sc_preview.setMinimumSize(360, 360)
         self.sc_preview.setWidget(self.preview_label)
+        # 監聽 viewport 尺寸變化以動態調整對齊
+        try:
+            self.sc_preview.viewport().installEventFilter(self)
+        except Exception:
+            pass
         right.addWidget(self.sc_preview, 1)
         splitter.addWidget(right_widget)
         splitter.setStretchFactor(0, 2)
@@ -487,33 +502,35 @@ class GenerateTab(QtWidgets.QWidget):
         except Exception:
             pass
 
+    def _update_preview_alignment(self):
+        try:
+            vp = self.sc_preview.viewport().size()
+            w = self.preview_label.width()
+            h = self.preview_label.height()
+            if w <= vp.width() and h <= vp.height():
+                self.sc_preview.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+            else:
+                self.sc_preview.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignTop)
+        except Exception:
+            pass
+
     def _apply_generate_button_alignment(self):
-        # 清空 event_layout 再依設定重建
+        # 清空 event_layout 再依設定重建（固定靠右對齊）
         lay = self.event_layout
         while lay.count():
             it = lay.takeAt(0)
             w = it.widget()
             if w:
                 w.setParent(None)
-        align = (self.cfg.generate_button_align or 'right').lower()
-        if align == 'left':
-            # 活動名稱 | [產生按鈕] [活動名稱輸入]
-            lay.addWidget(self.lbl_event)
-            lay.addWidget(self.btn_generate, 0)
-            lay.addWidget(self.event_edit, 1)
-        else:
-            # 活動名稱 | [活動名稱輸入] [產生按鈕]
-            lay.addWidget(self.lbl_event)
-            lay.addWidget(self.event_edit, 1)
-            lay.addWidget(self.btn_generate, 0)
+        # 活動名稱 | [活動名稱輸入] [產生按鈕]
+        lay.addWidget(self.lbl_event)
+        lay.addWidget(self.event_edit, 1)
+        lay.addWidget(self.btn_generate, 0)
 
-    # Called from SettingsTab after save via MainWindow
+    # Called from SettingsTab after save via MainWindow（目前固定靠右，不需要讀設定）
     def apply_ui_prefs(self, cfg: AppConfig):
         self.cfg = cfg
-        try:
-            self._apply_generate_button_alignment()
-        except Exception:
-            pass
+        self._apply_generate_button_alignment()
 
     # Export template moved to TemplateTab
     
@@ -871,6 +888,8 @@ class GenerateTab(QtWidgets.QWidget):
             self.preview_label.setCanvasSize(opts.width, opts.height)
             pix = QtGui.QPixmap.fromImage(qimg).scaled(sw, sh, QtCore.Qt.AspectRatioMode.KeepAspectRatio, QtCore.Qt.TransformationMode.SmoothTransformation)
             self.preview_label.setPixmap(pix)
+            # 根據是否出現卷軸調整對齊：有卷軸左上，無卷軸置中
+            self._update_preview_alignment()
         except Exception as e:
             QtWidgets.QMessageBox.warning(self, "預覽失敗", str(e))
 
@@ -1037,6 +1056,8 @@ class ScanTab(QtWidgets.QWidget):
 
     def _build(self):
         layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(10)
 
         # Camera preview
         self.preview = QtWidgets.QLabel()
@@ -1047,6 +1068,7 @@ class ScanTab(QtWidgets.QWidget):
 
         # Controls
         ctrl = QtWidgets.QHBoxLayout()
+        ctrl.setSpacing(8)
         self.btn_start = QtWidgets.QPushButton("啟動相機")
         self.btn_stop = QtWidgets.QPushButton("停止")
         self.btn_flush_offline = QtWidgets.QPushButton("上傳離線資料")
@@ -1071,6 +1093,14 @@ class ScanTab(QtWidgets.QWidget):
         self.table.setHorizontalHeaderLabels(["時間", "ID", "姓名", "內容"])
         self.table.horizontalHeader().setStretchLastSection(True)
         layout.addWidget(self.table)
+        # Normalize key button widths
+        try:
+            for b, pad in ((self.btn_start, 16), (self.btn_stop, 16), (self.btn_flush_offline, 16)):
+                w = b.sizeHint().width() + pad
+                b.setMinimumWidth(w)
+                b.setSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        except Exception:
+            pass
 
     def start_camera(self):
         if self.cap is not None:
@@ -1456,6 +1486,10 @@ class SettingsTab(QtWidgets.QWidget):
             form.setLabelAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
             form.setHorizontalSpacing(12)
             form.setVerticalSpacing(8)
+            form.setFieldGrowthPolicy(QtWidgets.QFormLayout.FieldGrowthPolicy.ExpandingFieldsGrow)
+            form.setRowWrapPolicy(QtWidgets.QFormLayout.RowWrapPolicy.DontWrapRows)
+            form.setFormAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
+            form.setContentsMargins(12, 12, 12, 12)
         except Exception:
             pass
 
@@ -1470,9 +1504,9 @@ class SettingsTab(QtWidgets.QWidget):
         self.ed_credentials = QtWidgets.QLineEdit(self.cfg.credentials_path)
         btn_cred = QtWidgets.QPushButton("瀏覽...")
         btn_cred.clicked.connect(self._choose_credentials)
-        h1 = QtWidgets.QHBoxLayout()
-        h1.addWidget(self.ed_credentials)
-        h1.addWidget(btn_cred)
+        h1 = QtWidgets.QHBoxLayout(); h1.setContentsMargins(0,0,0,0); h1.setSpacing(8)
+        h1.addWidget(self.ed_credentials, 1)
+        h1.addWidget(btn_cred, 0)
 
         # OAuth client + token paths
         self.ed_oauth_client = QtWidgets.QLineEdit(self.cfg.oauth_client_path)
@@ -1480,7 +1514,8 @@ class SettingsTab(QtWidgets.QWidget):
         btn_oauth_client = QtWidgets.QPushButton("瀏覽...")
         btn_oauth_client.setEnabled(False)      # disable since filename is fixed
         btn_oauth_client.clicked.connect(lambda: None)
-        h_oac = QtWidgets.QHBoxLayout(); h_oac.addWidget(self.ed_oauth_client); h_oac.addWidget(btn_oauth_client)
+        h_oac = QtWidgets.QHBoxLayout(); h_oac.setContentsMargins(0,0,0,0); h_oac.setSpacing(8)
+        h_oac.addWidget(self.ed_oauth_client, 1); h_oac.addWidget(btn_oauth_client, 0)
 
         # We manage token.json automatically; do not ask user for a path
         self.lb_oauth_status = QtWidgets.QLabel("")
@@ -1488,22 +1523,24 @@ class SettingsTab(QtWidgets.QWidget):
         self.lb_oauth_status.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
         self.btn_oauth_logout = QtWidgets.QPushButton("登出 (清除 OAuth token)")
         self.btn_oauth_logout.clicked.connect(self._logout_oauth)
-        h_oat = QtWidgets.QHBoxLayout(); h_oat.addWidget(self.lb_oauth_status); h_oat.addStretch(1); h_oat.addWidget(self.btn_oauth_logout)
+        h_oat = QtWidgets.QHBoxLayout(); h_oat.setContentsMargins(0,0,0,0); h_oat.setSpacing(8)
+        h_oat.addWidget(self.lb_oauth_status, 1); h_oat.addWidget(self.btn_oauth_logout, 0)
 
         # Spreadsheet URL instead of ID; display mapped URL
         self.ed_spreadsheet = QtWidgets.QLineEdit(self._to_sheet_url(self.cfg.spreadsheet_id))
         btn_open_sheet = QtWidgets.QPushButton("開啟試算表")
         btn_open_sheet.clicked.connect(self._open_sheet_in_browser)
-        h_url = QtWidgets.QHBoxLayout(); h_url.addWidget(self.ed_spreadsheet, 1); h_url.addWidget(btn_open_sheet)
+        h_url = QtWidgets.QHBoxLayout(); h_url.setContentsMargins(0,0,0,0); h_url.setSpacing(8)
+        h_url.addWidget(self.ed_spreadsheet, 1); h_url.addWidget(btn_open_sheet, 0)
         self.ed_worksheet = QtWidgets.QLineEdit(self.cfg.worksheet_name)
         self.ed_event = QtWidgets.QLineEdit(self.cfg.event_name)
         # Camera combobox + refresh button
         self.cb_camera = QtWidgets.QComboBox()
         btn_cam_refresh = QtWidgets.QPushButton("刷新")
         btn_cam_refresh.clicked.connect(self._populate_cameras)
-        cam_row = QtWidgets.QHBoxLayout()
-        cam_row.addWidget(self.cb_camera)
-        cam_row.addWidget(btn_cam_refresh)
+        cam_row = QtWidgets.QHBoxLayout(); cam_row.setContentsMargins(0,0,0,0); cam_row.setSpacing(8)
+        cam_row.addWidget(self.cb_camera, 1)
+        cam_row.addWidget(btn_cam_refresh, 0)
         self._populate_cameras()
 
         form.addRow("驗證方式", self.cb_auth)
@@ -1528,6 +1565,7 @@ class SettingsTab(QtWidgets.QWidget):
         idx_theme = max(0, self.cb_theme.findData(cur_theme))
         self.cb_theme.setCurrentIndex(idx_theme)
         form.addRow("介面主題", self.cb_theme)
+        # 活動名稱
         form.addRow("活動名稱", self.ed_event)
         form.addRow("相機來源", self._wrap(cam_row))
 
@@ -1540,11 +1578,22 @@ class SettingsTab(QtWidgets.QWidget):
         btn_test = QtWidgets.QPushButton("測試連線 / 登入")
         btn_save.clicked.connect(self._save)
         btn_test.clicked.connect(self._test_connection)
-        hb = QtWidgets.QHBoxLayout()
-        hb.addWidget(btn_save)
-        hb.addWidget(btn_test)
+        hb = QtWidgets.QHBoxLayout(); hb.setContentsMargins(0,0,0,0); hb.setSpacing(8)
+        hb.addWidget(btn_save, 0)
+        hb.addWidget(btn_test, 0)
         hb.addStretch(1)
         form.addRow(self._wrap(hb))
+        # Normalize button widths to fit text (避免文字超出按鈕)
+        for _b, extra in (
+            (btn_cred, 16), (btn_oauth_client, 16), (btn_open_sheet, 16), (btn_cam_refresh, 16),
+            (btn_save, 16), (btn_test, 16), (self.btn_oauth_logout, 24),
+        ):
+            try:
+                _w = _b.sizeHint().width() + extra
+                _b.setMinimumWidth(_w)
+                _b.setSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+            except Exception:
+                pass
         self._refresh_oauth_status()
 
         # Toggle visibility of auth-specific rows
@@ -1613,7 +1662,7 @@ class SettingsTab(QtWidgets.QWidget):
         except Exception:
             self.cfg.camera_index = 0
         self.cfg.debug = bool(self.cb_debug.isChecked())
-        # theme
+        # UI 主題（產生按鈕固定靠右，不再存對齊）
         try:
             self.cfg.theme = str(self.cb_theme.currentData() or 'dark')
         except Exception:
@@ -1844,6 +1893,8 @@ class TemplateTab(QtWidgets.QWidget):
 
     def _build(self):
         layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(10)
 
         # Editor for custom fields
         group = QtWidgets.QGroupBox("自訂欄位（除了 id, name）")
@@ -1856,6 +1907,7 @@ class TemplateTab(QtWidgets.QWidget):
         v.addWidget(self.list_fields)
 
         h = QtWidgets.QHBoxLayout()
+        h.setSpacing(8)
         btn_add = QtWidgets.QPushButton("新增")
         btn_edit = QtWidgets.QPushButton("編輯")
         btn_del = QtWidgets.QPushButton("刪除")
@@ -1874,12 +1926,23 @@ class TemplateTab(QtWidgets.QWidget):
 
         # Buttons: Save fields and Export template
         btns = QtWidgets.QHBoxLayout()
+        btns.setSpacing(8)
         btn_save = QtWidgets.QPushButton("儲存欄位")
         btn_export = QtWidgets.QPushButton("輸出範本 CSV")
         btns.addWidget(btn_save)
         btns.addStretch(1)
         btns.addWidget(btn_export)
         layout.addLayout(btns)
+
+        # Cloud write row: URL + button
+        cloud_row = QtWidgets.QHBoxLayout(); cloud_row.setSpacing(8)
+        self.ed_cloud_url = QtWidgets.QLineEdit()
+        self.ed_cloud_url.setPlaceholderText("貼上 Google 試算表 URL 或 ID（雲端）")
+        btn_cloud_write = QtWidgets.QPushButton("寫入雲端試算表")
+        btn_cloud_write.clicked.connect(self._write_cloud_template)
+        cloud_row.addWidget(self.ed_cloud_url, 1)
+        cloud_row.addWidget(btn_cloud_write, 0)
+        layout.addLayout(cloud_row)
 
         self.status = QtWidgets.QLabel()
         self.status.setWordWrap(True)
@@ -1896,6 +1959,14 @@ class TemplateTab(QtWidgets.QWidget):
         btn_down.clicked.connect(lambda: self._field_move(1))
         btn_save.clicked.connect(self._save_fields)
         btn_export.clicked.connect(self._export_template)
+        # Normalize button widths to avoid jitter
+        try:
+            for b, pad in ((btn_add, 12), (btn_edit, 12), (btn_del, 12), (btn_up, 12), (btn_down, 12), (btn_save, 16), (btn_export, 16)):
+                w = b.sizeHint().width() + pad
+                b.setMinimumWidth(w)
+                b.setSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        except Exception:
+            pass
 
     def _save_fields(self):
         items = [self.list_fields.item(i).text() for i in range(self.list_fields.count())]
@@ -1943,6 +2014,48 @@ class TemplateTab(QtWidgets.QWidget):
             it = self.list_fields.takeItem(row)
             self.list_fields.insertItem(new_row, it)
             self.list_fields.setCurrentRow(new_row)
+
+    def _extract_spreadsheet_id(self, s: str) -> str:
+        import re
+        s = (s or "").strip()
+        if not s:
+            return ""
+        m = re.search(r"/spreadsheets/d/([a-zA-Z0-9-_]+)", s)
+        if m:
+            return m.group(1)
+        return s
+
+    def _write_cloud_template(self):
+        from .google_sheets import GoogleSheetsClient
+        # Build headers: id, name + extras from config
+        headers = ["id", "name", *self.cfg.extra_fields]
+        sid = self._extract_spreadsheet_id(self.ed_cloud_url.text())
+        if not sid:
+            QtWidgets.QMessageBox.information(self, "雲端試算表", "請先貼上試算表 URL 或 ID。")
+            return
+        try:
+            client = GoogleSheetsClient(
+                self.cfg.credentials_path,
+                sid,
+                self.cfg.worksheet_name,
+                auth_method=self.cfg.auth_method,
+                oauth_client_path=self.cfg.oauth_client_path,
+                oauth_token_path=self.cfg.oauth_token_path,
+            )
+            client.connect()
+            # 利用私有方法以便快速確保表頭（union，不會清除原有欄位）
+            try:
+                client._ensure_headers(headers)  # type: ignore[attr-defined]
+            except Exception:
+                # Fallback: 直接取第一列合併更新
+                ws = client._ws  # type: ignore[attr-defined]
+                if ws is not None:
+                    exist = ws.row_values(1) or []
+                    new_headers = list(dict.fromkeys(exist + headers))
+                    ws.update('1:1', [new_headers])
+            QtWidgets.QMessageBox.information(self, "雲端試算表", "已寫入表頭（id, name 以及自訂欄位）。")
+        except Exception as e:
+            QtWidgets.QMessageBox.warning(self, "雲端試算表", f"寫入失敗：{e}")
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -2003,10 +2116,13 @@ class MainWindow(QtWidgets.QMainWindow):
             css = """
             QMainWindow { background: #f3f3f3; }
             QWidget { color: #111; font-size: 14px; }
+            QLabel { qproperty-alignment: AlignVCenter; }
 
             QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QFontComboBox, QDateTimeEdit {
-                min-height: 32px; background: #ffffff; color: #111; border: 1px solid #c9c9c9; border-radius: 6px; padding: 4px 6px;
-            }
+                min-height: 32px; background: #ffffff; color: #111; border: 1px solid #c9c9c9; border-radius: 6px; padding: 4px 6px; }
+            QSpinBox, QDoubleSpinBox { padding-right: 28px; }
+            QSpinBox::up-button, QDoubleSpinBox::up-button { width: 16px; }
+            QSpinBox::down-button, QDoubleSpinBox::down-button { width: 16px; }
             QTextEdit { min-height: 32px; background: #ffffff; color: #111; border: 1px solid #c9c9c9; border-radius: 6px; padding: 6px; }
             QTableWidget, QTableView { background: #ffffff; color: #111; border: 1px solid #c9c9c9; border-radius: 6px; }
 
@@ -2043,19 +2159,24 @@ class MainWindow(QtWidgets.QMainWindow):
             QGroupBox#design_group QFontComboBox { min-width: 0px; max-width: 16777215px; }
             """
         else:
-            # VS Code 深色系（黑色底）：背景 #000000、控制 #252526、邊框 #3c3c3c、文字 #d4d4d4、主色 #0e639c
+            # VS Code 深色系（黑色底）：背景 #000000、控制 #0f0f0f、邊框 #222222、文字 #e6e6e6、主色 #0e639c
             css = """
             QMainWindow { background: #000000; }
-            QWidget { color: #d4d4d4; font-size: 14px; }
+            QWidget { background: #0b0b0b; color: #e6e6e6; font-size: 14px; }
+            QLabel { qproperty-alignment: AlignVCenter; }
 
             QGroupBox { border: 1px solid #3c3c3c; border-radius: 6px; margin-top: 12px; }
             QGroupBox::title { subcontrol-origin: margin; left: 8px; padding: 0 4px; color: #d4d4d4; }
+            /* 設計區塊標籤垂直置中以達到中線對齊 */
+            QGroupBox#design_group QLabel { qproperty-alignment: AlignVCenter; }
 
             QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QFontComboBox, QDateTimeEdit {
-                min-height: 32px; background: #252526; color: #d4d4d4; border: 1px solid #3c3c3c; border-radius: 6px; padding: 4px 6px;
-            }
-            QTextEdit { min-height: 32px; background: #252526; color: #d4d4d4; border: 1px solid #3c3c3c; border-radius: 6px; padding: 6px; }
-            QTableWidget, QTableView { background: #252526; color: #d4d4d4; border: 1px solid #3c3c3c; border-radius: 6px; }
+                min-height: 32px; background: #0f0f0f; color: #e6e6e6; border: 1px solid #222222; border-radius: 6px; padding: 4px 6px; }
+            QSpinBox, QDoubleSpinBox { padding-right: 28px; }
+            QSpinBox::up-button, QDoubleSpinBox::up-button { width: 16px; }
+            QSpinBox::down-button, QDoubleSpinBox::down-button { width: 16px; }
+            QTextEdit { min-height: 32px; background: #0f0f0f; color: #e6e6e6; border: 1px solid #222222; border-radius: 6px; padding: 6px; }
+            QTableWidget, QTableView { background: #0f0f0f; color: #e6e6e6; border: 1px solid #222222; border-radius: 6px; }
 
             QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus, QFontComboBox:focus, QTextEdit:focus { border-color: #0e639c; }
             QComboBox:hover, QFontComboBox:hover { border-color: #0e639c; }
@@ -2074,12 +2195,13 @@ class MainWindow(QtWidgets.QMainWindow):
             QSlider::handle:horizontal:hover { background: #1177bb; }
             QSlider::handle:horizontal:pressed { background: #0b4f7a; }
 
+            QAbstractScrollArea { background: #0b0b0b; }
             QScrollBar:vertical { background: #2a2a2a; width: 12px; margin: 0; }
             QScrollBar::handle:vertical { background: #3c3c3c; min-height: 24px; border-radius: 6px; }
             QScrollBar::handle:vertical:hover { background: #4a4a4a; }
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
 
-            QTabWidget::pane { border: 1px solid #3c3c3c; }
+            QTabWidget::pane { background: #0b0b0b; border: 1px solid #3c3c3c; }
             QTabBar::tab { background: #2b2b2b; color: #d4d4d4; padding: 8px 12px; border-top-left-radius: 6px; border-top-right-radius: 6px; }
             QTabBar::tab:selected { background: #0e639c; color: #ffffff; }
             QTabBar::tab:hover:!selected { background: #333333; }
@@ -2112,3 +2234,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         # Re-apply theme if changed
         self._apply_style()
+        # Apply UI prefs to tabs without recreation
+        try:
+            if hasattr(self, 'tab_generate') and isinstance(self.tab_generate, GenerateTab):
+                self.tab_generate.apply_ui_prefs(self.cfg)
+        except Exception:
+            pass
